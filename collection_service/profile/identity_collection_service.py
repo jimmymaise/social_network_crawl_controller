@@ -6,16 +6,16 @@ from collection_loading.load.kol_load_handler import KOLLoadHandler
 from collection_loading.query.base_query import Query
 from collection_service.base_collection_service import CollectionService
 from database.db_handler import MongodbHandler
-from item_aggregator.identity_item_aggregator_handler import IdentityItemAggregatorHandler
+from item_transform.identity_item_transform_handler import IdentityItemTransformHandler
 
 
 class IdentityService(CollectionService):
     def __init__(self, loader: KOLLoadHandler,
                  collect_handler: APICollectHandler,
-                 item_aggregator: IdentityItemAggregatorHandler,
+                 item_transform: IdentityItemTransformHandler,
                  system_config: dict,
                  service_config: dict):
-        super().__init__(loader, collect_handler, item_aggregator)
+        super().__init__(loader, collect_handler, item_transform)
         self.service_name = 'identity'
         self.system_config = system_config
         self.service_config = service_config
@@ -52,7 +52,7 @@ class IdentityService(CollectionService):
         return crawl_items
 
     def _prepare_data_for_storing(self, loaded_items, crawled_items):
-        # Play something with self.item_aggregator
+        # Play something with self.item_transform
         pass
 
     def _store_to_database(self, data):
@@ -69,11 +69,11 @@ class IdentityServiceRunner:
         self.loader = KOLLoadHandler(db_handler=self.db_handler)
         self.api_handler = LambdaApiRequestHandler(base_url=system_config['BASE_LAMBDA_URL'])
         self.collect_handler = APICollectHandler(self.api_handler, social_network='facebook', service='identity')
-        self.item_aggregator = IdentityItemAggregatorHandler()
+        self.item_transform = IdentityItemTransformHandler()
 
         self.identity_service = IdentityService(loader=self.loader,
                                                 collect_handler=self.collect_handler,
-                                                item_aggregator=self.item_aggregator,
+                                                item_transform=self.item_transform,
                                                 system_config=self.system_config,
                                                 service_config=self.service_config,
                                                 )

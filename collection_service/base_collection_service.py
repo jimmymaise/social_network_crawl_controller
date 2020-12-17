@@ -5,10 +5,10 @@ from collection_loading.load.base_load_handler import BaseLoadHandler
 
 class CollectionService:
     def __init__(self, loader: BaseLoadHandler, collect_handler,
-                 item_aggregator):
+                 item_transform):
         self.loader = loader
         self.collect_handler = collect_handler
-        self.item_aggregator = item_aggregator
+        self.item_transform = item_transform
         self.service_name = None
 
     @abstractmethod
@@ -23,7 +23,7 @@ class CollectionService:
 
     @abstractmethod
     def _prepare_data_for_storing(self, loaded_items, crawled_items):
-        # Play something with self.item_aggregator
+        # Play something with self.item_transform
         pass
 
     @abstractmethod
