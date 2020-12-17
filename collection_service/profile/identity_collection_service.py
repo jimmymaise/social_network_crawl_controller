@@ -39,7 +39,7 @@ class IdentityService(CollectionService):
         query = Query(_filter=_filter, _sort=_sort, selected_fields=selected_fields,
                       _limit=self.service_config['LIMIT'], priority=1)
 
-        self.loader.add_filter(query)
+        self.loader.add_query(query)
         return self.loader.load_items()
 
     def _get_crawl_data(self, loaded_items) -> list:

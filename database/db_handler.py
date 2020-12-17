@@ -16,3 +16,6 @@ class MongodbHandler:
 
     def set_db(self, database_name):
         self.database_name = database_name
+
+    def get_items_by_query(self, query, collection_name):
+        return []
