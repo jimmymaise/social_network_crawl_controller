@@ -15,10 +15,12 @@ class IdentityQuery(Query):
             'last_time_crawl_identity': {'$lte': (time.time() - 86400)}
         }
         self._sort = [("last_time_crawl_post", 1)]
+        self._limit = 10
         self.selected_fields = [
             '_id',
             'hiip_user_type', 'fb_user_type', 'fb_permission',
             'user_id', 'page_id', 'username', 'app_id']
 
     def query_function(self):
-        pass
+        return Query(_filter=self._filter, _sort=self._sort, selected_fields=self.selected_fields,
+                     _limit=self._limit, priority=1)

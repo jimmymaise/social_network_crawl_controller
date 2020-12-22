@@ -3,7 +3,7 @@ import time
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.api_collect_handler import APICollectHandler
 from collection_loading.load.kol_load_handler import KOLLoadHandler
-from collection_loading.query.base_query import Query
+from collection_loading.query.identity_collection import IdentityQuery
 from collection_service.base_collection_service import CollectionService
 from database.db_handler import MongodbHandler
 from item_transform.identity_item_transform_handler import IdentityItemTransformHandler
@@ -21,23 +21,8 @@ class IdentityService(CollectionService):
         self.service_config = service_config
 
     def _load_items(self) -> list:
-        # Play something with self.loads to get data
-        _filter = {
-            'crawl_identity_status': {'$nin': ['Failed']},
-            'hiip_user_type': {'$in': ['user', 'page']},
-            'country_code': {'$elemMatch': {'$in': ['vi']}},
-            '$or': [{'influencer_type': {'$nin': self.service_config['INFLUENCE_TYPE_IGNORE']}},
-                    {'influencer_type': {'$exists': False}}],
-            'last_time_crawl_identity': {'$lte': (time.time() - 86400)}
-        }
-        _sort = [("last_time_crawl_post", 1)]
-        selected_fields = [
-            '_id',
-            'hiip_user_type', 'fb_user_type', 'fb_permission',
-            'user_id', 'page_id', 'username', 'app_id']
 
-        query = Query(_filter=_filter, _sort=_sort, selected_fields=selected_fields,
-                      _limit=self.service_config['LIMIT'], priority=1)
+        query = IdentityQuery.query_function()
 
         self.loader.add_query(query)
         return self.loader.load_items()
