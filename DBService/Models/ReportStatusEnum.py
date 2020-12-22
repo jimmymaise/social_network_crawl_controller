@@ -1,0 +1,10 @@
+class ReportStatusEnum:
+    Cached = 'Cached'
+    Pending = 'Pending'
+    Tracking = 'Tracking'
+    Created = 'Created'
+    Crawling = 'Crawling'
+    Following = 'Following'
+    Done = 'Done'
+    Failed = 'Failed'
+    Missing = 'Missing'
