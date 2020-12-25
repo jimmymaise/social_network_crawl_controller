@@ -1,7 +1,4 @@
 from account_manager.account_manager_handler import AccountManager
-from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import APIPath
-from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import \
-    PostDetailAPIResponseSchema, PostDetailAPIRequestSchema
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
@@ -30,7 +27,7 @@ class APICollectHandler(BaseCollectHandler):
             message=message
         )
 
-    def crawl_post_detail_data(self, **kwargs) -> dict:
+    def crawl_post_detail_data(self) -> dict:
         self._get_account_id_token()
 
         api_request_data = PostDetailAPISpecs()
