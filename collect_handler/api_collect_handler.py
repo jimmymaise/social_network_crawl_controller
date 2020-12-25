@@ -27,13 +27,14 @@ class APICollectHandler(BaseCollectHandler):
             message=message
         )
 
-    def crawl_post_detail_data(self) -> dict:
+    def crawl_post_detail_data(self, items_load) -> dict:
         self._get_account_id_token()
 
         api_request_data = PostDetailAPISpecs()
+        api_request_data.set_body_from_load_data(item_load=items_load, account_info={})
+
         response, is_valid_schema = self.api_handler.call_api(
             request_data=api_request_data
-
         )
         self._update_account_token(response.status_code, 'Done')
         if is_valid_schema:

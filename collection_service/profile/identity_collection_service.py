@@ -21,7 +21,6 @@ class IdentityService(CollectionService):
         self.service_config = service_config
 
     def _load_items(self) -> list:
-
         query = IdentityQuery.query_function()
 
         self.loader.add_query(query)
@@ -32,8 +31,8 @@ class IdentityService(CollectionService):
         crawl_items = []
 
         for item in loaded_items:
-            post_id = item.get('post_id')
-            crawl_items.append(self.collect_handler.crawl_post_detail_data(post_id))
+            crawl_items.append(self.collect_handler.crawl_post_detail_data(item))
+            # todo sleep time
         return crawl_items
 
     def _prepare_data_for_storing(self, loaded_items, crawled_items):

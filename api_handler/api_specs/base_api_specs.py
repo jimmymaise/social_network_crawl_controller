@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, EXCLUDE
+from abc import abstractmethod
 
 
 class BaseAPISpecs:
@@ -17,39 +17,10 @@ class BaseAPISpecs:
         self.request_schema = request_schema
         self.response_schema = response_schema
 
-    def set_body(self, body):
-        self.body = body
+    @abstractmethod
+    def set_body_from_load_data(self, item_load, account_info):
+        pass
 
-    def set_header(self, header):
-        self.header = header
-
-
-class BaseUserSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    username = fields.Str()
-    user_id = fields.Int()
-    avatar = fields.Str()
-
-
-class BasePostSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    content = fields.Str()
-    full_picture = fields.Str()
-    num_reaction = fields.Int()
-    num_comment = fields.Int()
-    num_share = fields.Int()
-    view_count = fields.Int()
-    feedback_id = fields.Str()
-
-
-class BaseStatusSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    status_code = fields.Int()
-    cookie_status = fields.Int()
-    details = fields.Str()
+    @abstractmethod
+    def set_header_from_api_key(self, api_key):
+        self.header = {'X-API-KEY': api_key}

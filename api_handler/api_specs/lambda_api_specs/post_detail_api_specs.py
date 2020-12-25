@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, EXCLUDE
-from api_handler.api_specs.base_api_specs import BaseAPISpecs, BaseUserSchema, BasePostSchema
+from api_handler.api_specs.base_api_specs import BaseAPISpecs
 from config.env_config import LAMBDA_CONFIG
 
 
@@ -12,6 +12,8 @@ class PostDetailAPISpecs(BaseAPISpecs):
                          request_schema=PostDetailAPIRequestSchema,
                          response_schema=PostDetailAPIResponseSchema)
 
+        self.set_header_from_api_key(LAMBDA_CONFIG.get('X-API-KEY_POST_DETAIL'))
+
     def set_body_from_load_data(self, item_load: dict, account_info: dict):
 
         _body = {'post_link': item_load.get('post_link'),
@@ -19,9 +21,36 @@ class PostDetailAPISpecs(BaseAPISpecs):
 
         self.body = _body
 
-    def set_header_from_config_env(self):
 
-        self.header = {'X-API-KEY': LAMBDA_CONFIG.get('X-API-KEY_POST_DETAIL')}
+class BaseUserSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    username = fields.Str()
+    user_id = fields.Int()
+    avatar = fields.Str()
+
+
+class BasePostSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    content = fields.Str()
+    full_picture = fields.Str()
+    num_reaction = fields.Int()
+    num_comment = fields.Int()
+    num_share = fields.Int()
+    view_count = fields.Int()
+    feedback_id = fields.Str()
+
+
+class BaseStatusSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    status_code = fields.Int()
+    cookie_status = fields.Int()
+    details = fields.Str()
 
 
 class PostDetailAPIResponseSchema(Schema):
