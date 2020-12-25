@@ -1,6 +1,6 @@
 import enum
 
 
-class ServicesEnum(enum):
+class CollectionLoadEnum(enum):
     KOLLoad = "KOLLoad"
     ReportLoad = "ReportLoad"
