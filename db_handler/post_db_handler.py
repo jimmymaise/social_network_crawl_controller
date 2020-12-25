@@ -1,7 +1,7 @@
-from db_handler import general_db_handler
+from db_handler.base_db_handler import BaseDBHandler
 
 
-class PostDBHandler(general_db_handler):
+class PostDBHandler(BaseDBHandler):
     def __init__(self):
         super(PostDBHandler, self).__init__()
         self.collection = self.database['posts']

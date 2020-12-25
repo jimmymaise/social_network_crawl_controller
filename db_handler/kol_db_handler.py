@@ -1,8 +1,8 @@
 # Import libs
-from db_handler import general_db_handler
+from db_handler.base_db_handler import BaseDBHandler
 
 
-class KOLDBHandler(general_db_handler):
+class KOLDBHandler(BaseDBHandler):
     def __init__(self):
         super(KOLDBHandler, self).__init__()
         self.collection = self.database['kols']

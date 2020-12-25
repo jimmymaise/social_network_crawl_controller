@@ -1,8 +1,8 @@
 # Import libs
-from db_handler import general_db_handler
+from db_handler.base_db_handler import BaseDBHandler
 
 
-class NormalUserDBHandler(general_db_handler):
+class NormalUserDBHandler(BaseDBHandler):
     def __init__(self):
         super(NormalUserDBHandler, self).__init__()
         self.collection = self.database['normalusers']

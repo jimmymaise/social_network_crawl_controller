@@ -35,7 +35,7 @@ class DBConnection(object):
         self.client = MongoClient(_host_address, connect=False)
 
 
-class GeneralDBHandler(object):
+class BaseDBHandler(object):
     # ********** Constructor **********
     def __init__(self):
         _connection = DBConnection()

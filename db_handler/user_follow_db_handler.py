@@ -1,7 +1,7 @@
-from db_handler import general_db_handler
+from db_handler.base_db_handler import BaseDBHandler
 
 
-class UserFollowUserDBHandler(general_db_handler):
+class UserFollowUserDBHandler(BaseDBHandler):
     def __init__(self):
         super(UserFollowUserDBHandler, self).__init__()
         self.collection = self.database['userfollowusers']

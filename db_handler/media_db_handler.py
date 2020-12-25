@@ -1,8 +1,8 @@
 # Import libs
-from db_handler import general_db_handler
+from db_handler.base_db_handler import BaseDBHandler
 
 
-class MediaDBHandler(general_db_handler):
+class MediaDBHandler(BaseDBHandler):
     def __init__(self):
         super(MediaDBHandler, self).__init__()
         self.collection = self.database['medias']
