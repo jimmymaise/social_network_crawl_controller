@@ -3,7 +3,7 @@ import time
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.post_detail_collect_handler import APICollectHandler
 from collection_loading.load.kol_load_handler import KOLLoadHandler
-from collection_loading.query.identity_collection import IdentityQuery
+from collection_loading.query.kol_query import IdentityQuery
 from collection_service.base_collection_service import CollectionService
 from database.db_handler import MongodbHandler
 from item_transform.identity_item_transform_handler import IdentityItemTransformHandler
