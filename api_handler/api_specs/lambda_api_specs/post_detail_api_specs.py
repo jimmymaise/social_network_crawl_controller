@@ -1,6 +1,10 @@
 from marshmallow import Schema, fields, EXCLUDE
 
 
+class APIPath:
+    FB_POST_DETAIL = 'post_detail'
+
+
 class BaseUserSchema(Schema):
     class Meta:
         unknown = EXCLUDE

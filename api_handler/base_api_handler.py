@@ -6,7 +6,7 @@ import requests
 
 
 @dataclass
-class APIRequestData:
+class BaseAPISpecs:
     method: str
     path: str
     header: dict
@@ -40,13 +40,13 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
             error = e
         return data, error
 
-    def _process_request(self, request_data: APIRequestData):
+    def _process_request(self, request_data: BaseAPISpecs):
         response = getattr(requests, request_data.method)(url=f'{self.base_url}/{request_data.path}',
                                                           header=request_data.header,
                                                           json=request_data.body)
         return json.loads(response.content, encoding='utf8')
 
-    def call_api(self, request_data: APIRequestData):
+    def call_api(self, request_data: BaseAPISpecs):
         is_valid_schema = True
         data, errors = self._validate_schema(request_data.body, request_data.request_schema)
 
