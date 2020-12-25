@@ -1,4 +1,4 @@
-from account_manager.account_manager_handler import AccountManager
+from api_handler.account_api_handler import AccountAPIRequestHandler
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
@@ -14,7 +14,7 @@ class APICollectHandler(BaseCollectHandler):
         self.country = country
         self.account_id = None
         self.account_info = None
-        self.account_manager = AccountManager()
+        self.account_manager = AccountAPIRequestHandler('')
 
     def _get_account_id_token(self):
         self.account_id, self.account_info = self.account_manager.get_account_from_api(

@@ -1,9 +1,11 @@
+from abc import ABC
+
 from marshmallow import Schema, fields, EXCLUDE
 from api_handler.api_specs.base_api_specs import BaseAPISpecs
 from config.env_config import LAMBDA_CONFIG
 
 
-class PostDetailAPISpecs(BaseAPISpecs):
+class PostDetailAPISpecs(BaseAPISpecs, ABC):
     def __init__(self):
         super().__init__(method='POST',
                          path='post_detail',
