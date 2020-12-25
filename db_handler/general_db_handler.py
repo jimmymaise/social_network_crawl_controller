@@ -4,7 +4,7 @@ from pymongo import UpdateOne, DeleteOne
 import urllib.parse
 
 # Import config
-from config.DBConfig import DBCONFIG
+from config.db_config import DB_CONFIG
 
 
 class Singleton(type):
@@ -20,18 +20,18 @@ class DBConnection(object):
     __metaclass__ = Singleton
 
     def __init__(self):
-        if DBCONFIG['USERNAME'] and DBCONFIG['PASS']:
-            username = urllib.parse.quote_plus(DBCONFIG['USERNAME'])
-            password = urllib.parse.quote_plus(DBCONFIG['PASS'])
+        if DB_CONFIG['USERNAME'] and DB_CONFIG['PASS']:
+            username = urllib.parse.quote_plus(DB_CONFIG['USERNAME'])
+            password = urllib.parse.quote_plus(DB_CONFIG['PASS'])
             _host_address = 'mongodb://%s:%s@%s:%s/%s' % (username,
                                                           password,
-                                                          DBCONFIG['HOST'],
-                                                          DBCONFIG['PORT'],
-                                                          DBCONFIG['DATABASE'])
+                                                          DB_CONFIG['HOST'],
+                                                          DB_CONFIG['PORT'],
+                                                          DB_CONFIG['DATABASE'])
         else:
-            _host_address = 'mongodb://%s:%s/%s' % (DBCONFIG['HOST'],
-                                                    DBCONFIG['PORT'],
-                                                    DBCONFIG['DATABASE'])
+            _host_address = 'mongodb://%s:%s/%s' % (DB_CONFIG['HOST'],
+                                                    DB_CONFIG['PORT'],
+                                                    DB_CONFIG['DATABASE'])
         self.client = MongoClient(_host_address, connect=False)
 
 
