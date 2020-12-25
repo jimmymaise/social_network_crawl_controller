@@ -1,21 +1,4 @@
 from marshmallow import Schema, fields, EXCLUDE
-from .base_api_specs import BaseApiSpecs
-
-
-class PostDetailAPISpecs(BaseApiSpecs):
-
-    def __init__(self, base_url):
-        super().__init__(base_url=base_url,
-                         method='POST',
-                         path=APIPath.FB_POST_DETAIL,
-                         header={},
-                         body={},
-                         request_schema=PostDetailAPIRequestSchema,
-                         response_schema=PostDetailAPIResponseSchema)
-
-
-class APIPath:
-    FB_POST_DETAIL = 'post_detail'
 
 
 class BaseUserSchema(Schema):
@@ -60,4 +43,5 @@ class PostDetailAPIResponseSchema(Schema):
 class PostDetailAPIRequestSchema(Schema):
     class Meta:
         unknown = EXCLUDE
+
     pass

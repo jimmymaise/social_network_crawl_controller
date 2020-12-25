@@ -1,10 +1,13 @@
 from account_manager.account_manager_handler import AccountManager
-from api_handler.post_detail_api_specs import PostDetailAPISpecs
+from api_handler.api_specs.api_paths import APIPath
+from api_handler.api_specs.api_schemas import PostDetailAPIResponseSchema, PostDetailAPIRequestSchema
+from api_handler.base_api_handler import APIRequestData
+from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
 
 
-class PostDetailCollectHandler(BaseCollectHandler):
-    def __init__(self, api_handler: PostDetailAPISpecs, social_network, service, country=None):
+class APICollectHandler(BaseCollectHandler):
+    def __init__(self, api_handler: LambdaApiRequestHandler, social_network, service, country=None):
         super().__init__()
         self.type = 'api'
         self.api_handler = api_handler
@@ -26,10 +29,21 @@ class PostDetailCollectHandler(BaseCollectHandler):
             message=message
         )
 
-    def crawl_post_detail_data(self) -> dict:
+    def crawl_post_detail_data(self, **kwargs) -> dict:
         self._get_account_id_token()
 
-        response, is_valid_schema = self.api_handler.call_api()
+        api_request_data = APIRequestData(
+            method='POST',
+            path=APIPath.FB_POST_DETAIL,
+            header={},
+            body={**kwargs},
+            request_schema=PostDetailAPIRequestSchema,
+            response_schema=PostDetailAPIResponseSchema,
+        )
+        response, is_valid_schema = self.api_handler.call_api(
+            request_data=api_request_data
+
+        )
         self._update_account_token(response.status_code, 'Done')
         if is_valid_schema:
             return response['collect_data']
