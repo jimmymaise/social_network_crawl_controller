@@ -1,7 +1,7 @@
-from DBService.DBHandler.GeneralDBHandler import GeneralDBHandler
+from db_handler import general_db_handler
 
 
-class UserDBHandler(GeneralDBHandler):
+class UserDBHandler(general_db_handler):
     def __init__(self):
         super(UserDBHandler, self).__init__()
         self.collection = self.database['users']

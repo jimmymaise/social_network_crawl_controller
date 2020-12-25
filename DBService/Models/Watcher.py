@@ -1,3 +1,0 @@
-
-class Watcher(object):
-    pass

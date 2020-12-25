@@ -1,8 +1,8 @@
 from pymongo import UpdateOne
-from DBService.DBHandler.GeneralDBHandler import GeneralDBHandler
+from db_handler import general_db_handler
 
 
-class CommentDBHandler(GeneralDBHandler):
+class CommentDBHandler(general_db_handler):
     def __init__(self):
         super(CommentDBHandler, self).__init__()
         self.collection = self.database['comments']

@@ -1,8 +1,8 @@
 # Import libs
-from DBService.DBHandler.GeneralDBHandler import GeneralDBHandler
+from db_handler import general_db_handler
 
 
-class NormalUserDBHandler(GeneralDBHandler):
+class NormalUserDBHandler(general_db_handler):
     def __init__(self):
         super(NormalUserDBHandler, self).__init__()
         self.collection = self.database['normalusers']

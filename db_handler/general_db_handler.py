@@ -4,7 +4,7 @@ from pymongo import UpdateOne, DeleteOne
 import urllib.parse
 
 # Import config
-from DBService.Config.DBConfig import DBCONFIG
+from config.DBConfig import DBCONFIG
 
 
 class Singleton(type):
