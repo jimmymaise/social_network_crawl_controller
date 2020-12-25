@@ -1,6 +1,7 @@
 import json
 from abc import ABCMeta, abstractmethod
 import requests
+from api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
 class BaseApiRequestHandler(object, metaclass=ABCMeta):
