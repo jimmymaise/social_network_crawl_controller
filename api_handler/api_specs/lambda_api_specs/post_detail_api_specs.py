@@ -1,5 +1,17 @@
 from marshmallow import Schema, fields, EXCLUDE
 
+from api_handler.api_specs.base_api_specs import BaseAPISpecs
+
+
+class PostDetailAPISpecs(BaseAPISpecs):
+    def __init__(self):
+        super().__init__(method='POST',
+                         path=APIPath.FB_POST_DETAIL,
+                         header={},
+                         body={},
+                         request_schema=PostDetailAPIRequestSchema,
+                         response_schema=PostDetailAPIResponseSchema)
+
 
 class APIPath:
     FB_POST_DETAIL = 'post_detail'

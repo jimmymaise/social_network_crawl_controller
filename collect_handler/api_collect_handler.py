@@ -2,7 +2,7 @@ from account_manager.account_manager_handler import AccountManager
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import APIPath
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import \
     PostDetailAPIResponseSchema, PostDetailAPIRequestSchema
-from api_handler.base_api_handler import BaseAPISpecs
+from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
 
@@ -33,14 +33,7 @@ class APICollectHandler(BaseCollectHandler):
     def crawl_post_detail_data(self, **kwargs) -> dict:
         self._get_account_id_token()
 
-        api_request_data = BaseAPISpecs(
-            method='POST',
-            path=APIPath.FB_POST_DETAIL,
-            header={},
-            body={**kwargs},
-            request_schema=PostDetailAPIRequestSchema,
-            response_schema=PostDetailAPIResponseSchema,
-        )
+        api_request_data = PostDetailAPISpecs()
         response, is_valid_schema = self.api_handler.call_api(
             request_data=api_request_data
 

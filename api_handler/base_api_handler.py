@@ -1,18 +1,6 @@
 import json
 from abc import ABCMeta, abstractmethod
-from dataclasses import dataclass
-
 import requests
-
-
-@dataclass
-class BaseAPISpecs:
-    method: str
-    path: str
-    header: dict
-    body: dict
-    request_schema: object
-    response_schema: object
 
 
 class BaseApiRequestHandler(object, metaclass=ABCMeta):
