@@ -3,12 +3,28 @@ from dataclasses import dataclass
 
 @dataclass
 class Query:
-    _filter: dict
-    _sort: list
-    _limit: int
+    filter_: dict
+    sort_: list
+    limit_: int
     priority: int
-    selected_fields: list
+    selected_fields_: list
 
     def query_function(self):
-        return Query(_filter=self._filter, _sort=self._sort, selected_fields=self.selected_fields,
-                     _limit=self._limit, priority=1)
+        return Query(filter_=self.filter_, sort_=self.sort_, selected_fields_=self.selected_fields_,
+                     limit_=self.limit_, priority=1)
+
+    @property
+    def filter(self):
+        return self.filter_
+
+    @property
+    def selected_fields(self):
+        return self.selected_fields_
+
+    @property
+    def limit(self):
+        return self.limit_
+
+    @property
+    def sort(self):
+        return self.sort_

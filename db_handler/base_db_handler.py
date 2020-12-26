@@ -226,5 +226,5 @@ class BaseDBHandler(object):
         return result
 
     def close_connection(self):
-        "Close connection after done"
+        """Close connection after done"""
         self.client.close()

@@ -1,11 +1,11 @@
 import time
 
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
-from collect_handler.post_detail_collect_handler import APICollectHandler
+from collect_handler.api_collect_handler import APICollectHandler
 from collection_loading.load.kol_load_handler import KOLLoadHandler
 from collection_loading.query.kol_query import KOLQuery
 from collection_service.base_collection_service import CollectionService
-from database.db_handler import MongodbHandler
+from db_handler.kol_db_handler import KOLDBHandler
 from item_transform.identity_item_transform_handler import IdentityItemTransformHandler
 
 
@@ -49,8 +49,8 @@ class IdentityServiceRunner:
         self.system_config = system_config
         self.service_config = service_config
 
-        self.db_handler = MongodbHandler(connection_uri=system_config['DB_URI'], database_name=system_config['DB_NAME'])
-        self.loader = KOLLoadHandler(db_handler=self.db_handler)
+        self.kol_db_handler = KOLDBHandler()
+        self.loader = KOLLoadHandler(self.kol_db_handler)
         self.api_handler = LambdaApiRequestHandler(base_url=system_config['BASE_LAMBDA_URL'])
         self.collect_handler = APICollectHandler(self.api_handler, social_network='facebook', service='identity')
         self.item_transform = IdentityItemTransformHandler()
