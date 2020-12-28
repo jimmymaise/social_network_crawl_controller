@@ -1,8 +1,5 @@
 import time
 import traceback
-
-import requests
-
 from api_handler.account_api_handler import AccountAPIRequestHandler
 from api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
 from api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
