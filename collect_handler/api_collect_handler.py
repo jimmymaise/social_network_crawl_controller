@@ -1,7 +1,15 @@
+import time
+import traceback
+
+import requests
+
 from api_handler.account_api_handler import AccountAPIRequestHandler
+from api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
+from api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
+from config.account_config import AccountAPIConfig
 
 
 class APICollectHandler(BaseCollectHandler):
@@ -17,15 +25,43 @@ class APICollectHandler(BaseCollectHandler):
         self.account_manager = AccountAPIRequestHandler('')
 
     def _get_account_id_token(self):
-        self.account_id, self.account_info = self.account_manager.get_account_from_api(
-            self.social_network, self.service, self.country
-        )
+        account_spec = AccountGetSpecs()
+        account_spec.set_body_for_account_get(self.social_network, self.service, self.country)
+        payload = account_spec.get_payload()
+
+        num_request = 0
+        while num_request < AccountAPIConfig.MAX_REQUEST_ACCOUNT:
+            response_obj = requests.post(url=AccountAPIConfig.AM_GET_ACCOUNT_URL, json=payload)
+            print(response_obj.text)
+            try:
+                account_data = response_obj.json().get('data')
+            except Exception as ex:
+                print('Fail to get account data: ', ex)
+                traceback.print_exc()
+                continue
+
+            if account_data:
+                self.account_info = account_data['info']
+                self.account_id = account_data['accountId']
+                break
+            time.sleep(AccountAPIConfig.DEFAULT_SLEEP_TIME)
+            num_request += 1
 
     def _update_account_token(self, status_code, message):
-        self.account_manager.update_account_status(
-            social_network=self.social_network, account_id=self.account_id, status_code=status_code,
-            message=message
-        )
+        account_spec = AccountUpdateSpecs()
+        account_spec.set_body_from_account_update(self.social_network, self.account_id, status_code, message)
+        payload = account_spec.get_payload()
+        result = "Fail"
+        response_obj = requests.post(url=AccountAPIConfig.AM_UPDATE_STATUS, json=payload)
+        if response_obj.status_code == 200:
+            response_code = None
+            try:
+                response_code = response_obj.json()['status_code']
+            except Exception as ex:
+                print("Fail to update account status, Details: ", ex)
+            if response_code == 200:
+                result = "Done"
+        return result
 
     def crawl_post_detail_data(self, items_load) -> dict:
         self._get_account_id_token()

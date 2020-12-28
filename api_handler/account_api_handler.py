@@ -5,11 +5,11 @@ from abc import ABC
 import requests
 from config.account_config import AccountAPIConfig
 from api_handler.base_api_handler import BaseApiRequestHandler
-from api_handler.api_specs.account_api_specs.account_get_specs import AccountRequestSpecs
+from api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
 from api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
 
 
-class AccountAPIRequestHandler(BaseApiRequestHandler, ABC):
+class AccountAPIRequestHandler(BaseApiRequestHandler):
     def __init__(self, base_url):
         super().__init__(base_url=base_url)
 
@@ -29,8 +29,8 @@ class AccountAPIRequestHandler(BaseApiRequestHandler, ABC):
     def get_account_from_api(social_network, service, country=None):
         account_id = None
         account_info = None
-        account_spec = AccountRequestSpecs()
-        account_spec.set_api_body(social_network, service, country)
+        account_spec = AccountGetSpecs()
+        account_spec.set_body_for_account_get(social_network, service, country)
         payload = account_spec.get_payload()
 
         num_request = 0
@@ -55,7 +55,7 @@ class AccountAPIRequestHandler(BaseApiRequestHandler, ABC):
     @staticmethod
     def update_account_status(social_network, account_id, status_code, message=None):
         account_spec = AccountUpdateSpecs()
-        account_spec.set_api_body(social_network, account_id, status_code, message)
+        account_spec.set_body_from_account_update(social_network, account_id, status_code, message)
         payload = account_spec.get_payload()
         result = "Fail"
         response_obj = requests.post(url=AccountAPIConfig.AM_UPDATE_STATUS, json=payload)

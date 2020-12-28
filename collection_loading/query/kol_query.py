@@ -1,9 +1,9 @@
 import time
 
-from .base_query import Query
+from collection_loading.query.base_query import Query
 
 
-class KOLQuery(Query):
+class KOLQuery:
     @staticmethod
     def get_identity_query():
         filter_ = {
