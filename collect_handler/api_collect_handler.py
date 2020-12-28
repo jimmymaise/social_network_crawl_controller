@@ -27,11 +27,12 @@ class APICollectHandler(BaseCollectHandler):
     def _get_account_id_token(self):
         account_spec = AccountGetSpecs()
         account_spec.set_body_for_account_get(self.social_network, self.service, self.country)
-        payload = account_spec.get_payload()
 
         num_request = 0
         while num_request < AccountAPIConfig.MAX_REQUEST_ACCOUNT:
-            response_obj = requests.post(url=AccountAPIConfig.AM_GET_ACCOUNT_URL, json=payload)
+            response_obj, is_valid_schema = self.api_handler.call_api(
+                request_data=account_spec
+            )
             print(response_obj.text)
             try:
                 account_data = response_obj.json().get('data')
@@ -50,9 +51,11 @@ class APICollectHandler(BaseCollectHandler):
     def _update_account_token(self, status_code, message):
         account_spec = AccountUpdateSpecs()
         account_spec.set_body_from_account_update(self.social_network, self.account_id, status_code, message)
-        payload = account_spec.get_payload()
         result = "Fail"
-        response_obj = requests.post(url=AccountAPIConfig.AM_UPDATE_STATUS, json=payload)
+
+        response_obj, is_valid_schema = self.api_handler.call_api(
+            request_data=account_spec
+        )
         if response_obj.status_code == 200:
             response_code = None
             try:
