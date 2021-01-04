@@ -18,7 +18,7 @@ class BaseAPISpecs:
         self.response_schema = response_schema
 
     @abstractmethod
-    def set_body_from_load_data(self, item_load, account_info):
+    def set_body_from_load_data(self, loaded_item, account_info):
         pass
 
     @abstractmethod

@@ -32,7 +32,7 @@ class IdentityService(CollectionService):
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
         collected_data = collect_handler.get_post_detail_data_from_lambda(
-            lambda_base_url=self.system_config['BASE_LAMBDA_URL'], item_load=loaded_item)
+            lambda_base_url=self.system_config['BASE_LAMBDA_URL'], loaded_item=loaded_item)
         return collected_data
 
     def _prepare_data_for_storing(self, loaded_items, crawled_items):

@@ -26,7 +26,7 @@ class CollectionService:
 
     def process(self):
         loaded_items = self._load_items()
-        for load_item in loaded_items:
-            collected_data = self._get_collected_data(load_item)
-            data = self._prepare_data_for_storing(load_item, collected_data)
+        for loaded_item in loaded_items:
+            collected_data = self._get_collected_data(loaded_item)
+            data = self._prepare_data_for_storing(loaded_item, collected_data)
             self._store_to_database(data)

@@ -7,7 +7,7 @@ class BaseItemTransformHandler(object, ABCMeta):
         pass
 
     @abstractmethod
-    def process_item(self, load_item, collected_data):
+    def process_item(self, loaded_item, collected_data):
         pass
 
     @staticmethod

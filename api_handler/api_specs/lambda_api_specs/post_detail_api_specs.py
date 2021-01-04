@@ -16,9 +16,9 @@ class PostDetailAPISpecs(BaseAPISpecs, ABC):
 
         self.set_header_from_api_key(LAMBDA_CONFIG.get('X-API-KEY_POST_DETAIL'))
 
-    def set_body_from_load_data(self, item_load: dict, account_info: dict):
+    def set_body_from_load_data(self, loaded_item: dict, account_info: dict):
 
-        _body = {'post_link': item_load.get('post_link'),
+        _body = {'post_link': loaded_item.get('post_link'),
                  'token': account_info.get('token')}
 
         self.body = _body

@@ -7,7 +7,7 @@ class IdentityItemTransformHandler(BaseItemTransformHandler):
     def __init__(self):
         super().__init__()
 
-    def process_item(self, load_item, collected_data):
+    def process_item(self, loaded_item, collected_data):
         _user_data = self.get_users_data(collected_data)
         _post_data = self.get_posts_data(collected_data)
 
@@ -16,13 +16,13 @@ class IdentityItemTransformHandler(BaseItemTransformHandler):
         post_data, error_post_data = self._validate_schema(_post_data, PostsObjectSchema)
 
         # Build object to store
-        user_objs = self.build_user_object(user_data, load_item)
-        post_objs = self.build_user_object(post_data, load_item)
+        user_objs = self.build_user_object(user_data, loaded_item)
+        post_objs = self.build_user_object(post_data, loaded_item)
 
         return user_objs, post_objs
 
     @staticmethod
-    def get_users_data(crawl_items):
+    def get_users_data(collected_data):
         user_objs = {}
 
         return user_objs
@@ -34,13 +34,13 @@ class IdentityItemTransformHandler(BaseItemTransformHandler):
         return post_objs
 
     @staticmethod
-    def build_user_object(user_data, load_item):
+    def build_user_object(user_data, loaded_item):
         _user_objs = {}
 
         return _user_objs
 
     @staticmethod
-    def build_post_object(post_data, load_item):
+    def build_post_object(post_data, loaded_item):
         _post_objs = {}
 
         return _post_objs

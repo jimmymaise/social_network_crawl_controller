@@ -10,13 +10,13 @@ class APICollectHandler(BaseCollectHandler):
         self.type = 'api'
         self.crawl_account_handler = crawl_account_handler
 
-    def get_post_detail_data_from_lambda(self, lambda_base_url, item_load) -> dict:
+    def get_post_detail_data_from_lambda(self, lambda_base_url, loaded_item) -> dict:
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
 
         api_request_data = PostDetailAPISpecs()
-        api_request_data.set_body_from_load_data(item_load=item_load, account_info={})
+        api_request_data.set_body_from_load_data(loaded_item=loaded_item, account_info={})
 
         response, is_valid_schema = lambda_api_handler.call_api(
             request_data=api_request_data
