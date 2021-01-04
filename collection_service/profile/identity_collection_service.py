@@ -1,4 +1,5 @@
 from collect_handler.api_collect_handler import APICollectHandler
+from collect_handler.crawl_account_handler import CrawlAccountHandler
 from collection_loading.load.kol_load_handler import KOLLoadHandler
 from collection_loading.query.kol_query import KOLQuery
 from collection_service.base_collection_service import CollectionService
@@ -25,10 +26,13 @@ class IdentityService(CollectionService):
 
     def _get_collected_data(self, loaded_item):
         # Play something with self.collect_handler to get data
-        collect_handler = APICollectHandler(base_url=self.system_config['BASE_LAMBDA_URL'],
-                                            social_network='facebook',
-                                            service=self.service_name)
-        collected_data = collect_handler.get_post_detail_data_from_lambda(loaded_item)
+        crawl_account_handler = CrawlAccountHandler(account_base_url=self.system_config['BASE_ACCOUNT_URL'],
+                                                    social_network='facebook',
+                                                    service_name=self.service_name,
+                                                    country=None)
+        collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
+        collected_data = collect_handler.get_post_detail_data_from_lambda(
+            lambda_base_url=self.system_config['BASE_LAMBDA_URL'], item_load=loaded_item)
         return collected_data
 
     def _prepare_data_for_storing(self, loaded_items, crawled_items):
