@@ -16,7 +16,7 @@ class CollectionService:
         pass
 
     @abstractmethod
-    def _prepare_data_for_storing(self, loaded_items, crawled_items):
+    def _prepare_data_for_storing(self, loaded_item, collected_data):
         # Play something with self.item_transform
         pass
 
@@ -26,7 +26,7 @@ class CollectionService:
 
     def process(self):
         loaded_items = self._load_items()
-        for item in loaded_items:
-            crawled_items = self._get_collected_data(item)
-            data = self._prepare_data_for_storing(item, crawled_items)
+        for load_item in loaded_items:
+            collected_data = self._get_collected_data(load_item)
+            data = self._prepare_data_for_storing(load_item, collected_data)
             self._store_to_database(data)

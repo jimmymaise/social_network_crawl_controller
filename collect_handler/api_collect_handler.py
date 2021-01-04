@@ -5,26 +5,24 @@ from api_handler.account_api_handler import AccountAPIRequestHandler
 from api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
 from api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
+from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
 from config.account_config import AccountAPIConfig
-from api_handler.lambda_api_handler import LambdaApiRequestHandler
 
 
 class APICollectHandler(BaseCollectHandler):
-    def __init__(self, base_url, social_network, service, country=None):
+    def __init__(self, base_url, social_network, service_name, country=None):
         super().__init__()
         self.type = 'api'
-        self.api_handler = LambdaApiRequestHandler(base_url=base_url)
         self.social_network = social_network
-        self.service = service
+        self.service_name = service_name
         self.country = country
-        self.account_id = None
-        self.account_info = None
+        self.api_handler = LambdaApiRequestHandler(base_url=base_url)
         self.account_manager = AccountAPIRequestHandler('')
 
     def _get_account_id_token(self):
         account_spec = AccountGetSpecs()
-        account_spec.set_body_for_account_get(self.social_network, self.service, self.country)
+        account_spec.set_body_for_account_get(self.social_network, self.service_name, self.country)
 
         num_request = 0
         while num_request < AccountAPIConfig.MAX_REQUEST_ACCOUNT:
@@ -40,15 +38,15 @@ class APICollectHandler(BaseCollectHandler):
                 continue
 
             if account_data:
-                self.account_info = account_data['info']
-                self.account_id = account_data['accountId']
-                break
+                account_info = account_data['info']
+                account_id = account_data['accountId']
+                return account_info, account_id
             time.sleep(AccountAPIConfig.DEFAULT_SLEEP_TIME)
             num_request += 1
 
-    def _update_account_token(self, status_code, message):
+    def _update_account_token(self, account_id, status_code, message):
         account_spec = AccountUpdateSpecs()
-        account_spec.set_body_from_account_update(self.social_network, self.account_id, status_code, message)
+        account_spec.set_body_from_account_update(self.social_network, account_id, status_code, message)
         result = "Fail"
 
         response_obj, is_valid_schema = self.api_handler.call_api(
@@ -65,7 +63,7 @@ class APICollectHandler(BaseCollectHandler):
         return result
 
     def get_post_detail_data_from_lambda(self, items_load) -> dict:
-        self._get_account_id_token()
+        account_info, account_id = self._get_account_id_token()
 
         api_request_data = PostDetailAPISpecs()
         api_request_data.set_body_from_load_data(item_load=items_load, account_info={})
@@ -73,7 +71,7 @@ class APICollectHandler(BaseCollectHandler):
         response, is_valid_schema = self.api_handler.call_api(
             request_data=api_request_data
         )
-        self._update_account_token(response.status_code, 'Done')
+        self._update_account_token(account_id=account_id, status_code=response.status_code, message='Done')
         if is_valid_schema:
             return response['collected_data']
 
