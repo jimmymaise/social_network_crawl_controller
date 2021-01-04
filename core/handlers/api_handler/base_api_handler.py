@@ -1,7 +1,7 @@
 import json
 from abc import ABCMeta, abstractmethod
 import requests
-from workflow.collect.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
 class BaseApiRequestHandler(object, metaclass=ABCMeta):

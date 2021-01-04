@@ -1,9 +1,9 @@
 import time
 import traceback
 
-from workflow.collect.api_handler.account_api_handler import AccountAPIRequestHandler
-from workflow.collect.api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
-from workflow.collect.api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
+from core.handlers.api_handler.account_api_handler import AccountAPIRequestHandler
+from core.handlers.api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
+from core.handlers.api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
 from config.account_config import AccountAPIConfig
 
 

@@ -1,9 +1,9 @@
 from workflow.collect.api_collect_handler import APICollectHandler
-from workflow.collect.crawl_account_handler import CrawlAccountHandler
+from core.handlers.crawl_account_handler import CrawlAccountHandler
 from workflow.loading.load.kol_load_handler import KOLLoadHandler
 from workflow.loading.query.kol_query import KOLQuery
 from services.base_collection_service import CollectionService
-from workflow.store.db_handler.kol_db_handler import KOLDBHandler
+from core.handlers.db_handler import KOLDBHandler
 from workflow.transform.identity_item_transform_handler import IdentityItemTransformHandler
 
 

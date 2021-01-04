@@ -1,7 +1,7 @@
 from abc import ABC
 
 from marshmallow import Schema, fields, EXCLUDE
-from workflow.collect.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 from config.env_config import LAMBDA_CONFIG
 
 

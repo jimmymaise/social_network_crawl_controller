@@ -1,5 +1,5 @@
 from pymongo import UpdateOne
-from workflow.store.db_handler import BaseDBHandler
+from core.handlers.db_handler import BaseDBHandler
 
 
 class CommentDBHandler(BaseDBHandler):

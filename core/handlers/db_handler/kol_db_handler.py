@@ -1,5 +1,5 @@
 # Import libs
-from workflow.store.db_handler import BaseDBHandler
+from core.handlers.db_handler import BaseDBHandler
 
 
 class KOLDBHandler(BaseDBHandler):

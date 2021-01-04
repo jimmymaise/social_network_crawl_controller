@@ -1,7 +1,7 @@
-from workflow.collect.api_handler.base_api_handler import BaseApiRequestHandler
+from core.handlers.api_handler.base_api_handler import BaseApiRequestHandler
 
 
-class LambdaApiRequestHandler(BaseApiRequestHandler):
+class AccountAPIRequestHandler(BaseApiRequestHandler):
     def __init__(self, base_url):
         super().__init__(base_url=base_url)
 

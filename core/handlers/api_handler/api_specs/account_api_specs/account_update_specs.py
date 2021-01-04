@@ -1,6 +1,6 @@
 from abc import ABC
 from marshmallow import Schema, EXCLUDE
-from workflow.collect.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
 class AccountUpdateSpecs(BaseAPISpecs, ABC):
