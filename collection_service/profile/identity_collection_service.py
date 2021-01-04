@@ -24,7 +24,7 @@ class IdentityService(CollectionService):
         loader.add_query(query)
         return loader.load_items()
 
-    def _get_collected_data(self, loaded_item):
+    def _collect_data(self, loaded_item):
         # Play something with self.collect_handler to get data
         crawl_account_handler = CrawlAccountHandler(account_base_url=self.system_config['BASE_ACCOUNT_URL'],
                                                     social_network='facebook',
@@ -35,10 +35,10 @@ class IdentityService(CollectionService):
             lambda_base_url=self.system_config['BASE_LAMBDA_URL'], loaded_item=loaded_item)
         return collected_data
 
-    def _prepare_data_for_storing(self, loaded_items, crawled_items):
+    def _transform_data(self, loaded_items, crawled_items):
         # Play something with self.item_transform
         item_transform = IdentityItemTransformHandler()
         pass
 
-    def _store_to_database(self, data):
+    def _store_data(self, data):
         pass
