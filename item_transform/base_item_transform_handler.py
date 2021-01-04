@@ -7,19 +7,14 @@ class BaseItemTransformHandler(object, ABCMeta):
         pass
 
     @abstractmethod
-    def process_item(self, load_items, crawl_items):
+    def process_item(self, load_item, collected_data):
         pass
 
-    @abstractmethod
-    def parser_user_objects(self):
-        pass
-
-    def _validate_schema(self, data, schema):
+    @staticmethod
+    def _validate_schema(data, schema):
         error = {}
         try:
             schema().load(data)
         except Exception as e:
             error = e
         return data, error
-
-

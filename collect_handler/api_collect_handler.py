@@ -1,19 +1,20 @@
 import time
 import traceback
+
 from api_handler.account_api_handler import AccountAPIRequestHandler
 from api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
 from api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
 from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
-from api_handler.lambda_api_handler import LambdaApiRequestHandler
 from collect_handler.base_collect_handler import BaseCollectHandler
 from config.account_config import AccountAPIConfig
+from api_handler.lambda_api_handler import LambdaApiRequestHandler
 
 
 class APICollectHandler(BaseCollectHandler):
-    def __init__(self, api_handler: LambdaApiRequestHandler, social_network, service, country=None):
+    def __init__(self, base_url, social_network, service, country=None):
         super().__init__()
         self.type = 'api'
-        self.api_handler = api_handler
+        self.api_handler = LambdaApiRequestHandler(base_url=base_url)
         self.social_network = social_network
         self.service = service
         self.country = country
@@ -63,7 +64,7 @@ class APICollectHandler(BaseCollectHandler):
                 result = "Done"
         return result
 
-    def crawl_post_detail_data(self, items_load) -> dict:
+    def get_post_detail_data_from_lambda(self, items_load) -> dict:
         self._get_account_id_token()
 
         api_request_data = PostDetailAPISpecs()
@@ -74,6 +75,6 @@ class APICollectHandler(BaseCollectHandler):
         )
         self._update_account_token(response.status_code, 'Done')
         if is_valid_schema:
-            return response['collect_data']
+            return response['collected_data']
 
         return {}
