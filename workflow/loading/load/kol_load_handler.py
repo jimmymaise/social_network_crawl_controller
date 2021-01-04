@@ -1,6 +1,6 @@
 from workflow.loading.load.base_load_handler import BaseLoadHandler
 from workflow.loading.query.base_query import Query
-from core.handlers.db_handler import KOLDBHandler
+from core.handlers.db_handler.kol_db_handler import KOLDBHandler
 
 
 class KOLLoadHandler(BaseLoadHandler):

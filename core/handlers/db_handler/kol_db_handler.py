@@ -1,5 +1,5 @@
 # Import libs
-from core.handlers.db_handler import BaseDBHandler
+from core.handlers.db_handler.base_db_handler import BaseDBHandler
 
 
 class KOLDBHandler(BaseDBHandler):
