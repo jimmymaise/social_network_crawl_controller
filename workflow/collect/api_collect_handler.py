@@ -1,7 +1,7 @@
-from api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
-from api_handler.lambda_api_handler import LambdaApiRequestHandler
-from collect_handler.base_collect_handler import BaseCollectHandler
-from collect_handler.crawl_account_handler import CrawlAccountHandler
+from workflow.collect.api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
+from workflow.collect.api_handler.lambda_api_handler import LambdaApiRequestHandler
+from workflow.collect.base_collect_handler import BaseCollectHandler
+from workflow.collect.crawl_account_handler import CrawlAccountHandler
 
 
 class APICollectHandler(BaseCollectHandler):

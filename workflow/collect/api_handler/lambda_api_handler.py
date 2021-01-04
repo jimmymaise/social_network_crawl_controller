@@ -1,4 +1,4 @@
-from api_handler.base_api_handler import BaseApiRequestHandler
+from workflow.collect.api_handler.base_api_handler import BaseApiRequestHandler
 
 
 class LambdaApiRequestHandler(BaseApiRequestHandler):

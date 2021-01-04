@@ -1,6 +1,6 @@
-from collection_loading.load.kol_load_handler import KOLLoadHandler
-from collection_loading.load.report_load_handler import ReportLoadHandler
-from collection_loading.load.collection_load_enum import CollectionLoadEnum
+from workflow.loading.load.kol_load_handler import KOLLoadHandler
+from workflow.loading.load.report_load_handler import ReportLoadHandler
+from workflow.loading.load.collection_load_enum import CollectionLoadEnum
 
 
 class FactoryLoadHandler:

@@ -1,12 +1,4 @@
-import time
-import traceback
-from abc import ABC
-
-import requests
-from config.account_config import AccountAPIConfig
-from api_handler.base_api_handler import BaseApiRequestHandler
-from api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
-from api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
+from workflow.collect.api_handler.base_api_handler import BaseApiRequestHandler
 
 
 class AccountAPIRequestHandler(BaseApiRequestHandler):

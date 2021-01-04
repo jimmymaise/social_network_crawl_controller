@@ -1,10 +1,10 @@
-from collect_handler.api_collect_handler import APICollectHandler
-from collect_handler.crawl_account_handler import CrawlAccountHandler
-from collection_loading.load.kol_load_handler import KOLLoadHandler
-from collection_loading.query.kol_query import KOLQuery
-from collection_service.base_collection_service import CollectionService
-from db_handler.kol_db_handler import KOLDBHandler
-from item_transform.identity_item_transform_handler import IdentityItemTransformHandler
+from workflow.collect.api_collect_handler import APICollectHandler
+from workflow.collect.crawl_account_handler import CrawlAccountHandler
+from workflow.loading.load.kol_load_handler import KOLLoadHandler
+from workflow.loading.query.kol_query import KOLQuery
+from services.base_collection_service import CollectionService
+from workflow.store.db_handler import KOLDBHandler
+from workflow.transform.identity_item_transform_handler import IdentityItemTransformHandler
 
 
 class IdentityService(CollectionService):

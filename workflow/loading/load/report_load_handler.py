@@ -1,4 +1,4 @@
-from collection_loading.load.base_load_handler import BaseLoadHandler
+from workflow.loading.load.base_load_handler import BaseLoadHandler
 
 
 class ReportLoadHandler(BaseLoadHandler):

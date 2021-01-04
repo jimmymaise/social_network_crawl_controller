@@ -1,6 +1,6 @@
 import time
 
-from collection_loading.query.base_query import Query
+from workflow.loading.query.base_query import Query
 
 
 class KOLQuery:

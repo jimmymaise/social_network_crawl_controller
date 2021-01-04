@@ -1,4 +1,4 @@
-from item_transform.base_item_transform_handler import BaseItemTransformHandler
+from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
 from .schema_objects.posts_object_schema import PostsObjectSchema
 from .schema_objects.users_object_schema import UsersObjectSchema
 

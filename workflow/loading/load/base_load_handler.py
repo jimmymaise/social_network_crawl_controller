@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from collection_loading.query.base_query import Query
+from workflow.loading.query.base_query import Query
 
 
 class BaseLoadHandler(object, metaclass=ABCMeta):
