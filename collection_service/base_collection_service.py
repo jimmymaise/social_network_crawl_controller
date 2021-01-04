@@ -21,12 +21,12 @@ class CollectionService:
         pass
 
     @abstractmethod
-    def _store_data(self, data):
+    def _store_data(self, transformed_data):
         pass
 
     def process(self):
         loaded_items = self._load_items()
         for loaded_item in loaded_items:
             collected_data = self._collect_data(loaded_item)
-            data = self._transform_data(loaded_item, collected_data)
-            self._store_data(data)
+            transformed_data = self._transform_data(loaded_item, collected_data)
+            self._store_data(transformed_data)

@@ -35,10 +35,10 @@ class IdentityService(CollectionService):
             lambda_base_url=self.system_config['BASE_LAMBDA_URL'], loaded_item=loaded_item)
         return collected_data
 
-    def _transform_data(self, loaded_items, crawled_items):
+    def _transform_data(self, loaded_items, collected_data):
         # Play something with self.item_transform
         item_transform = IdentityItemTransformHandler()
         pass
 
-    def _store_data(self, data):
+    def _store_data(self, transformed_data):
         pass
