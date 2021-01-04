@@ -11,7 +11,7 @@ class CollectionService:
         pass
 
     @abstractmethod
-    def _collect_data(self, loaded_items: list) -> list:
+    def _collect_data(self, loaded_items: list):
         # Play something with self.collect_handler to get data
         pass
 
