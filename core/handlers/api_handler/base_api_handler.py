@@ -38,6 +38,12 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
                                                           json=request_data.body)
         return json.loads(response.content, encoding='utf8')
 
+    def _validate_response_data_schema(self, response_body, response_data_schema, response_data_key=None):
+        response_data = response_body[response_data_key] if response_data_key else response_body
+        response_data, errors = self._validate_schema(response_data, response_data_schema)
+        is_valid_schema = False if errors else True
+        return is_valid_schema
+
     def call_api(self, request_data: BaseAPISpecs, max_attempts: int = 1, retry_time_sleep: int = 3):
         is_valid_schema = True
         _, errors = self._validate_schema(request_data.body, request_data.request_schema)
@@ -49,13 +55,16 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
                                  sleep=retry_time_sleep,
                                  before_sleep=retry.warning_when_retry,
                                  retry_error_callback=retry.return_last_value)
-        response = retryer(self._process_request, request_data)
-        if not self._is_request_success(response):
-            self._handle_failed_request(response, request_data)
-            return response, False
+        response_body = retryer(self._process_request, request_data)
+        if not self._is_request_success(response_body):
+            self._handle_failed_request(response_body, request_data)
+            return response_body, False
 
-        self._handle_success_request(response)
-        data, errors = self._validate_schema(response['collected_data'], request_data.response_schema)
+        self._handle_success_request(response_body)
+        data, errors = self._validate_response_data_schema(response_body=response_body,
+                                                           response_data_schema=request_data.response_data_schema,
+                                                           response_data_key=request_data.response_data_key
+                                                           )
         if errors:
             is_valid_schema = False
-        return response, is_valid_schema
+        return response_body, is_valid_schema

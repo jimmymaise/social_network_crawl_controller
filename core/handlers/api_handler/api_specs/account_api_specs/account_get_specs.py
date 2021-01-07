@@ -10,9 +10,9 @@ class AccountGetSpecs(BaseAPISpecs, ABC):
                          header={},
                          body={},
                          request_schema=AccountGetAPIRequestSchema,
-                         response_schema=AccountGetAPIResponseSchema)
+                         response_data_schema=AccountGetAPIResponseSchema)
 
-    def set_body_for_account_get(self, social_network, service, country=None):
+    def set_body(self, social_network, service, country=None):
         _body = {
             "api_type": "GET",
             "api_body": {

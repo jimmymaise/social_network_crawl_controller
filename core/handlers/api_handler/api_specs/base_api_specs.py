@@ -2,25 +2,21 @@ from abc import abstractmethod
 
 
 class BaseAPISpecs:
-    method: str
-    path: str
-    header: dict
-    body: dict
-    request_schema: object
-    response_schema: object
 
-    def __init__(self, method, path, header, body, request_schema, response_schema):
+    def __init__(self, method: str, path: str, header: dict, body, request_schema: object,
+                 response_data_schema: object, response_data_key: str = 'data'):
         self.method = method
         self.path = path
         self.body = body
         self.header = header
+        self.response_data_key = response_data_key
         self.request_schema = request_schema
-        self.response_schema = response_schema
+        self.response_data_schema = response_data_schema
 
     @abstractmethod
-    def set_body_from_load_data(self, loaded_item, account_info):
+    def set_body(self, **kwargs):
         pass
 
     @abstractmethod
-    def set_header_from_api_key(self, api_key):
-        self.header = {'X-API-KEY': api_key}
+    def set_header(self, **kwargs):
+        pass

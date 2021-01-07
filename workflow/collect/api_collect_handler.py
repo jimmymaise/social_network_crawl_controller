@@ -14,15 +14,14 @@ class APICollectHandler(BaseCollectHandler):
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
 
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
-        api_request_data = PostDetailAPISpecs()
-        api_request_data.set_body_from_load_data(loaded_item=loaded_item, account_info=account_info)
+        post_detail_api_request_data = PostDetailAPISpecs()
+        post_detail_api_request_data.set_body(loaded_item=loaded_item, account_info=account_info)
 
-        response, is_valid_schema = lambda_api_handler.call_api(
-            request_data=api_request_data
+        response_body, is_valid_schema = lambda_api_handler.call_api(
+            request_data=post_detail_api_request_data
         )
         if account_id:
-            self.crawl_account_handler.update_account_token(account_id=account_id, status_code=response.status_code,
+            self.crawl_account_handler.update_account_token(account_id=account_id, status_code=response_body.status_code,
                                                             message='Done')
         if is_valid_schema:
-            return response['collected_data']
-
+            return response_body[post_detail_api_request_data.response_data_key]

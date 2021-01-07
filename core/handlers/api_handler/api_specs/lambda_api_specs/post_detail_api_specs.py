@@ -1,27 +1,26 @@
-from abc import ABC
-
 from marshmallow import Schema, fields, EXCLUDE
-from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
+
 from config.env_config import LAMBDA_CONFIG
+from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
-class PostDetailAPISpecs(BaseAPISpecs, ABC):
+class PostDetailAPISpecs(BaseAPISpecs):
     def __init__(self):
         super().__init__(method='POST',
                          path='post_detail',
                          header={},
                          body={},
                          request_schema=PostDetailAPIRequestSchema,
-                         response_schema=PostDetailAPIResponseSchema)
+                         response_data_schema=PostDetailAPIResponseSchema)
 
-        self.set_header_from_api_key(LAMBDA_CONFIG.get('X-API-KEY_POST_DETAIL'))
+        self.set_header(LAMBDA_CONFIG.get('X-API-KEY_POST_DETAIL'))
 
-    def set_body_from_load_data(self, loaded_item: dict, account_info: dict):
+    def set_body(self, loaded_item: dict, account_info: dict):
+        self.body = {'post_link': loaded_item.get('post_link'),
+                     'token': account_info.get('token')}
 
-        _body = {'post_link': loaded_item.get('post_link'),
-                 'token': account_info.get('token')}
-
-        self.body = _body
+    def set_header(self, api_key):
+        self.header = {'X-API-KEY': api_key}
 
 
 class BaseUserSchema(Schema):

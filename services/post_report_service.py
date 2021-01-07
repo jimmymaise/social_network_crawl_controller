@@ -33,6 +33,7 @@ class PostService(CollectionService):
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
         collected_data = collect_handler.get_post_detail_data_from_lambda(
             lambda_base_url=self.system_config['BASE_LAMBDA_URL'], loaded_item=loaded_item)
+
         return collected_data
 
     def _transform_data(self, loaded_items, collected_data):

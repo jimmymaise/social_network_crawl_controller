@@ -10,9 +10,9 @@ class AccountUpdateSpecs(BaseAPISpecs, ABC):
                          header={},
                          body={},
                          request_schema=AccountUpdateAPIRequestSchema,
-                         response_schema=AccountUpdateAPIResponseSchema)
+                         response_data_schema=AccountUpdateAPIResponseSchema)
 
-    def set_body_from_account_update(self, social_network, account_id, status_code, message=None):
+    def set_body(self, social_network, account_id, status_code, message=None):
         _body = {
             "api_type": "UPDATE_STATUS",
             "api_body": {
