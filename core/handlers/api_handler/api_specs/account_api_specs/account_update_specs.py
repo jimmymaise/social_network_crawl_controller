@@ -5,9 +5,9 @@ from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 class AccountUpdateSpecs(BaseAPISpecs, ABC):
     def __init__(self):
-        super().__init__(method='POST',
+        super().__init__(method='post',
                          path='account_update',
-                         header={},
+                         headers={},
                          body={},
                          request_schema=AccountUpdateAPIRequestSchema,
                          response_data_schema=AccountUpdateAPIResponseSchema)

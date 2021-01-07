@@ -5,9 +5,9 @@ from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 class AccountGetSpecs(BaseAPISpecs, ABC):
     def __init__(self):
-        super().__init__(method='POST',
-                         path='account_get',
-                         header={},
+        super().__init__(method='post',
+                         path='request',
+                         headers={},
                          body={},
                          request_schema=AccountGetAPIRequestSchema,
                          response_data_schema=AccountGetAPIResponseSchema)

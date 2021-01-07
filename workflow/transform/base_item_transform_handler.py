@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class BaseItemTransformHandler(object, ABCMeta):
+class BaseItemTransformHandler(object):
     @abstractmethod
     def __init__(self):
         pass

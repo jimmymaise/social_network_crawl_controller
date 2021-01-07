@@ -12,7 +12,3 @@ class LambdaApiRequestHandler(BaseApiRequestHandler):
     def _handle_success_request(self, response, request_data=None):
         # Should implement this methods
         pass
-
-    def _is_request_success(self, response):
-        # Should implement this methods
-        return response.status_code in [200, 201]

@@ -1,10 +1,11 @@
 # Import libs
-from pymongo import MongoClient
-from pymongo import UpdateOne, DeleteOne
 import urllib.parse
 
+from pymongo import MongoClient
+from pymongo import UpdateOne, DeleteOne
+
+
 # Import config
-from config.db_config import DB_CONFIG
 
 
 class Singleton(type):
@@ -19,75 +20,70 @@ class Singleton(type):
 class DBConnection(object):
     __metaclass__ = Singleton
 
-    def __init__(self):
-        if DB_CONFIG['USERNAME'] and DB_CONFIG['PASS']:
-            username = urllib.parse.quote_plus(DB_CONFIG['USERNAME'])
-            password = urllib.parse.quote_plus(DB_CONFIG['PASS'])
-            _host_address = 'mongodb://%s:%s@%s:%s/%s' % (username,
-                                                          password,
-                                                          DB_CONFIG['HOST'],
-                                                          DB_CONFIG['PORT'],
-                                                          DB_CONFIG['DATABASE'])
+    def __init__(self, db_host, db_port, db_name, db_username, db_password):
+        if db_username and db_password:
+            db_username = urllib.parse.quote_plus(db_username)
+            db_password = urllib.parse.quote_plus(db_password)
+            host_address = f'mongodb://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}'
         else:
-            _host_address = 'mongodb://%s:%s/%s' % (DB_CONFIG['HOST'],
-                                                    DB_CONFIG['PORT'],
-                                                    DB_CONFIG['DATABASE'])
-        self.client = MongoClient(_host_address, connect=False)
+            host_address = f'mongodb://{db_host}:{db_port}/{db_name}'
+        self.client = MongoClient(host_address, connect=False)
 
 
 class BaseDBHandler(object):
     # ********** Constructor **********
-    def __init__(self):
-        _connection = DBConnection()
+    def __init__(self, db_username, db_name, db_password, db_host, db_port):
+        _connection = DBConnection(db_host, db_port, db_name, db_username, db_password)
         self.client = _connection.client
         self.database = self.client['facebook']
         self.collection = None
 
     def get_one_by_filter(self,
-                          _filter,
-                          _selected_fields=None):
-        if _selected_fields is None:
-            result = self.collection.find_one(_filter)
+                          filter_,
+                          selected_fields=None):
+        if selected_fields is None:
+            result = self.collection.find_one(filter_)
         else:
-            _selected_fields_dict = self._create_fields_dict(_selected_fields)
-            result = self.collection.find_one(_filter, _selected_fields_dict)
+            selected_fieldsdict = self._create_fields_dict(selected_fields)
+            result = self.collection.find_one(filter_, selected_fieldsdict)
         return result
 
     def get_many_by_filter(self,
-                           _filter,
-                           _selected_fields=None,
-                           _must_have_fields=None,
-                           _not_have_fields=None):
-        if _must_have_fields:
-            for _must_have_field in _must_have_fields:
-                _filter[_must_have_field] = {'$exists': True}
-        if _not_have_fields:
-            for _not_have_field in _not_have_fields:
-                _filter[_not_have_field] = {'$exists': False}
-        if _selected_fields is None:
-            result = self.collection.find(_filter)
+                           filter_,
+                           selected_fields=None,
+                           must_have_fields=None,
+                           not_have_fields=None):
+        if must_have_fields:
+            for _must_have_field in must_have_fields:
+                filter_[_must_have_field] = {'$exists': True}
+        if not_have_fields:
+            for _not_have_field in not_have_fields:
+                filter_[_not_have_field] = {'$exists': False}
+        if selected_fields is None:
+            result = self.collection.find(filter_)
         else:
-            _selected_fields_dict = self._create_fields_dict(_selected_fields)
-            result = self.collection.find(_filter, _selected_fields_dict)
+            selected_fieldsdict = self._create_fields_dict(selected_fields)
+            result = self.collection.find(filter_, selected_fieldsdict)
         return result
 
     def get_many_by_filter_and_sort(self,
-                                    _filter,
-                                    _sort,
-                                    _selected_fields=None,
-                                    _must_have_fields=None,
-                                    _not_have_fields=None):
-        if _must_have_fields:
-            for _must_have_field in _must_have_fields:
-                _filter[_must_have_field] = {'$exists': True}
-        if _not_have_fields:
-            for _not_have_field in _not_have_fields:
-                _filter[_not_have_field] = {'$exists': False}
-        if _selected_fields is None:
-            result = self.collection.find(_filter)
+                                    filter_,
+                                    sort_,
+                                    limit_=None,
+                                    selected_fields=None,
+                                    must_have_fields=None,
+                                    not_have_fields=None):
+        if must_have_fields:
+            for _must_have_field in must_have_fields:
+                filter_[_must_have_field] = {'$exists': True}
+        if not_have_fields:
+            for _not_have_field in not_have_fields:
+                filter_[_not_have_field] = {'$exists': False}
+        if selected_fields is None:
+            result = self.collection.find(filter_)
         else:
-            _selected_fields_dict = self._create_fields_dict(_selected_fields)
-            result = self.collection.find(_filter, _selected_fields_dict).sort(_sort)
+            selected_fields_dict = self._create_fields_dict(selected_fields)
+            result = self.collection.find(filter_, selected_fields_dict).sort(sort_)
         return result
 
     def insert_one(self,
@@ -130,12 +126,12 @@ class BaseDBHandler(object):
                          _array_filters=None,
                          _operator='$set'):
         # ===== Execute =====
-        _requests = [UpdateOne(_filter,
+        _requests = [UpdateOne(filter_,
                                {_operator: _updated_record},
                                upsert=_upsert,
                                collation=_collation,
                                array_filters=_array_filters)
-                     for _filter, _updated_record in _updated_records]
+                     for filter_, _updated_record in _updated_records]
 
         result = self.bulk_write(_requests)
         return result
@@ -144,19 +140,19 @@ class BaseDBHandler(object):
                                  _updated_records,
                                  _upsert=False):
         # ===== Execute =====
-        _requests = [UpdateOne(_filter,
+        _requests = [UpdateOne(filter_,
                                {'$setOnInsert': _updated_record},
                                upsert=_upsert)
-                     for _filter, _updated_record in _updated_records]
+                     for filter_, _updated_record in _updated_records]
 
         result = self.bulk_write(_requests)
         return result
 
     def update(self,
-               _filter,
+               filter_,
                _new_info,
                _multi=False):
-        result = self.collection.update(spec=_filter,
+        result = self.collection.update(spec=filter_,
                                         document=_new_info,
                                         multi=_multi)
         return result
@@ -177,32 +173,32 @@ class BaseDBHandler(object):
     def get_many_pairs_by_id(self,
                              _ids,
                              _filter=None,
-                             _selected_fields=None,
-                             _must_have_fields=None,
-                             _not_have_fields=None):
+                             selected_fields=None,
+                             must_have_fields=None,
+                             not_have_fields=None):
         _filter_record = {'_id': {'$in': _ids}}
 
-        if isinstance(_filter, dict):
+        if isinstance(filter_, dict):
             for _key, _value in _filter.items():
                 _filter_record[_key] = _value
         result = self.get_many_by_filter(_filter=_filter_record,
-                                         _selected_fields=_selected_fields,
-                                         _must_have_fields=_must_have_fields,
-                                         _not_have_fields=_not_have_fields)
+                                         selected_fields=selected_fields,
+                                         must_have_fields=must_have_fields,
+                                         not_have_fields=not_have_fields)
         return result
 
     def get_one_by_id(self,
                       _id,
-                      _selected_fields=None):
+                      selected_fields=None):
         result = self.get_one_by_filter(_filter={'_id': _id},
-                                        _selected_fields=_selected_fields)
+                                        selected_fields=selected_fields)
         return result
 
     def get_one_by_app_id(self,
                           app_id,
-                          _selected_fields=None):
+                          selected_fields=None):
         result = self.get_one_by_filter(_filter={'app_id': app_id},
-                                        _selected_fields=_selected_fields)
+                                        selected_fields=selected_fields)
         return result
 
     def delete_many_pair(self,
@@ -214,15 +210,15 @@ class BaseDBHandler(object):
         return service_result
 
     @staticmethod
-    def _create_fields_dict(_selected_fields):
-        selected_fields_dict = {}
-        for _selected_field in _selected_fields:
-            selected_fields_dict[_selected_field] = 1
-        return selected_fields_dict
+    def _create_fields_dict(selected_fields):
+        selected_fieldsdict = {}
+        for _selected_field in selected_fields:
+            selected_fieldsdict[_selected_field] = 1
+        return selected_fieldsdict
 
     def count_by_filter(self,
-                        _filter):
-        result = self.get_many_by_filter(_filter).count(True)
+                        filter_):
+        result = self.get_many_by_filter(filter_).count(True)
         return result
 
     def close_connection(self):

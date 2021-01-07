@@ -11,8 +11,9 @@ class AccountAPIRequestHandler(BaseApiRequestHandler):
 
     def _handle_failed_request(self, response, request_data=None):
         # todo: Should refactor this one. Just for demo purpose
-        payload = {'response': response,
-                   'request_data': request_data
+        payload = {'response': response.text,
+                   'url': response.url,
+                   'request_body': json.loads(response.request.body, encoding='utf8')
                    }
         slack_webhook = 'https://hooks.slack.com/services/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'
         requests.post(slack_webhook, data=json.dumps(payload))
@@ -20,7 +21,3 @@ class AccountAPIRequestHandler(BaseApiRequestHandler):
     def _handle_success_request(self, response, request_data=None):
         # Should implement this methods
         pass
-
-    def _is_request_success(self, response):
-        # Should implement this methods
-        return response.status_code in [200, 201]

@@ -1,4 +1,3 @@
-import json
 from abc import ABCMeta, abstractmethod
 
 import requests
@@ -19,9 +18,9 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
     def _handle_success_request(self, response, request_data=None):
         pass
 
-    @abstractmethod
     def _is_request_success(self, response):
-        pass
+        # Should implement this methods
+        return response.ok
 
     @staticmethod
     def _validate_schema(data, schema):
@@ -34,15 +33,14 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
 
     def _process_request(self, request_data: BaseAPISpecs):
         response = getattr(requests, request_data.method)(url=f'{self.base_url}/{request_data.path}',
-                                                          header=request_data.header,
+                                                          headers=request_data.headers,
                                                           json=request_data.body)
-        return json.loads(response.content, encoding='utf8')
+        return response
 
     def _validate_response_data_schema(self, response_body, response_data_schema, response_data_key=None):
-        response_data = response_body[response_data_key] if response_data_key else response_body
+        response_data = response_body.get(response_data_key) if response_data_key else response_body
         response_data, errors = self._validate_schema(response_data, response_data_schema)
-        is_valid_schema = False if errors else True
-        return is_valid_schema
+        return response_data, errors
 
     def call_api(self, request_data: BaseAPISpecs, max_attempts: int = 1, retry_time_sleep: int = 3):
         is_valid_schema = True
@@ -52,19 +50,20 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
             raise Exception('Invalid request data')
         retryer = retry.Retrying(stop=retry.stop_after_attempt(max_attempts),
                                  retry=retry.retry_if_not_result(self._is_request_success),
-                                 sleep=retry_time_sleep,
+                                 wait=retry.wait_fixed(retry_time_sleep),
                                  before_sleep=retry.warning_when_retry,
                                  retry_error_callback=retry.return_last_value)
-        response_body = retryer(self._process_request, request_data)
-        if not self._is_request_success(response_body):
-            self._handle_failed_request(response_body, request_data)
-            return response_body, False
+        response = retryer(self._process_request, request_data)
+        if not self._is_request_success(response):
+            self._handle_failed_request(response, request_data)
+            return response, False
 
-        self._handle_success_request(response_body)
+        self._handle_success_request(response)
+        response_body = response.json()
         data, errors = self._validate_response_data_schema(response_body=response_body,
                                                            response_data_schema=request_data.response_data_schema,
                                                            response_data_key=request_data.response_data_key
                                                            )
         if errors:
             is_valid_schema = False
-        return response_body, is_valid_schema
+        return response, is_valid_schema

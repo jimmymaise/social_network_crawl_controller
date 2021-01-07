@@ -13,9 +13,13 @@ class BaseLoadHandler(object, metaclass=ABCMeta):
     def add_query(self, query: Query):
         self.queries.append(query)
 
-    @abstractmethod
-    def _get_items_from_query(self, query: Query) -> list:
-        pass
+    def _get_items_from_query(self, query: Query):
+        return self.db_handler.get_many_by_filter_and_sort(
+            filter_=query.filter_,
+            sort_=query.sort_,
+            limit_=query.limit_,
+            selected_fields=query.selected_fields
+        )
 
     def load_items(self):
         if not self.queries:

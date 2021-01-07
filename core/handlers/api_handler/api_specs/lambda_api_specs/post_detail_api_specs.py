@@ -1,26 +1,23 @@
 from marshmallow import Schema, fields, EXCLUDE
 
-from config.env_config import LAMBDA_CONFIG
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
 class PostDetailAPISpecs(BaseAPISpecs):
     def __init__(self):
-        super().__init__(method='POST',
-                         path='post_detail',
-                         header={},
+        super().__init__(method='post',
+                         path='fb-post-details',
+                         headers={},
                          body={},
                          request_schema=PostDetailAPIRequestSchema,
                          response_data_schema=PostDetailAPIResponseSchema)
 
-        self.set_header(LAMBDA_CONFIG.get('X-API-KEY_POST_DETAIL'))
+    def set_body(self, post_link: str, account_info: dict):
+        self.body = {'post_link': post_link,
+                     'token': account_info.get('token') if account_info else None}
 
-    def set_body(self, loaded_item: dict, account_info: dict):
-        self.body = {'post_link': loaded_item.get('post_link'),
-                     'token': account_info.get('token')}
-
-    def set_header(self, api_key):
-        self.header = {'X-API-KEY': api_key}
+    def set_headers(self, api_key):
+        self.headers = {'X-API-KEY': api_key}
 
 
 class BaseUserSchema(Schema):

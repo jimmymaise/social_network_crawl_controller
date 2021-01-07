@@ -1,12 +1,12 @@
 from abc import abstractmethod
 
+from config.system_config import SystemConfig
+
 
 class CollectionService:
-    def __init__(self,
-                 system_config: dict,
-                 service_config: dict):
+    def __init__(self, service_config: dict):
         self.service_name = None
-        self.system_config = system_config
+        self.system_config = SystemConfig
         self.service_config = service_config
 
     @abstractmethod

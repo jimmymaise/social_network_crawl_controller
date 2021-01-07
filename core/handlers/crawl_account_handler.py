@@ -1,12 +1,13 @@
 import logging
 
-from config.account_config import AccountAPIConfig
 from core.handlers.api_handler.account_api_handler import AccountAPIRequestHandler
 from core.handlers.api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
 from core.handlers.api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
+from core.utils.constant import Constant
 
 
 class CrawlAccountHandler:
+
     def __init__(self, account_base_url, social_network, service_name, country=None):
         super().__init__()
         self.type = 'api'
@@ -19,14 +20,14 @@ class CrawlAccountHandler:
         self.logger = logging.getLogger()
 
     def get_account_id_token(self):
-        response_obj, is_valid_schema = self.account_api.call_api(
+        response, is_valid_schema = self.account_api.call_api(
             request_data=self.account_spec,
-            max_attempts=AccountAPIConfig.MAX_REQUEST_ACCOUNT,
-            retry_time_sleep=AccountAPIConfig.DEFAULT_SLEEP_TIME
+            max_attempts=Constant.AM_MAX_REQUEST,
+            retry_time_sleep=Constant.AM_DEFAULT_SLEEP_TIME
         )
         account_info, account_id = None, None
         if is_valid_schema:
-            account_data = response_obj.json().get('data')
+            account_data = response.json().get('data')
             account_info = account_data['info']
             account_id = account_data['accountId']
         return account_info, account_id

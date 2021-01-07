@@ -16,7 +16,7 @@ class UsersObjectSchema(Schema):
     username = fields.Str(required=True)
     work = fields.Dict()
     crawl_post_code = fields.Int()
-    latest_posts = fields.List(dict)
+    latest_posts = fields.List(fields.Dict)
     birthday = fields.Str()
     mini_avatar = fields.Str()
     num_photo = fields.Str()

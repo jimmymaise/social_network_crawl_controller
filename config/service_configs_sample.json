@@ -1,0 +1,15 @@
+{
+  "SERVICES": {
+    "POST_REPORT": {
+      "MARKET": [
+        "vi"
+      ],
+      "ENGAGEMENT_UPDATE_INTERVAL": 86400,
+      "REPORT_PERIOD": 1209600,
+      "LIKER_COLLECT_PERIOD": 172800,
+      "POST_TIME_OFFSET": 86400,
+      "NUM_REPORTS": 1,
+      "LOGGER_NAME": "PostReport"
+    }
+  }
+}
