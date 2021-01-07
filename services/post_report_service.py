@@ -8,13 +8,9 @@ from workflow.transform.identity_item_transform_handler import IdentityItemTrans
 
 
 class PostService(CollectionService):
-    def __init__(self,
-                 system_config: dict,
-                 service_config: dict):
+    def __init__(self):
         super().__init__()
         self.service_name = 'post_report'
-        self.system_config = system_config
-        self.service_config = service_config
 
     def _load_items(self) -> list:
         kol_db_handler = KOLDBHandler()
