@@ -2,8 +2,12 @@ from abc import abstractmethod
 
 
 class CollectionService:
-    def __init__(self):
+    def __init__(self,
+                 system_config: dict,
+                 service_config: dict):
         self.service_name = None
+        self.system_config = system_config
+        self.service_config = service_config
 
     @abstractmethod
     def _load_items(self) -> list:

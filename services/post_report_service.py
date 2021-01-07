@@ -8,18 +8,14 @@ from workflow.transform.identity_item_transform_handler import IdentityItemTrans
 
 
 class PostService(CollectionService):
-    def __init__(self,
-                 system_config: dict,
-                 service_config: dict):
+    def __init__(self):
         super().__init__()
         self.service_name = 'post_report'
-        self.system_config = system_config
-        self.service_config = service_config
 
     def _load_items(self) -> list:
         kol_db_handler = KOLDBHandler()
         loader = KOLLoadHandler(kol_db_handler)
-        query = KOLQuery.get_identity_query()
+        query = KOLQuery.get_new_report_query(self.service_config)
 
         loader.add_query(query)
         return loader.load_items()
