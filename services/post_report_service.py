@@ -15,7 +15,7 @@ class PostService(CollectionService):
     def _load_items(self) -> list:
         kol_db_handler = KOLDBHandler()
         loader = KOLLoadHandler(kol_db_handler)
-        query = KOLQuery.get_identity_query()
+        query = KOLQuery.get_new_report_query(self.service_config)
 
         loader.add_query(query)
         return loader.load_items()

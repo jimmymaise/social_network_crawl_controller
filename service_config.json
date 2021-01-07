@@ -11,46 +11,19 @@
           "LEVEL": "DEBUG"
         }]
     },
-    "SERVICES": [{
-      "NAME": "KOLPost",
-      "QUERY":{
-        "MARKET": ["vi"],
-        "SOCIAL_NETWORK": ["page"],
-        "INFLUENCE_TYPE_IGNORE": ["normal_user"],
-        "TIME_FILTER": 86400,
-        "PERMISSION": ["granted"],
-        "LIMIT_LOAD_NEW_KOLS": 10,
-        "LIMIT_LOAD_KOLS_BY_TIME": 10,
-        "LIMIT_LOAD_KOLS_BY_ERROR": 2
-      },
-      "LOGGER_NAME": "general"},
+    "SERVICES": [
       {
-      "NAME": "PostReport",
-      "QUERY":{
-        "MARKET": ["vi"],
+      "PostReport": {
+        "MARKET": [
+          "vi"
+        ],
         "ENGAGEMENT_UPDATE_INTERVAL": 86400,
         "REPORT_PERIOD": 1209600,
         "LIKER_COLLECT_PERIOD": 172800,
         "POST_TIME_OFFSET": 86400,
-        "NUM_REPORTS": 1
-      },
-      "LOGGER_NAME": "PostReport"
-      },
-    {
-      "NAME": "PostEngagement",
-      "QUERY":{
-        "MARKET": ["vi"],
-        "ENGAGEMENT_COMMENT_UPDATE_INTERVAL": 86400,
-        "REPORT_PERIOD": 1209600,
-        "LIKER_COLLECT_PERIOD": 172800,
-        "FILTER_POST_LOAD": {
-            "":""
-        },
-        "LIMIT_POST_LOAD": 1,
-        "SORT_POST_LOAD": 1,
-        "LIMIT_ENGAGEMENT_COMMENT_DAYS": 14,
-        "LIMIT_COMMENTS_COUNT":1
-      },
-      "LOGGER_NAME": "general"
-      }]
+        "NUM_REPORTS": 1,
+        "LOGGER_NAME": "PostReport"
+        }
+      }
+    ]
 }
