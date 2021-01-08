@@ -37,7 +37,7 @@ class PostReportService(CollectionService):
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
         collected_data = collect_handler.get_post_detail_data_from_lambda(
-            lambda_base_url=self.system_config.AM_BASE_URL, post_link=loaded_item['post_link'], api_key=
+            lambda_base_url=self.system_config.LAMBDA_BASE_URL, post_link=loaded_item['post_link'], api_key=
             self.system_config.LAMBDA_X_API_KEY_POST_DETAIL
         )
 

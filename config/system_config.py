@@ -10,5 +10,5 @@ class SystemConfig:
     MONGO_DB_USERNAME = os.environ.get('MONGODB_USER')
     MONGO_DB_PASSWORD = os.environ.get('MONGODB_PASS')
 
-    LAMBDA_URL_FB_POST_DETAIL = os.environ.get('LAMBDA_URL_FB_POST_DETAIL')
-    LAMBDA_X_API_KEY_POST_DETAIL = os.getenv('LAMBDA_X_API_KEY_POST_DETAIL', '123456')
+    LAMBDA_BASE_URL = os.environ.get('LAMBDA_BASE_URL', 'https://75xpxqqpy5.execute-api.us-west-2.amazonaws.com/prod')
+    LAMBDA_X_API_KEY_POST_DETAIL = os.getenv('LAMBDA_X_API_KEY_POST_DETAIL', 'VNbGgsRzyF9NORS1HCAPt4d2TJsdNBFbrp4iUpM7')
