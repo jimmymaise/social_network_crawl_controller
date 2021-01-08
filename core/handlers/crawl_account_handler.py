@@ -20,13 +20,13 @@ class CrawlAccountHandler:
         self.logger = logging.getLogger()
 
     def get_account_id_token(self):
-        response, is_valid_schema = self.account_api.call_api(
+        response, success, schema_errors = self.account_api.call_api(
             request_data=self.account_spec,
             max_attempts=Constant.AM_MAX_REQUEST,
             retry_time_sleep=Constant.AM_DEFAULT_SLEEP_TIME
         )
         account_info, account_id = None, None
-        if is_valid_schema:
+        if success and not schema_errors:
             account_data = response.json().get('data')
             account_info = account_data['info']
             account_id = account_data['accountId']

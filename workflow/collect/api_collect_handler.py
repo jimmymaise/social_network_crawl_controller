@@ -18,12 +18,12 @@ class APICollectHandler(BaseCollectHandler):
         post_detail_api_request_data.set_body(post_link=post_link, account_info=account_info)
         post_detail_api_request_data.set_headers(api_key)
 
-        response_body, is_valid_schema = lambda_api_handler.call_api(
+        response, success, schema_errors = lambda_api_handler.call_api(
             request_data=post_detail_api_request_data
         )
         if account_id:
             self.crawl_account_handler.update_account_token(account_id=account_id,
-                                                            status_code=response_body.status_code,
+                                                            status_code=response.status_code,
                                                             message='Done')
-        if is_valid_schema:
-            return response_body[post_detail_api_request_data.response_data_key]
+        if success and not schema_errors:
+            return response.json()[post_detail_api_request_data.response_data_key]

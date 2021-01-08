@@ -13,8 +13,9 @@ class PostDetailAPISpecs(BaseAPISpecs):
                          response_data_schema=PostDetailAPIResponseSchema)
 
     def set_body(self, post_link: str, account_info: dict):
-        self.body = {'post_link': post_link,
-                     'token': account_info.get('token') if account_info else None}
+        self.body = {'link': post_link,
+                     'type': 'user',
+                     'token': account_info}
 
     def set_headers(self, api_key):
         self.headers = {'X-API-KEY': api_key}
