@@ -18,8 +18,9 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
     def _handle_success_request(self, response, request_data=None):
         pass
 
-    def _is_request_success(self, response):
-        # Should implement this methods
+    @staticmethod
+    def _is_request_success(response):
+        # Can extend more this method
         return response.ok
 
     @staticmethod

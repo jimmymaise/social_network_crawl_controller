@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, EXCLUDE
 
 
-class UsersObjectSchema(Schema):
+class UserObjectSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 

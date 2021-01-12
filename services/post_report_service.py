@@ -21,8 +21,8 @@ class PostReportService(CollectionService):
             'db_port': self.system_config.MONGO_DB_PORT
         }
 
-        kol_db_handler = ReportDB(**mongodb_credential)
-        loader = ReportLoadHandler(kol_db_handler)
+        report_db_handler = ReportDB(**mongodb_credential)
+        loader = ReportLoadHandler(report_db_handler)
         query = ReportQuery.get_report_service_query(self.service_config)
 
         loader.add_query(query)

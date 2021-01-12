@@ -10,12 +10,16 @@ class PostDetailAPISpecs(BaseAPISpecs):
                          headers={},
                          body={},
                          request_schema=PostDetailAPIRequestSchema,
+                         response_data_key='collected_data',
                          response_data_schema=PostDetailAPIResponseSchema)
 
     def set_body(self, post_link: str, account_info: dict):
+        # todo Remove hardcode for testing purpose
         self.body = {'link': post_link,
                      'type': 'user',
-                     'token': account_info}
+                     'cookie': account_info.get('token') if account_info else None
+                     or 'EAAAAZAw4FxQIBANYWnh5BTFIwTUb1IgkjLo1baRFEI1h57C51XqAgna1rNZB4TnnVb9Ya6OuMvcQBEmWEYHTBFq7QWK4VZBl3SI26fvuOBUETOlLcyzVFQnyqtaIdbN3RCaVZCpKkrRBscCGZCF1GCCZBVHukT49d42eJKmU2ZBpQZDZD'
+                     }
 
     def set_headers(self, api_key):
         self.headers = {'X-API-KEY': api_key}
