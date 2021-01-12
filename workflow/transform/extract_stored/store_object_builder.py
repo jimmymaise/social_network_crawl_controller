@@ -22,7 +22,8 @@ class StoredObjectBuilder:
 
     def build(self, **collected_objects):
         for collected_object_name, collected_object in collected_objects.items():
-            self._build(self.mappings[collected_object_name], collected_object)
+            if collected_object_name in self.mappings:
+                self._build(self.mappings[collected_object_name], collected_object)
             if collected_object_name in self.get_all_fields:
                 self._set_get_all_fields(collected_object, self.get_all_fields[collected_object_name])
         return self.stored_object
