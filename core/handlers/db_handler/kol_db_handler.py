@@ -3,8 +3,8 @@ from core.handlers.db_handler.base_db_handler import BaseDBHandler
 
 
 class KOLDBHandler(BaseDBHandler):
-    def __init__(self, db_username, db_name, db_password, db_host, db_port):
-        super(KOLDBHandler, self).__init__(db_username, db_name, db_password, db_host, db_port)
+    def __init__(self, db_connection):
+        super(KOLDBHandler, self).__init__(db_connection)
         self.collection = self.database['kols']
 
     def get_one_by(self,

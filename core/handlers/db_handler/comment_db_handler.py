@@ -1,10 +1,11 @@
 from pymongo import UpdateOne
+
 from core.handlers.db_handler.base_db_handler import BaseDBHandler
 
 
 class CommentDBHandler(BaseDBHandler):
-    def __init__(self):
-        super(CommentDBHandler, self).__init__()
+    def __init__(self, db_connection):
+        super(CommentDBHandler, self).__init__(db_connection)
         self.collection = self.database['comments']
 
     def get_comments_by_post_id(self,
@@ -20,7 +21,7 @@ class CommentDBHandler(BaseDBHandler):
         Update list "comment" for post after crawled
         """
         if list_comment and isinstance(list_comment, list):
-            list_cmt_obj = [UpdateOne(cmtfilter_, {"$set": _updated_record}, upsert=True)\
+            list_cmt_obj = [UpdateOne(cmtfilter_, {"$set": _updated_record}, upsert=True) \
                             for cmtfilter_, _updated_record in list_comment]
             reuslt = self.collection.bulk_write(list_cmt_obj)
             return reuslt

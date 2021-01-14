@@ -1,27 +1,23 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.handlers.db_handler.report_db_handler import ReportDB
+from core.handlers.db_handler.base_db_handler import GeneralDBHandler
+from core.handlers.db_handler.report_db_handler import ReportDBHandler
 from services.base_collection_service import CollectionService
 from workflow.collect.api_collect_handler import APICollectHandler
 from workflow.loading.load.report_load_handler import ReportLoadHandler
 from workflow.loading.query.report_query import ReportQuery
-from workflow.transform.identity_item_transform_handler import IdentityItemTransformHandler
+from workflow.transform.post_report_transform_handler import PostReportTransformHandler
 
 
 class PostReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config)
         self.service_name = 'post_report'
+        self.stored_object_collection_mapping = {
 
-    def _load_items(self) -> list:
-        mongodb_credential = {
-            'db_username': self.system_config.MONGO_DB_HOST,
-            'db_name': self.system_config.MONGO_DB_DATABASE_NAME,
-            'db_password': self.system_config.MONGO_DB_PASSWORD,
-            'db_host': self.system_config.MONGO_DB_HOST,
-            'db_port': self.system_config.MONGO_DB_PORT
         }
 
-        report_db_handler = ReportDB(**mongodb_credential)
+    def _load_items(self) -> list:
+        report_db_handler = ReportDBHandler(self.db_connection)
         loader = ReportLoadHandler(report_db_handler)
         query = ReportQuery.get_report_service_query(self.service_config)
 
@@ -45,8 +41,11 @@ class PostReportService(CollectionService):
 
     def _transform_data(self, loaded_items, collected_data):
         # Play something with self.item_transform
-        item_transform = IdentityItemTransformHandler()
-        pass
+        post_report_transform = PostReportTransformHandler()
+        transformed_data = post_report_transform.process_item(loaded_items, collected_data)
+        return transformed_data
 
     def _store_data(self, transformed_data):
-        pass
+        for obj in transformed_data:
+            GeneralDBHandler(collection_name=obj['name'], connection=self.db_connection). \
+                bulk_write_many_update_objects(obj['items'])
