@@ -172,16 +172,16 @@ class BaseDBHandler(object):
 
     def get_many_pairs_by_id(self,
                              _ids,
-                             _filter=None,
+                             filter_=None,
                              selected_fields=None,
                              must_have_fields=None,
                              not_have_fields=None):
-        _filter_record = {'_id': {'$in': _ids}}
+        filter_record = {'_id': {'$in': _ids}}
 
         if isinstance(filter_, dict):
-            for _key, _value in _filter.items():
-                _filter_record[_key] = _value
-        result = self.get_many_by_filter(_filter=_filter_record,
+            for key, value in filter_.items():
+                filter_record[key] = value
+        result = self.get_many_by_filter(filter_=filter_record,
                                          selected_fields=selected_fields,
                                          must_have_fields=must_have_fields,
                                          not_have_fields=not_have_fields)
@@ -219,6 +219,20 @@ class BaseDBHandler(object):
     def count_by_filter(self,
                         filter_):
         result = self.get_many_by_filter(filter_).count(True)
+        return result
+
+    # Refactor from here
+    def bulk_write_many_update_objects(self, update_objects):
+        if not update_objects:
+            return
+        _requests = [UpdateOne(filter=update_object['filter'],
+                               update={update_object.get('operator', '$set'): update_object['update']},
+                               upsert=update_object.get('upsert', True),
+                               collation=update_object.get('collation'),
+                               array_filters=update_object.get('array_filters'))
+                     for update_object in update_objects]
+
+        result = self.bulk_write(_requests)
         return result
 
     def close_connection(self):
