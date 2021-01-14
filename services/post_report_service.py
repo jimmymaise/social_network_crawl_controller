@@ -1,5 +1,4 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.handlers.db_handler.base_db_handler import GeneralDBHandler
 from core.handlers.db_handler.report_db_handler import ReportDBHandler
 from services.base_collection_service import CollectionService
 from workflow.collect.api_collect_handler import APICollectHandler
@@ -45,7 +44,3 @@ class PostReportService(CollectionService):
         transformed_data = post_report_transform.process_item(loaded_items, collected_data)
         return transformed_data
 
-    def _store_data(self, transformed_data):
-        for obj in transformed_data:
-            GeneralDBHandler(collection_name=obj['name'], connection=self.db_connection). \
-                bulk_write_many_update_objects(obj['items'])

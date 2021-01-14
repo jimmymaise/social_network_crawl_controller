@@ -154,11 +154,7 @@ class PostReportTransformHandler(BaseItemTransformHandler):
 
     def _build_report_statuses_object(self):
         report_statuses_object = {
-            'status': 'Done',
-            'last_time_checking': self.now.timestamp(),  # timestamp int
             'response_server.is_update_report': False,
             'response_server.last_time_update': 0,
-            'response_server.num_update': 0,
-            'tracking_status': None,
         }
         return report_statuses_object
