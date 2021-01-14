@@ -2,8 +2,9 @@
   "SERVICES": {
     "POST_REPORT": {
       "MARKET": [
-        "vi"
+        "vi", "id"
       ],
+      "STATUS_IGNORE": [],
       "ENGAGEMENT_UPDATE_INTERVAL": 86400,
       "REPORT_PERIOD": 1209600,
       "LIKER_COLLECT_PERIOD": 172800,
