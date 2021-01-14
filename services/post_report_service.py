@@ -1,5 +1,5 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.handlers.db_handler.media_db_handler import MediaDBHandler
+from core.handlers.db_handler.base_db_handler import GeneralDBHandler
 from core.handlers.db_handler.report_db_handler import ReportDBHandler
 from services.base_collection_service import CollectionService
 from workflow.collect.api_collect_handler import APICollectHandler
@@ -12,16 +12,12 @@ class PostReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config)
         self.service_name = 'post_report'
-        self.mongodb_credential = {
-            'db_username': self.system_config.MONGO_DB_HOST,
-            'db_name': self.system_config.MONGO_DB_DATABASE_NAME,
-            'db_password': self.system_config.MONGO_DB_PASSWORD,
-            'db_host': self.system_config.MONGO_DB_HOST,
-            'db_port': self.system_config.MONGO_DB_PORT
+        self.stored_object_collection_mapping = {
+
         }
 
     def _load_items(self) -> list:
-        report_db_handler = ReportDBHandler(**self.mongodb_credential)
+        report_db_handler = ReportDBHandler(self.db_connection)
         loader = ReportLoadHandler(report_db_handler)
         query = ReportQuery.get_report_service_query(self.service_config)
 
@@ -50,23 +46,6 @@ class PostReportService(CollectionService):
         return transformed_data
 
     def _store_data(self, transformed_data):
-        db_report_handler = ReportDBHandler(**self.mongodb_credential)
-        db_report_handler.bulk_write_many_update_objects(
-            transformed_data.get('report_stored_objects')
-        )
-
-        db_post_handler = MediaDBHandler(**self.mongodb_credential)
-        db_post_handler.bulk_write_many_update_objects(
-            transformed_data.get('post_stored_objects'))
-
-        db_user_handler = MediaDBHandler(**self.mongodb_credential)
-        db_user_handler.bulk_write_many_update_objects(
-            transformed_data.get('user_stored_objects'))
-
-        db_kol_handler = MediaDBHandler(**self.mongodb_credential)
-        db_kol_handler.bulk_write_many_update_objects(
-            transformed_data.get('kol_stored_objects'))
-
-        db_media_handler = MediaDBHandler(**self.mongodb_credential)
-        db_media_handler.bulk_write_many_update_objects(
-            transformed_data.get('media_stored_objects'))
+        for obj in transformed_data:
+            GeneralDBHandler(collection_name=obj['name'], connection=self.db_connection). \
+                bulk_write_many_update_objects(obj['items'])

@@ -24,6 +24,13 @@ class BaseItemTransformHandler(object):
         return {
             'filter': filter_,
             'update': stored_object,
-            'upsert': upsert
+            'upsert': upsert,
 
+        }
+
+    @staticmethod
+    def _make_transformed_item(collection_name: str, updated_object_list: list):
+        return {
+            'collection_name': collection_name,
+            'items': updated_object_list
         }

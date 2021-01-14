@@ -8,17 +8,7 @@ from pymongo import UpdateOne, DeleteOne
 # Import config
 
 
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
 class DBConnection(object):
-    __metaclass__ = Singleton
 
     def __init__(self, db_host, db_port, db_name, db_username, db_password):
         if db_username and db_password:
@@ -28,14 +18,14 @@ class DBConnection(object):
         else:
             host_address = f'mongodb://{db_host}:{db_port}/{db_name}'
         self.client = MongoClient(host_address, connect=False)
+        self.db = self.client[db_name]
 
 
 class BaseDBHandler(object):
     # ********** Constructor **********
-    def __init__(self, db_username, db_name, db_password, db_host, db_port):
-        _connection = DBConnection(db_host, db_port, db_name, db_username, db_password)
-        self.client = _connection.client
-        self.database = self.client['facebook']
+    def __init__(self, connection: DBConnection):
+        self.client = connection.client
+        self.database = connection.db
         self.collection = None
 
     def get_one_by_filter(self,
@@ -238,3 +228,9 @@ class BaseDBHandler(object):
     def close_connection(self):
         """Close connection after done"""
         self.client.close()
+
+
+class GeneralDBHandler(BaseDBHandler):
+    def __init__(self, connection, collection_name):
+        super().__init__(connection)
+        self.collection = self.database[collection_name]

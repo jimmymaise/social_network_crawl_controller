@@ -13,20 +13,38 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         self.now = datetime.now()
 
     def process_item(self, loaded_item, collected_data):
+        transformed_data = []
         result = {}
         _, collected_user_schema_error = self._validate_schema(data=collected_data['user'], schema=UserObjectSchema)
         _, collected_post_schema_error = self._validate_schema(data=collected_data['post'], schema=PostObjectSchema)
 
         if collected_post_schema_error:
             return result
-        result['post_updated_objects'] = [self._build_post_updated_object(collected_data)]
-        result['report_updated_objects'] = [self._build_report_updated_object(collected_data, loaded_item)]
-        result['media_updated_objects'] = self._build_media_updated_objects(collected_data)
-        if not collected_user_schema_error:
-            result['kol_updated_objects'] = [self._build_kol_updated_object(collected_data)]
-            result['user_updated_objects'] = [self._build_user_updated_object(collected_data)]
 
-        return result
+        transformed_data.append(self._make_transformed_item(
+            collection_name='post',
+            updated_object_list=[self._build_post_updated_object(collected_data)])
+        )
+        transformed_data.append(self._make_transformed_item(
+            collection_name='report',
+            updated_object_list=[self._build_report_updated_object(collected_data, loaded_item)])
+        )
+        transformed_data.append(self._make_transformed_item(
+            collection_name='media',
+            updated_object_list=self._build_media_updated_objects(collected_data))
+        )
+
+        if not collected_user_schema_error:
+            transformed_data.append(self._make_transformed_item(
+                collection_name='kols',
+                updated_object_list=self._build_kol_updated_object(collected_data))
+            )
+            transformed_data.append(self._make_transformed_item(
+                collection_name='user',
+                updated_object_list=self._build_user_updated_object(collected_data))
+            )
+
+        return transformed_data
 
     def _build_post_updated_object(self, collected_data):
         post_stored_object_builder = StoredObjectBuilder()
@@ -38,9 +56,11 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         post_stored_object = post_stored_object_builder.build(collected_post=collected_data['post'],
                                                               collected_user=collected_data['user'])
 
-        post_updated_object = self._make_updated_object(filter_={'_id': post_stored_object['_id']},
-                                                        stored_object=post_stored_object
-                                                        )
+        post_updated_object = self._make_updated_object(
+            filter_={'_id': post_stored_object['_id']},
+            stored_object=post_stored_object,
+            collection='post'
+        )
 
         return post_updated_object
 
@@ -51,9 +71,10 @@ class PostReportTransformHandler(BaseItemTransformHandler):
 
         user_stored_object = user_stored_object_builder.build(collected_user=collected_data['user'])
 
-        user_updated_object = self._make_updated_object(filter_={'_id': user_stored_object['_id']},
-                                                        stored_object=user_stored_object
-                                                        )
+        user_updated_object = self._make_updated_object(
+            filter_={'_id': user_stored_object['_id']},
+            stored_object=user_stored_object,
+        )
         return user_updated_object
 
     def _build_kol_updated_object(self, collected_data):
@@ -61,9 +82,10 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         kol_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id', 'username': 'username'})
 
         kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data['user'])
-        kol_updated_object = self._make_updated_object(filter_={'_id': kol_stored_object['_id']},
-                                                       stored_object=kol_stored_object
-                                                       )
+        kol_updated_object = self._make_updated_object(
+            filter_={'_id': kol_stored_object['_id']},
+            stored_object=kol_stored_object,
+        )
 
         return kol_updated_object
 
@@ -74,7 +96,8 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         media_stored_object = media_stored_object_builder_by_post.build(collected_post=collected_data['post'])
         media_stored_object['_id'] = hashlib.md5(media_stored_object['link'])
         media_updated_objects.append(self._make_updated_object(
-            filter_=media_stored_object['_id'], stored_object=media_stored_object
+            filter_=media_stored_object['_id'],
+            stored_object=media_stored_object,
         ))
         if not collected_data['user'].get('avatar'):
             return media_stored_object
@@ -84,7 +107,8 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         media_stored_object.append(media_stored_object_builder_by_user.build(collected_user=collected_data['user']))
         media_stored_object['_id'] = hashlib.md5(media_stored_object['link'])
         media_updated_objects.append(self._make_updated_object(
-            filter_=media_stored_object['_id'], stored_object=media_stored_object
+            filter_=media_stored_object['_id'],
+            stored_object=media_stored_object,
         ))
 
         return media_updated_objects
@@ -112,8 +136,10 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         )
         report_stored_object['_id'] = loaded_item['_id']
         report_stored_object[f'history_report.{today_date}'] = self._build_history_report_object(collected_data)
-        report_updated_object = self._make_updated_object(filter_={'_id': loaded_item['_id']},
-                                                          stored_object=report_stored_object)
+        report_updated_object = self._make_updated_object(
+            filter_={'_id': loaded_item['_id']},
+            stored_object=report_stored_object,
+        )
         return report_updated_object
 
     @staticmethod
