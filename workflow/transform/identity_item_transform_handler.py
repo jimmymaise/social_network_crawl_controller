@@ -1,6 +1,6 @@
 from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
-from workflow.transform.schema_objects.posts_object_schema import PostsObjectSchema
-from workflow.transform.schema_objects.users_object_schema import UsersObjectSchema
+from workflow.transform.schema_objects.posts_object_schema import PostObjectSchema
+from workflow.transform.schema_objects.users_object_schema import UserObjectSchema
 
 
 class IdentityItemTransformHandler(BaseItemTransformHandler):
