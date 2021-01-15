@@ -1,5 +1,6 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
 from core.handlers.db_handler.report_db_handler import ReportDBHandler
+from core.logger.logger_handler import Logger
 from services.base_collection_service import CollectionService
 from workflow.collect.api_collect_handler import APICollectHandler
 from workflow.loading.load.report_load_handler import ReportLoadHandler
@@ -10,10 +11,10 @@ from workflow.transform.post_report_transform_handler import PostReportTransform
 class PostReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config)
-        self.service_name = 'post_report'
-        self.stored_object_collection_mapping = {
-
-        }
+        self.service_name = service_config['service_name'] = 'post_report'
+        self.logger = Logger().init_logger(logger_name=self.service_name,
+                                           log_file_path='/l/1.txt',
+                                           remove_old_log=True, )
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
@@ -43,4 +44,3 @@ class PostReportService(CollectionService):
         post_report_transform = PostReportTransformHandler()
         transformed_data = post_report_transform.process_item(loaded_items, collected_data)
         return transformed_data
-

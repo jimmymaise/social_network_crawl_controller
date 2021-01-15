@@ -4,6 +4,7 @@ import requests
 
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 from core.utils import retry
+from core.utils.exceptions import ErrorRequestFormat
 
 
 class BaseApiRequestHandler(object, metaclass=ABCMeta):
@@ -48,7 +49,7 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
         success = True
         schema_errors = {}
         if errors:
-            raise Exception('Invalid request data')
+            raise ErrorRequestFormat()
         retryer = retry.Retrying(stop=retry.stop_after_attempt(max_attempts),
                                  retry=retry.retry_if_not_result(self._is_request_success),
                                  wait=retry.wait_fixed(retry_time_sleep),

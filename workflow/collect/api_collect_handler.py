@@ -1,6 +1,7 @@
 from core.handlers.api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from core.handlers.api_handler.lambda_api_handler import LambdaApiRequestHandler
 from core.handlers.crawl_account_handler import CrawlAccountHandler
+from core.utils.exceptions import ErrorResponseFailed, ErrorResponseFormat
 from workflow.collect.base_collect_handler import BaseCollectHandler
 
 
@@ -21,9 +22,10 @@ class APICollectHandler(BaseCollectHandler):
         response, success, schema_errors = lambda_api_handler.call_api(
             request_data=post_detail_api_request_data
         )
-        if account_id:
-            self.crawl_account_handler.update_account_token(account_id=account_id,
-                                                            status_code=response.status_code,
-                                                            message='Done')
-        if success and not schema_errors:
-            return response.json()[post_detail_api_request_data.response_data_key]
+
+        if not success:
+            raise ErrorResponseFailed()
+        if schema_errors:
+            raise ErrorResponseFormat()
+
+        return response.json()[post_detail_api_request_data.response_data_key]

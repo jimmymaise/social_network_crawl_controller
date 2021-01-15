@@ -9,8 +9,9 @@ from workflow.transform.stored_object.stored_object_builder import StoredObjectB
 
 
 class PostReportTransformHandler(BaseItemTransformHandler):
-    def __init__(self):
+    def __init__(self, service_name):
         super().__init__()
+        self.service_name = service_name
         self.now = datetime.now()
 
     def process_item(self, loaded_item, collected_data):
@@ -151,7 +152,11 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         return today_report_history
 
     def _build_report_statuses_object(self):
+
         report_statuses_object = {
+            f'{self.service_name}_status': {'status': 'success',
+                                            'latest_updated_time': int(self.now.timestamp())
+                                            },
             'response_server.is_update_report': False,
             'response_server.last_time_update': 0,
         }

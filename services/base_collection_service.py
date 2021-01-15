@@ -12,11 +12,12 @@ class CollectionService:
         self.system_config = SystemConfig
         self.service_config = service_config
         self.db_connection = self._create_db_connection_by_system_config()
-        self.running_status = {
+        self.logger = None
 
-        }
+    def _update_failed_status(self, load_id, exception):
+        error_code = getattr(exception, 'collection_service_error_name', 'error_unknown')
+        self.logger.error(exception)
 
-    def _update_failed_status(self, load_id, error_code):
         self._store_data([
             {'collection_name': 'report',
              'items': [
@@ -59,7 +60,7 @@ class CollectionService:
         # Play something with self.item_transform
         pass
 
-    def _store_data(self, transformed_data):
+    def _store_data(self, transformed_data, **kwargs):
         for obj in transformed_data:
             GeneralDBHandler(collection_name=obj['name'], connection=self.db_connection). \
                 bulk_write_many_update_objects(obj['items'])
@@ -72,5 +73,4 @@ class CollectionService:
                 transformed_data = self._transform_data(loaded_item, collected_data)
                 self._store_data(transformed_data)
             except Exception as e:
-                error_code = getattr(e, 'collection_service_error_name', 'error_unknown')
-                self._update_failed_status(load_id=loaded_item['_id'], error_code=error_code)
+                self._update_failed_status(load_id=loaded_item['_id'], exception=e)

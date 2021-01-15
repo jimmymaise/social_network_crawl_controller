@@ -16,6 +16,15 @@ class ErrorResponseFailed(Exception):
         return self.message
 
 
+class ErrorRequestFormat(Exception):
+    def __init__(self, message='ErrorRequestFormat'):
+        self.message = message
+        self.collection_service_error_name = 'error_request_format'
+
+    def __str__(self):
+        return self.message
+
+
 class ErrorResponseFormat(Exception):
     def __init__(self, message='ErrorResponseFormat'):
         self.message = message
