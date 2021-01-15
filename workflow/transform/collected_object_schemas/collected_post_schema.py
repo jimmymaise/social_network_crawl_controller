@@ -5,7 +5,7 @@ class PostObjectSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    _id = fields.Int()
+    _id = fields.Int(required=True)
     app_id = fields.Int()
     user_id = fields.Int()
     page_id = fields.Int()
