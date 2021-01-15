@@ -1,6 +1,7 @@
 import hashlib
 from datetime import datetime
 
+from core.utils.exceptions import ErrorStoreFormat
 from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
 from workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
 from workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
@@ -14,12 +15,11 @@ class PostReportTransformHandler(BaseItemTransformHandler):
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []
-        result = {}
         _, collected_user_schema_error = self._validate_schema(data=collected_data['user'], schema=UserObjectSchema)
         _, collected_post_schema_error = self._validate_schema(data=collected_data['post'], schema=PostObjectSchema)
 
         if collected_post_schema_error:
-            return result
+            raise ErrorStoreFormat
 
         transformed_data.append(self._make_transformed_item(
             collection_name='post',
@@ -58,9 +58,7 @@ class PostReportTransformHandler(BaseItemTransformHandler):
 
         post_updated_object = self._make_updated_object(
             filter_={'_id': post_stored_object['_id']},
-            stored_object=post_stored_object,
-            collection='post'
-        )
+            stored_object=post_stored_object, )
 
         return post_updated_object
 

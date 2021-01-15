@@ -25,3 +25,10 @@ class ErrorResponseFormat(Exception):
         return self.message
 
 
+class ErrorStoreFormat(Exception):
+    def __init__(self, message='ErrorStoreFormat'):
+        self.message = message
+        self.collection_service_error_name = 'error_store_format'
+
+    def __str__(self):
+        return self.message

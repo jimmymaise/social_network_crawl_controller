@@ -16,12 +16,12 @@ class CollectionService:
 
         }
 
-    def _update_failed_report(self, report_id, error_code):
+    def _update_failed_status(self, load_id, error_code):
         self._store_data([
             {'collection_name': 'report',
              'items': [
                  {
-                     'filter': {'_id': report_id},
+                     'filter': {'_id': load_id},
                      'update': {
                          f'{self.service_name}_status': {'status': error_code,
                                                          'latest_updated_time': int(time.time())
@@ -73,4 +73,4 @@ class CollectionService:
                 self._store_data(transformed_data)
             except Exception as e:
                 error_code = getattr(e, 'collection_service_error_name', 'error_unknown')
-                self._update_failed_report(report_id=loaded_item['_id'], error_code=error_code)
+                self._update_failed_status(load_id=loaded_item['_id'], error_code=error_code)
