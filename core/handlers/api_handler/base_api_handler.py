@@ -4,7 +4,7 @@ import requests
 
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 from core.utils import retry
-from core.utils.exceptions import ErrorRequestFormat
+from core.utils.exceptions import ErrorRequestFormat, ErrorAPIServerConnection
 
 
 class BaseApiRequestHandler(object, metaclass=ABCMeta):
@@ -34,9 +34,13 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
         return data, error
 
     def _process_request(self, request_data: BaseAPISpecs):
-        response = getattr(requests, request_data.method)(url=f'{self.base_url}/{request_data.path}',
-                                                          headers=request_data.headers,
-                                                          json=request_data.body)
+        print(f'{self.base_url}/{request_data.path}')
+        try:
+            response = getattr(requests, request_data.method)(url=f'{self.base_url}/{request_data.path}',
+                                                              headers=request_data.headers,
+                                                              json=request_data.body)
+        except Exception as e:
+            raise ErrorAPIServerConnection(str(e))
         return response
 
     def _validate_response_data_schema(self, response_body, response_data_schema, response_data_key=None):
@@ -51,10 +55,13 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
         if errors:
             raise ErrorRequestFormat()
         retryer = retry.Retrying(stop=retry.stop_after_attempt(max_attempts),
-                                 retry=retry.retry_if_not_result(self._is_request_success),
+                                 retry=(retry.retry_if_exception_type(Exception) | retry.retry_if_not_result(
+                                     self._is_request_success)),
                                  wait=retry.wait_fixed(retry_time_sleep),
                                  before_sleep=retry.warning_when_retry,
+                                 reraise=False,
                                  retry_error_callback=retry.return_last_value)
+
         response = retryer(self._process_request, request_data)
         if not self._is_request_success(response):
             success = False

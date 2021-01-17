@@ -13,7 +13,6 @@ class PostReportService(CollectionService):
         super().__init__(service_config)
         self.service_name = service_config['service_name'] = 'post_report'
         self.logger = Logger().init_logger(logger_name=self.service_name,
-                                           log_file_path='/l/1.txt',
                                            remove_old_log=True, )
 
     def _load_items(self) -> list:
@@ -41,6 +40,6 @@ class PostReportService(CollectionService):
 
     def _transform_data(self, loaded_items, collected_data):
         # Play something with self.item_transform
-        post_report_transform = PostReportTransformHandler()
+        post_report_transform = PostReportTransformHandler(service_name=self.service_name )
         transformed_data = post_report_transform.process_item(loaded_items, collected_data)
         return transformed_data

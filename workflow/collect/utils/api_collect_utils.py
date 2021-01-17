@@ -1,5 +1,7 @@
 import re
 
+from workflow.collect.utils.constant import APICollectConstant
+
 
 class APICollectUtils:
     @classmethod
@@ -10,15 +12,25 @@ class APICollectUtils:
                 return True
         return False
 
-    @staticmethod
-    def _post_link_valid_patterns():
-        user_name = '[a-z0-9]+'
-        user_id = post_id = album_id = '[0-9]+'
-
-        return {
-            'profile_have_username': f'https://www\.facebook\.com/{user_name}/posts/{post_id}',
-            'profile_not_have_username': f'https://www\.facebook\.com/permalink\.php?story_fbid={post_id}&id={user_id} ',
-            'post_with_photo_album': f'https://www\.facebook\.com/{user_name}/photos/a\.{album_id}/{post_id}/',
-            'live_stream_post': f'https://www\.facebook\.com/watch/live/?v={post_id}&ref=watch_permalink'
-
+    @classmethod
+    def _post_link_valid_patterns(cls):
+        only_num_pattern = '[a-z0-9]+'
+        only_num_char_pattern = '[a-z0-9]+'
+        param_patterns = {
+            'user_name': only_num_char_pattern,
+            'user_id': only_num_pattern,
+            'post_id': only_num_pattern,
+            'album_id': only_num_pattern,
         }
+        post_link_template_dict = APICollectConstant.POST_LINK_VALID_TEMPLATE_DICT
+
+        pattern_dict = {pattern_key: cls._make_url_pattern_from_url_template(pattern_url, **param_patterns) for
+                        pattern_key, pattern_url in
+                        post_link_template_dict.items()}
+        return pattern_dict
+
+    @staticmethod
+    def _make_url_pattern_from_url_template(url, **param_patterns):
+        url = re.escape(url)
+        url = url.replace('<', '{').replace('>', '}').format(**param_patterns)
+        return url

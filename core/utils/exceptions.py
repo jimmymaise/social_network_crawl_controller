@@ -34,6 +34,15 @@ class ErrorResponseFormat(Exception):
         return self.message
 
 
+class ErrorAPIServerConnection(Exception):
+    def __init__(self, message='ErrorAPIServerConnection'):
+        self.message = message
+        self.collection_service_error_name = 'error_api_server_connection'
+
+    def __str__(self):
+        return self.message
+
+
 class ErrorStoreFormat(Exception):
     def __init__(self, message='ErrorStoreFormat'):
         self.message = message

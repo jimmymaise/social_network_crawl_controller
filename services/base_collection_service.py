@@ -16,15 +16,16 @@ class CollectionService:
 
     def _update_failed_status(self, load_id, exception):
         error_code = getattr(exception, 'collection_service_error_name', 'error_unknown')
-        self.logger.error(exception)
+        self.logger.error(exception, exc_info=True)
 
         self._store_data([
-            {'collection_name': 'report',
+            {'collection_name': 'reports',
              'items': [
                  {
                      'filter': {'_id': load_id},
                      'update': {
                          f'{self.service_name}_status': {'status': error_code,
+                                                         'exception_detail': str(exception),
                                                          'latest_updated_time': int(time.time())
                                                          },
                          'response_server.is_update_report': True,
@@ -62,7 +63,7 @@ class CollectionService:
 
     def _store_data(self, transformed_data, **kwargs):
         for obj in transformed_data:
-            GeneralDBHandler(collection_name=obj['name'], connection=self.db_connection). \
+            GeneralDBHandler(collection_name=obj['collection_name'], connection=self.db_connection). \
                 bulk_write_many_update_objects(obj['items'])
 
     def process(self):
