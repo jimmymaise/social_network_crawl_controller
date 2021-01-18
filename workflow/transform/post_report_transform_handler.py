@@ -1,6 +1,6 @@
-import hashlib
 from datetime import datetime
 
+from core.utils.common import Common
 from core.utils.exceptions import ErrorStoreFormat
 from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
 from workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
@@ -23,26 +23,26 @@ class PostReportTransformHandler(BaseItemTransformHandler):
             raise ErrorStoreFormat
 
         transformed_data.append(self._make_transformed_item(
-            collection_name='post',
+            collection_name='posts',
             updated_object_list=[self._build_post_updated_object(collected_data)])
         )
         transformed_data.append(self._make_transformed_item(
-            collection_name='report',
+            collection_name='reports',
             updated_object_list=[self._build_report_updated_object(collected_data, loaded_item)])
         )
         transformed_data.append(self._make_transformed_item(
-            collection_name='media',
+            collection_name='medias',
             updated_object_list=self._build_media_updated_objects(collected_data))
         )
 
         if not collected_user_schema_error:
             transformed_data.append(self._make_transformed_item(
                 collection_name='kols',
-                updated_object_list=self._build_kol_updated_object(collected_data))
+                updated_object_list=[self._build_kol_updated_object(collected_data)])
             )
             transformed_data.append(self._make_transformed_item(
-                collection_name='user',
-                updated_object_list=self._build_user_updated_object(collected_data))
+                collection_name='users',
+                updated_object_list=[self._build_user_updated_object(collected_data)])
             )
 
         return transformed_data
@@ -59,7 +59,9 @@ class PostReportTransformHandler(BaseItemTransformHandler):
 
         post_updated_object = self._make_updated_object(
             filter_={'_id': post_stored_object['_id']},
-            stored_object=post_stored_object, )
+            stored_object=post_stored_object,
+            upsert=False
+        )
 
         return post_updated_object
 
@@ -73,6 +75,7 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
             stored_object=user_stored_object,
+            upsert=False
         )
         return user_updated_object
 
@@ -82,8 +85,9 @@ class PostReportTransformHandler(BaseItemTransformHandler):
 
         kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data['user'])
         kol_updated_object = self._make_updated_object(
-            filter_={'_id': kol_stored_object['_id']},
+            filter_={'username': kol_stored_object['username']},
             stored_object=kol_stored_object,
+            upsert=False
         )
 
         return kol_updated_object
@@ -93,21 +97,24 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         media_stored_object_builder_by_post = StoredObjectBuilder()
         media_stored_object_builder_by_post.add_mapping('collected_post', {'full_picture': 'link'})
         media_stored_object = media_stored_object_builder_by_post.build(collected_post=collected_data['post'])
-        media_stored_object['_id'] = hashlib.md5(media_stored_object['link'])
+        media_stored_object['_id'] = Common.hash_url(media_stored_object['link'])
         media_updated_objects.append(self._make_updated_object(
-            filter_=media_stored_object['_id'],
+            filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,
+            upsert=True
+
         ))
         if not collected_data['user'].get('avatar'):
             return media_stored_object
 
         media_stored_object_builder_by_user = StoredObjectBuilder()
         media_stored_object_builder_by_user.add_mapping('collected_user', {'avatar': 'link'})
-        media_stored_object.append(media_stored_object_builder_by_user.build(collected_user=collected_data['user']))
-        media_stored_object['_id'] = hashlib.md5(media_stored_object['link'])
+        media_stored_object = media_stored_object_builder_by_user.build(collected_user=collected_data['user'])
+        media_stored_object['_id'] = Common.hash_url(media_stored_object['link'])
         media_updated_objects.append(self._make_updated_object(
-            filter_=media_stored_object['_id'],
+            filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,
+            upsert=True
         ))
 
         return media_updated_objects
@@ -138,17 +145,18 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         report_updated_object = self._make_updated_object(
             filter_={'_id': loaded_item['_id']},
             stored_object=report_stored_object,
+            upsert=False
         )
         return report_updated_object
 
-    @staticmethod
-    def _build_history_report_object(collected_data):
+    def _build_history_report_object(self, collected_data):
         today_report_history_builder = StoredObjectBuilder()
         today_report_history_builder.add_mapping('collected_post', {'num_reaction': 'num_reaction',
                                                                     'num_comment': 'num_comment',
                                                                     'num_share': 'num_share'
                                                                     })
         today_report_history = today_report_history_builder.build(collected_post=collected_data['post'])
+        today_report_history['taken_at_timestamp'] = int(self.now.timestamp())
         return today_report_history
 
     def _build_report_statuses_object(self):

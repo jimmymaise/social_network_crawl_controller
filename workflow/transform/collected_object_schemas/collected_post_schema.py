@@ -30,7 +30,7 @@ class PostObjectSchema(Schema):
     source = fields.Str()
     status_type = fields.Str()
     story = fields.Str()
-    taken_at_timestamp = fields.Str()
+    taken_at_timestamp = fields.Int()
     to = fields.Str()
     updated_time = fields.Str()
     via = fields.Str()
