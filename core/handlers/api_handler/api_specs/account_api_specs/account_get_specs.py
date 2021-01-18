@@ -1,5 +1,7 @@
 from abc import ABC
-from marshmallow import Schema, EXCLUDE
+
+from marshmallow import Schema, EXCLUDE, fields
+
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
@@ -28,7 +30,15 @@ class AccountGetAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
+    accountId = fields.Str()
+    info = fields.Str()
+    type = fields.Str()
+    username = fields.Str()
+
 
 class AccountGetAPIRequestSchema(Schema):
     class Meta:
         unknown = EXCLUDE
+
+    api_type = fields.Str()
+    api_body = fields.Dict()

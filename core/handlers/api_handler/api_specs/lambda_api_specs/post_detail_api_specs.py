@@ -13,11 +13,9 @@ class PostDetailAPISpecs(BaseAPISpecs):
                          response_data_schema=PostDetailAPIResponseSchema)
 
     def set_body(self, post_link: str, account_info: dict):
-        # todo Remove hardcode for testing purpose
         self.body = {'link': post_link,
                      'type': 'user',
                      'cookie': account_info.get('token') if account_info else None
-                     or 'EAAAAZAw4FxQIBANYWnh5BTFIwTUb1IgkjLo1baRFEI1h57C51XqAgna1rNZB4TnnVb9Ya6OuMvcQBEmWEYHTBFq7QWK4VZBl3SI26fvuOBUETOlLcyzVFQnyqtaIdbN3RCaVZCpKkrRBscCGZCF1GCCZBVHukT49d42eJKmU2ZBpQZDZD'
                      }
 
     def set_headers(self, api_key):
