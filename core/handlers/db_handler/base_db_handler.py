@@ -180,7 +180,7 @@ class BaseDBHandler(object):
     def get_one_by_id(self,
                       _id,
                       selected_fields=None):
-        result = self.get_one_by_filter(_filter={'_id': _id},
+        result = self.get_one_by_filter(filter_={'_id': _id},
                                         selected_fields=selected_fields)
         return result
 
