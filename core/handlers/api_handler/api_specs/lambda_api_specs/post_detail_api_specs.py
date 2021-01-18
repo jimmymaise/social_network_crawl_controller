@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, EXCLUDE
 
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.utils.constant import Constant
 
 
 class PostDetailAPISpecs(BaseAPISpecs):
@@ -12,10 +13,10 @@ class PostDetailAPISpecs(BaseAPISpecs):
                          request_schema=PostDetailAPIRequestSchema,
                          response_data_schema=PostDetailAPIResponseSchema)
 
-    def set_body(self, post_link: str, account_info: dict):
+    def set_body(self, post_link: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
         self.body = {'link': post_link,
-                     'type': 'user',
-                     'cookie': account_info.get('token') if account_info else None
+                     'social_type': social_type,
+                     'account_info': account_info
                      }
 
     def set_headers(self, api_key):

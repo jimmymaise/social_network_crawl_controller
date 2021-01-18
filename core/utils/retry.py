@@ -5,7 +5,7 @@ from tenacity import *  # noqa: F403
 
 def warning_when_retry(attempt, sleep, last_result):
     logger = logging.getLogger()
-    logger.info(
+    logger.warning(
         f'Retrying attempt {last_result.attempt_number} ended with exception {getattr(last_result, "_exception")}')
 
 

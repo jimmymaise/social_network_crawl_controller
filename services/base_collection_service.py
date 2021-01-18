@@ -68,6 +68,7 @@ class CollectionService:
 
     def _process(self):
         loaded_items = self._load_items()
+        self.logger.info(f'Load {len(loaded_items)} item for {self.service_name}')
         for loaded_item in loaded_items:
             try:
                 collected_data = self._collect_data(loaded_item)
@@ -77,6 +78,7 @@ class CollectionService:
                 self._update_failed_status(load_id=loaded_item['_id'], exception=e)
 
     def start(self):
+        self.logger.info(f'Starting service {self.service_name}')
         while True:
             self._process()
             time.sleep(SystemConfig.SERVICE_SLEEP_INTERVAL)
