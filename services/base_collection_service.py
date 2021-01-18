@@ -66,7 +66,7 @@ class CollectionService:
             GeneralDBHandler(collection_name=obj['collection_name'], connection=self.db_connection). \
                 bulk_write_many_update_objects(obj['items'])
 
-    def process(self):
+    def _process(self):
         loaded_items = self._load_items()
         for loaded_item in loaded_items:
             try:
@@ -75,3 +75,8 @@ class CollectionService:
                 self._store_data(transformed_data)
             except Exception as e:
                 self._update_failed_status(load_id=loaded_item['_id'], exception=e)
+
+    def start(self):
+        while True:
+            self._process()
+            time.sleep(SystemConfig.SERVICE_SLEEP_INTERVAL)

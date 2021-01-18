@@ -12,7 +12,7 @@ class ServicesRunner:
         for service_name, service_config in self.service_configs['SERVICES'].items():
             service = ServiceFactory.create_service(service_name=service_name,
                                                     service_config=service_config)
-            service.process()
+            service.start()
 
 
 ServicesRunner().run()
