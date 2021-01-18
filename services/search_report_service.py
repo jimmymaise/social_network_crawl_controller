@@ -5,13 +5,13 @@ from services.base_collection_service import CollectionService
 from workflow.collect.api_collect_handler import APICollectHandler
 from workflow.loading.load.report_load_handler import ReportLoadHandler
 from workflow.loading.query.report_query import ReportQuery
-from workflow.transform.post_report_transform_handler import PostReportTransformHandler
+from workflow.transform.search_report_transform_handler import SearchReportTransformHandler
 
 
-class PostReportService(CollectionService):
+class SearchReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config)
-        self.service_name = service_config['service_name'] = 'post_report'
+        self.service_name = service_config['service_name'] = 'search_report'
         self.logger = Logger().init_logger(logger_name=self.service_name,
                                            remove_old_log=True, )
 
@@ -40,6 +40,6 @@ class PostReportService(CollectionService):
 
     def _transform_data(self, loaded_items, collected_data):
         # Play something with self.item_transform
-        post_report_transform = PostReportTransformHandler(service_name=self.service_name )
-        transformed_data = post_report_transform.process_item(loaded_items, collected_data)
+        search_report_transform = SearchReportTransformHandler(service_name=self.service_name )
+        transformed_data = search_report_transform.process_item(loaded_items, collected_data)
         return transformed_data

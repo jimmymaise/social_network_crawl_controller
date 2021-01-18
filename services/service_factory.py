@@ -1,8 +1,8 @@
-from services.post_report_service import PostReportService
+from services.search_report_service import SearchReportService
 
 
 class ServiceFactory:
     @staticmethod
-    def create_service(service_name, service_config) -> PostReportService:
-        if service_name.upper() == 'POST_REPORT':
-            return PostReportService(service_config)
+    def create_service(service_name, service_config) -> SearchReportService:
+        if service_name.upper() == 'SEARCH_REPORT':
+            return SearchReportService(service_config)

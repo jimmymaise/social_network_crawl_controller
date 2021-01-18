@@ -8,7 +8,7 @@ from workflow.transform.collected_object_schemas.collected_user_schema import Us
 from workflow.transform.stored_object.stored_object_builder import StoredObjectBuilder
 
 
-class PostReportTransformHandler(BaseItemTransformHandler):
+class SearchReportTransformHandler(BaseItemTransformHandler):
     def __init__(self, service_name):
         super().__init__()
         self.service_name = service_name
@@ -51,7 +51,6 @@ class PostReportTransformHandler(BaseItemTransformHandler):
         post_stored_object_builder = StoredObjectBuilder()
         post_stored_object_builder.set_get_all_fields_from_collected_object('collected_post',
                                                                             excluded_fields='full_picture')
-        post_stored_object_builder.add_mapping('collected_post', {'_id': 'page_url'})
         post_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id'})
 
         post_stored_object = post_stored_object_builder.build(collected_post=collected_data['post'],
