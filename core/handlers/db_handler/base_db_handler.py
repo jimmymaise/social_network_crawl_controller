@@ -44,31 +44,31 @@ class BaseDBHandler(object):
                            must_have_fields=None,
                            not_have_fields=None):
         if must_have_fields:
-            for _must_have_field in must_have_fields:
-                filter_[_must_have_field] = {'$exists': True}
+            for must_have_field in must_have_fields:
+                filter_[must_have_field] = {'$exists': True}
         if not_have_fields:
-            for _not_have_field in not_have_fields:
-                filter_[_not_have_field] = {'$exists': False}
+            for not_have_field in not_have_fields:
+                filter_[not_have_field] = {'$exists': False}
         if selected_fields is None:
             result = self.collection.find(filter_)
         else:
-            selected_fieldsdict = self._create_fields_dict(selected_fields)
-            result = self.collection.find(filter_, selected_fieldsdict)
+            selected_fields_dict = self._create_fields_dict(selected_fields)
+            result = self.collection.find(filter_, selected_fields_dict)
         return result
 
     def get_many_by_filter_and_sort(self,
                                     filter_,
                                     sort_,
-                                    limit_=None,
+                                    limit=None,
                                     selected_fields=None,
                                     must_have_fields=None,
                                     not_have_fields=None):
         if must_have_fields:
-            for _must_have_field in must_have_fields:
-                filter_[_must_have_field] = {'$exists': True}
+            for must_have_field in must_have_fields:
+                filter_[must_have_field] = {'$exists': True}
         if not_have_fields:
-            for _not_have_field in not_have_fields:
-                filter_[_not_have_field] = {'$exists': False}
+            for not_have_field in not_have_fields:
+                filter_[not_have_field] = {'$exists': False}
         if selected_fields is None:
             result = self.collection.find(filter_)
         else:
@@ -77,65 +77,64 @@ class BaseDBHandler(object):
         return result
 
     def insert_one(self,
-                   _one_info):
-        result = self.collection.insert_one(_one_info)
+                   one_info):
+        result = self.collection.insert_one(one_info)
         return result
 
     def insert_many(self,
-                    _many_info):
-        result = self.collection.insert_many(_many_info)
+                    many_info):
+        result = self.collection.insert_many(many_info)
         return result
 
     def delete_one(self,
-                   _one_info):
-        result = self.collection.delete_one(_one_info)
+                   one_info):
+        result = self.collection.delete_one(one_info)
         return result
 
     def delete_many(self,
-                    _many_info):
-        result = self.collection.delete_many(_many_info)
+                    many_info):
+        result = self.collection.delete_many(many_info)
         return result
 
     def update_one(self,
                    _updated_record,
-                   _upsert=False):
-        result = self.update_many_pair(_updated_records=[_updated_record],
-                                       _upsert=_upsert)
+                   upsert=False):
+        result = self.update_many_pair(updated_records=[_updated_record],
+                                       upsert=upsert)
         return result
 
     def update_many(self,
-                    _many_info):
-        result = self.collection.update_many(_many_info)
+                    many_info):
+        result = self.collection.update_many(many_info)
         return result
 
     def update_many_pair(self,
-                         _updated_records,
-                         _upsert=False,
-                         _write_concern=None,
-                         _collation=None,
-                         _array_filters=None,
-                         _operator='$set'):
+                         updated_records,
+                         upsert=False,
+                         collation=None,
+                         array_filters=None,
+                         operator='$set'):
         # ===== Execute =====
-        _requests = [UpdateOne(filter_,
-                               {_operator: _updated_record},
-                               upsert=_upsert,
-                               collation=_collation,
-                               array_filters=_array_filters)
-                     for filter_, _updated_record in _updated_records]
+        requests = [UpdateOne(filter_,
+                              {operator: updated_record},
+                              upsert=upsert,
+                              collation=collation,
+                              array_filters=array_filters)
+                    for filter_, updated_record in updated_records]
 
-        result = self.bulk_write(_requests)
+        result = self.bulk_write(requests)
         return result
 
     def find_or_create_many_pair(self,
-                                 _updated_records,
-                                 _upsert=False):
+                                 updated_records,
+                                 upsert=False):
         # ===== Execute =====
-        _requests = [UpdateOne(filter_,
-                               {'$setOnInsert': _updated_record},
-                               upsert=_upsert)
-                     for filter_, _updated_record in _updated_records]
+        requests = [UpdateOne(filter_,
+                              {'$setOnInsert': updated_record},
+                              upsert=upsert)
+                    for filter_, updated_record in updated_records]
 
-        result = self.bulk_write(_requests)
+        result = self.bulk_write(requests)
         return result
 
     def update(self,
@@ -148,16 +147,16 @@ class BaseDBHandler(object):
         return result
 
     def bulk_write(self,
-                   _requests):
-        if _requests:
-            result = self.collection.bulk_write(_requests)
+                   requests):
+        if requests:
+            result = self.collection.bulk_write(requests)
         else:
             result = None
         return result
 
     def aggregate(self,
-                  _requests):
-        result = self.collection.aggregate(_requests)
+                  requests):
+        result = self.collection.aggregate(requests)
         return result
 
     def get_many_pairs_by_id(self,
@@ -187,16 +186,16 @@ class BaseDBHandler(object):
     def get_one_by_app_id(self,
                           app_id,
                           selected_fields=None):
-        result = self.get_one_by_filter(_filter={'app_id': app_id},
+        result = self.get_one_by_filter(filter_={'app_id': app_id},
                                         selected_fields=selected_fields)
         return result
 
     def delete_many_pair(self,
                          _delete_records):
         # ===== Exec =====
-        _requests = [DeleteOne(_delete_record)
-                     for _delete_record in _delete_records]
-        service_result = self.bulk_write(_requests)
+        requests = [DeleteOne(_delete_record)
+                    for _delete_record in _delete_records]
+        service_result = self.bulk_write(requests)
         return service_result
 
     @staticmethod
@@ -215,14 +214,14 @@ class BaseDBHandler(object):
     def bulk_write_many_update_objects(self, update_objects):
         if not update_objects:
             return
-        _requests = [UpdateOne(filter=update_object['filter'],
-                               update={update_object.get('operator', '$set'): update_object['update']},
-                               upsert=update_object.get('upsert', True),
-                               collation=update_object.get('collation'),
-                               array_filters=update_object.get('array_filters'))
-                     for update_object in update_objects]
+        requests = [UpdateOne(filter=update_object['filter'],
+                              update={update_object.get('operator', '$set'): update_object['update']},
+                              upsert=update_object.get('upsert', True),
+                              collation=update_object.get('collation'),
+                              array_filters=update_object.get('array_filters'))
+                    for update_object in update_objects]
 
-        result = self.bulk_write(_requests)
+        result = self.bulk_write(requests)
         return result
 
     def close_connection(self):

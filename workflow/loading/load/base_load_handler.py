@@ -17,7 +17,7 @@ class BaseLoadHandler(object, metaclass=ABCMeta):
         return self.db_handler.get_many_by_filter_and_sort(
             filter_=query.filter_,
             sort_=query.sort_,
-            limit_=query.limit_,
+            limit=query.limit,
             selected_fields=query.selected_fields
         )
 
