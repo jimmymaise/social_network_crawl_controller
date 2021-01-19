@@ -8,7 +8,7 @@ class ReportQuery:
         filter_ = {
             'social_type': Constant.SOCIAL_TYPE_PROFILE,
             'country_code': {'$in': service_config.get('MARKET')},
-            'search_report_status.status': {'$nin': ['success']},
+            f'{service_config["service_name"]}_status.status': {'$nin': ['success']},
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
         sort_ = [("search_report_status.latest_update_time", 1)]
