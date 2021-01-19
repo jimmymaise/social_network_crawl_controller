@@ -4,7 +4,7 @@ from workflow.loading.query.base_query import Query
 
 class ReportQuery:
     @staticmethod
-    def get_report_service_query(service_config: dict):
+    def get_reports_for_search_report_service(service_config: dict):
         filter_ = {
             'social_type': Constant.SOCIAL_TYPE_PROFILE,
             'country_code': {'$in': service_config.get('MARKET')},

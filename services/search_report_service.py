@@ -12,14 +12,14 @@ from workflow.transform.search_report_transform_handler import SearchReportTrans
 class SearchReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config)
-        self.service_name = service_config['service_name'] = 'search_report'
+        self.service_name = service_config['service_name'] = Constant.SERVICE_NAME_SEARCH_REPORT
         self.logger = Logger().init_logger(logger_name=self.service_name,
                                            remove_old_log=True, )
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
         loader = ReportLoadHandler(report_db_handler)
-        query = ReportQuery.get_report_service_query(self.service_config)
+        query = ReportQuery.get_reports_for_search_report_service(self.service_config)
 
         loader.add_query(query)
         load_items = loader.load_items()
@@ -28,7 +28,7 @@ class SearchReportService(CollectionService):
     def _collect_data(self, loaded_item):
         # Play something with self.collect_handler to get data
         crawl_account_handler = CrawlAccountHandler(account_base_url=self.system_config.AM_BASE_URL,
-                                                    social_network='facebook',
+                                                    social_network=Constant.SOCIAL_NETWORK_FACEBOOK,
                                                     service_name=self.service_name,
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)

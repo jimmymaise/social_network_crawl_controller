@@ -4,6 +4,7 @@ from abc import abstractmethod
 from config.system_config import SystemConfig
 from core.handlers.db_handler.base_db_handler import DBConnection
 from core.handlers.db_handler.base_db_handler import GeneralDBHandler
+from core.utils.constant import Constant
 
 
 class CollectionService:
@@ -15,11 +16,11 @@ class CollectionService:
         self.logger = None
 
     def _update_failed_status(self, load_id, exception):
-        error_code = getattr(exception, 'collection_service_error_name', 'error_unknown')
+        error_code = getattr(exception, Constant.COLLECTION_SERVICE_ERROR_NAME, 'error_unknown')
         self.logger.error(exception, exc_info=True)
 
         self._store_data([
-            {'collection_name': 'reports',
+            {'collection_name': Constant.COLLECTION_NAME_REPORT,
              'items': [
                  {
                      'filter': {'_id': load_id},

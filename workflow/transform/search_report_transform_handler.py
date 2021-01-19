@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from core.utils.common import Common
+from core.utils.constant import Constant
 from core.utils.exceptions import ErrorStoreFormat
 from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
 from workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
@@ -23,25 +24,25 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
             raise ErrorStoreFormat
 
         transformed_data.append(self._make_transformed_item(
-            collection_name='posts',
+            collection_name=Constant.COLLECTION_NAME_POST,
             updated_object_list=[self._build_post_updated_object(collected_data)])
         )
         transformed_data.append(self._make_transformed_item(
-            collection_name='reports',
+            collection_name=Constant.COLLECTION_NAME_REPORT,
             updated_object_list=[self._build_report_updated_object(collected_data, loaded_item)])
         )
         transformed_data.append(self._make_transformed_item(
-            collection_name='medias',
+            collection_name=Constant.COLLECTION_NAME_MEDIA,
             updated_object_list=self._build_media_updated_objects(collected_data))
         )
 
         if not collected_user_schema_error:
             transformed_data.append(self._make_transformed_item(
-                collection_name='kols',
+                collection_name=Constant.COLLECTION_NAME_KOL,
                 updated_object_list=[self._build_kol_updated_object(collected_data)])
             )
             transformed_data.append(self._make_transformed_item(
-                collection_name='users',
+                collection_name=Constant.COLLECTION_NAME_USER,
                 updated_object_list=[self._build_user_updated_object(collected_data)])
             )
 

@@ -11,7 +11,6 @@ from workflow.collect.utils.api_collect_utils import APICollectUtils
 class APICollectHandler(BaseCollectHandler):
     def __init__(self, crawl_account_handler: CrawlAccountHandler):
         super().__init__()
-        self.type = 'api'
         self.crawl_account_handler = crawl_account_handler
 
     def get_post_detail_data_from_lambda(self, lambda_base_url, post_link, api_key,
