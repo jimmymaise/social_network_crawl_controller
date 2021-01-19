@@ -10,7 +10,6 @@ class CrawlAccountHandler:
 
     def __init__(self, account_base_url, social_network, service_name, country=None):
         super().__init__()
-        self.type = 'api'
         self.social_network = social_network
         self.service_name = service_name
         self.country = country

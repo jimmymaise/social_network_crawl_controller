@@ -1,8 +1,10 @@
 import json
-from config.system_config import SystemConfig
+
 import requests
 
+from config.system_config import SystemConfig
 from core.handlers.api_handler.base_api_handler import BaseApiRequestHandler
+from core.utils.constant import Constant
 
 
 class AccountAPIRequestHandler(BaseApiRequestHandler):
@@ -10,7 +12,7 @@ class AccountAPIRequestHandler(BaseApiRequestHandler):
         super().__init__(base_url=base_url)
 
     def _handle_failed_request(self, response, request_data=None):
-        payload = {'text': response.text}
+        payload = {Constant.SLACK_DEFAULT_NOTIFICATION_FIELD: response.text}
         slack_webhook = SystemConfig.SLACK_NOTIFICATION_URL
         requests.post(slack_webhook, data=json.dumps(payload))
 
