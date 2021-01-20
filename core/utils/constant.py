@@ -22,6 +22,10 @@ class Constant:
 
     SLACK_DEFAULT_NOTIFICATION_FIELD = 'text'
 
+    LAMBDA_API_CRAWL_POST_DETAIL_PATH = 'post-details'
+    AM_API_GET_CRAWL_ACCOUNT_PATH = 'request'
+    AM_API_UPDATE_CRAWL_ACCOUNT_PATH = 'account_update'
+
 
 
 

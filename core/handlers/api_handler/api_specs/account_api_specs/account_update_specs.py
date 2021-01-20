@@ -1,12 +1,13 @@
-from abc import ABC
 from marshmallow import Schema, EXCLUDE
+
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.utils.constant import Constant
 
 
-class AccountUpdateSpecs(BaseAPISpecs, ABC):
+class AccountUpdateSpecs(BaseAPISpecs):
     def __init__(self):
         super().__init__(method='post',
-                         path='account_update',
+                         path=Constant.AM_API_UPDATE_CRAWL_ACCOUNT_PATH,
                          headers={},
                          body={},
                          request_schema=AccountUpdateAPIRequestSchema,

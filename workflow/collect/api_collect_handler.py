@@ -2,8 +2,7 @@ from core.handlers.api_handler.api_specs.lambda_api_specs.post_detail_api_specs 
 from core.handlers.api_handler.lambda_api_handler import LambdaApiRequestHandler
 from core.handlers.crawl_account_handler import CrawlAccountHandler
 from core.utils.constant import Constant
-from core.utils.exceptions import ErrorLinkFormat
-from core.utils.exceptions import ErrorResponseFailed, ErrorResponseFormat
+from core.utils.exceptions import ErrorResponseFailed, ErrorResponseFormat, ErrorLinkFormat
 from workflow.collect.base_collect_handler import BaseCollectHandler
 from workflow.collect.utils.api_collect_utils import APICollectUtils
 

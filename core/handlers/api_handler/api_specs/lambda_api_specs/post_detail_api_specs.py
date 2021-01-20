@@ -7,7 +7,7 @@ from core.utils.constant import Constant
 class PostDetailAPISpecs(BaseAPISpecs):
     def __init__(self):
         super().__init__(method='post',
-                         path='post-details',
+                         path=Constant.LAMBDA_API_CRAWL_POST_DETAIL_PATH,
                          headers={},
                          body={},
                          request_schema=PostDetailAPIRequestSchema,

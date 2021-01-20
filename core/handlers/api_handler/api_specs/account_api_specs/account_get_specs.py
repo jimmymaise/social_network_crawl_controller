@@ -1,14 +1,15 @@
 from abc import ABC
+from core.utils.constant import Constant
 
 from marshmallow import Schema, EXCLUDE, fields
 
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
 
 
-class AccountGetSpecs(BaseAPISpecs, ABC):
+class AccountGetSpecs(BaseAPISpecs):
     def __init__(self):
         super().__init__(method='post',
-                         path='request',
+                         path=Constant.AM_API_GET_CRAWL_ACCOUNT_PATH,
                          headers={},
                          body={},
                          request_schema=AccountGetAPIRequestSchema,
