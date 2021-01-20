@@ -15,9 +15,10 @@ class APICollectUtils:
     @classmethod
     def _post_link_valid_patterns(cls):
         only_num_pattern = '[a-z0-9]+'
-        only_num_char_pattern = '[a-z0-9]+'
+        fb_username_pattern = '[a-z0-9\.\-\_]+'
+
         param_patterns = {
-            'user_name': only_num_char_pattern,
+            'user_name': fb_username_pattern,
             'user_id': only_num_pattern,
             'post_id': only_num_pattern,
             'album_id': only_num_pattern,

@@ -16,7 +16,7 @@ class APICollectHandler(BaseCollectHandler):
                                          social_type=Constant.SOCIAL_TYPE_PROFILE) -> dict:
 
         if not APICollectUtils.is_validate_post_link_format(post_link):
-            raise ErrorLinkFormat()
+            raise ErrorLinkFormat(post_link)
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
