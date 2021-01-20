@@ -17,7 +17,7 @@ class UserObjectSchema(Schema):
     work = fields.Dict()
     crawl_post_status = fields.Str()
     crawl_post_code = fields.Int()
-    latest_posts = fields.List(fields.Dict)
+    latest_posts = fields.List(fields.Dict())
     last_time_crawl_post = fields.Int()
     crawl_reaction_status = fields.Str()
     last_time_normalize = fields.Int()

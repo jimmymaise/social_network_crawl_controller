@@ -16,7 +16,7 @@ class CollectionService:
         self.logger = None
 
     def _update_failed_status(self, load_id, exception):
-        error_code = getattr(exception, Constant.COLLECTION_SERVICE_ERROR_NAME, 'error_unknown')
+        error_code = getattr(exception, Constant.COLLECTION_SERVICE_ERROR_NAME, Constant.DEFAULT_UNKNOWN_ERROR_CODE)
         self.logger.error(exception, exc_info=True)
 
         self._store_data([

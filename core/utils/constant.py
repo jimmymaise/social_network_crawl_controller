@@ -26,6 +26,4 @@ class Constant:
     AM_API_GET_CRAWL_ACCOUNT_PATH = 'request'
     AM_API_UPDATE_CRAWL_ACCOUNT_PATH = 'account_update'
 
-
-
-
+    DEFAULT_UNKNOWN_ERROR_CODE = 'error_unknown'
