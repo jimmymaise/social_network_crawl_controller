@@ -16,6 +16,8 @@ class Constant:
     COLLECTION_NAME_REPORT = 'reports'
     COLLECTION_NAME_KOL = 'kols'
     COLLECTION_NAME_USER = 'users'
+    COLLECTION_NAME_PAGE = 'pages'
+
     COLLECTION_NAME_MEDIA = 'medias'
     COLLECTION_NAME_POST = 'posts'
     COLLECTION_SERVICE_ERROR_NAME = 'collection_service_error_name'

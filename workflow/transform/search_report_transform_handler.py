@@ -4,6 +4,7 @@ from core.utils.common import Common
 from core.utils.constant import Constant
 from core.utils.exceptions import ErrorStoreFormat
 from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
+from workflow.transform.collected_object_schemas.collected_page_schema import PageObjectSchema
 from workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
 from workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
 from workflow.transform.stored_object.stored_object_builder import StoredObjectBuilder
@@ -17,7 +18,6 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []
-        _, collected_user_schema_error = self._validate_schema(data=collected_data['user'], schema=UserObjectSchema)
         _, collected_post_schema_error = self._validate_schema(data=collected_data['post'], schema=PostObjectSchema)
 
         if collected_post_schema_error:
@@ -35,17 +35,24 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
             collection_name=Constant.COLLECTION_NAME_MEDIA,
             updated_object_list=self._build_media_updated_objects(collected_data))
         )
-
-        if not collected_user_schema_error:
-            transformed_data.append(self._make_transformed_item(
-                collection_name=Constant.COLLECTION_NAME_KOL,
-                updated_object_list=[self._build_kol_updated_object(collected_data)])
-            )
-            transformed_data.append(self._make_transformed_item(
-                collection_name=Constant.COLLECTION_NAME_USER,
-                updated_object_list=[self._build_user_updated_object(collected_data)])
-            )
-
+        if collected_data.get('user'):
+            _, collected_user_schema_error = self._validate_schema(data=collected_data['user'], schema=UserObjectSchema)
+            if not collected_user_schema_error:
+                transformed_data.append(self._make_transformed_item(
+                    collection_name=Constant.COLLECTION_NAME_KOL,
+                    updated_object_list=[self._build_kol_updated_object(collected_data)])
+                )
+                transformed_data.append(self._make_transformed_item(
+                    collection_name=Constant.COLLECTION_NAME_USER,
+                    updated_object_list=[self._build_user_updated_object(collected_data)])
+                )
+        if collected_data.get('page'):
+            _, collected_page_schema_error = self._validate_schema(data=collected_data['page'], schema=PageObjectSchema)
+            if not collected_page_schema_error:
+                transformed_data.append(self._make_transformed_item(
+                    collection_name=Constant.COLLECTION_NAME_PAGE,
+                    updated_object_list=[self._build_page_updated_object(collected_data)])
+                )
         return transformed_data
 
     def _build_post_updated_object(self, collected_data):
@@ -64,6 +71,20 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         )
 
         return post_updated_object
+
+    def _build_page_updated_object(self, collected_data):
+        page_stored_object_builder = StoredObjectBuilder()
+        page_stored_object_builder.set_get_all_fields_from_collected_object('collected_page',
+                                                                            excluded_fields='avatar')
+
+        page_stored_object = page_stored_object_builder.build(collected_page=collected_data['page'])
+
+        page_updated_object = self._make_updated_object(
+            filter_={'_id': page_stored_object['_id']},
+            stored_object=page_stored_object,
+            upsert=False
+        )
+        return page_updated_object
 
     def _build_user_updated_object(self, collected_data):
         user_stored_object_builder = StoredObjectBuilder()
@@ -104,7 +125,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
             upsert=True
 
         ))
-        if not collected_data['user'].get('avatar'):
+        if not collected_data.get('user', {}).get('avatar'):
             return media_stored_object
 
         media_stored_object_builder_by_user = StoredObjectBuilder()
@@ -131,14 +152,20 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         report_builder.add_mapping('collected_post',
                                    {'_id': 'post_id'})
         report_builder.add_mapping('collected_user',
-                                   {'username': 'username'})
+                                   {'username': 'username',
+                                    '_id': 'user_id'})
+        report_builder.add_mapping('collected_page',
+                                   {'username': 'username',
+                                    '_id': 'page_id'})
 
         report_builder.set_get_all_fields_from_collected_object('report_statuses', None)
 
         report_stored_object = report_builder.build(
             report_statuses=report_statuses,
             collected_post=collected_data['post'],
-            collected_user=collected_data['user']
+            collected_user=collected_data.get('user'),
+            collected_page=collected_data.get('page')
+
         )
         report_stored_object['_id'] = loaded_item['_id']
         report_stored_object[f'history_report.{today_date}'] = self._build_history_report_object(collected_data)

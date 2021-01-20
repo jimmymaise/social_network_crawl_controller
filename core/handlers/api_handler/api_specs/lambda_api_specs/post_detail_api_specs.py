@@ -27,8 +27,18 @@ class BaseUserSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
+    _id = fields.Int()
     username = fields.Str()
-    user_id = fields.Int()
+    avatar = fields.Str()
+
+
+class BasePageSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    _id = fields.Int()
+    app_id = fields.Int()
+    username = fields.Str()
     avatar = fields.Str()
 
 
@@ -36,6 +46,7 @@ class BasePostSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
+    _id = fields.Int()
     content = fields.Str()
     full_picture = fields.Str()
     num_reaction = fields.Int()
@@ -59,7 +70,9 @@ class PostDetailAPIResponseSchema(Schema):
         unknown = EXCLUDE
 
     user = fields.Nested(BaseUserSchema)
-    post = fields.Nested(BasePostSchema)
+    page = fields.Nested(BasePageSchema)
+
+    post = fields.Nested(BasePostSchema, required=True)
 
 
 class PostDetailAPIRequestSchema(Schema):
