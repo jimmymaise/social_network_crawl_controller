@@ -13,6 +13,9 @@ class AccountUpdateSpecs(BaseAPISpecs):
                          request_schema=AccountUpdateAPIRequestSchema,
                          response_data_schema=AccountUpdateAPIResponseSchema)
 
+    def set_headers(self, **kwargs):
+        raise NotImplementedError()
+
     def set_body(self, social_network, account_id, status_code, message=None):
         _body = {
             "api_type": "UPDATE_STATUS",

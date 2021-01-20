@@ -17,5 +17,6 @@ class BaseAPISpecs:
     def set_body(self, **kwargs):
         pass
 
+    @abstractmethod
     def set_headers(self, **kwargs):
         pass

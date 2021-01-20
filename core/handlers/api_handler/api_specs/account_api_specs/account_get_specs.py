@@ -1,9 +1,7 @@
-from abc import ABC
-from core.utils.constant import Constant
-
 from marshmallow import Schema, EXCLUDE, fields
 
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.utils.constant import Constant
 
 
 class AccountGetSpecs(BaseAPISpecs):
@@ -14,6 +12,9 @@ class AccountGetSpecs(BaseAPISpecs):
                          body={},
                          request_schema=AccountGetAPIRequestSchema,
                          response_data_schema=AccountGetAPIResponseSchema)
+
+    def set_headers(self, **kwargs):
+        raise NotImplementedError()
 
     def set_body(self, social_network, service, country=None):
         _body = {
