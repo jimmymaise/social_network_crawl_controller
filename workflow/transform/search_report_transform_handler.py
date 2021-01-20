@@ -21,7 +21,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         _, collected_post_schema_error = self._validate_schema(data=collected_data['post'], schema=PostObjectSchema)
 
         if collected_post_schema_error:
-            raise ErrorStoreFormat
+            raise ErrorStoreFormat(f'Schema error {str(collected_post_schema_error)}')
 
         transformed_data.append(self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_POST,

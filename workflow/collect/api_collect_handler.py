@@ -16,7 +16,7 @@ class APICollectHandler(BaseCollectHandler):
                                          social_type=Constant.SOCIAL_TYPE_PROFILE) -> dict:
 
         if not APICollectUtils.is_validate_post_link_format(post_link):
-            raise ErrorLinkFormat(post_link)
+            raise ErrorLinkFormat(f'Post Link Error:{post_link}')
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
@@ -30,8 +30,8 @@ class APICollectHandler(BaseCollectHandler):
         )
 
         if not success:
-            raise ErrorResponseFailed()
+            raise ErrorResponseFailed(f'API Response: {response.text}')
         if schema_errors:
-            raise ErrorResponseFormat()
+            raise ErrorResponseFormat(f'API Response Schema error: {schema_errors}')
 
         return response.json()[post_detail_api_request_data.response_data_key]

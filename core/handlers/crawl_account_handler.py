@@ -29,6 +29,7 @@ class CrawlAccountHandler:
             account_data = response.json().get('data')
             account_info = account_data['info']
             account_id = account_data['accountId']
+        self.logger.warning(f'Cannot get account from account manager. Response {response.text}')
         return account_info, account_id
 
     def update_account_token(self, account_id, status_code, message):
