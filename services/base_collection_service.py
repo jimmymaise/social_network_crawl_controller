@@ -39,7 +39,7 @@ class CollectionService:
 
     def _create_db_connection_by_system_config(self):
         self.mongodb_credential = {
-            'db_username': SystemConfig.MONGO_DB_HOST,
+            'db_username': SystemConfig.MONGO_DB_USERNAME,
             'db_name': SystemConfig.MONGO_DB_DATABASE_NAME,
             'db_password': SystemConfig.MONGO_DB_PASSWORD,
             'db_host': SystemConfig.MONGO_DB_HOST,
