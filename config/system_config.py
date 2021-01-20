@@ -14,6 +14,6 @@ class SystemConfig:
                                      'https://0t17hgh9td.execute-api.us-west-2.amazonaws.com/prod')
     LAMBDA_X_API_KEY_POST_DETAIL = os.getenv('LAMBDA_X_API_KEY_POST_DETAIL', 'VNbGgsRzyF9NORS1HCAPt4d2TJsdNBFbrp4iUpM7')
 
-    SLACK_NOTIFICATION_URL = os.environ.get('SLACK_NOTIFICATION_URL',
-                                            'https://hooks.slack.com/services/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')
+    SLACK_NOTIFICATION_URL = os.environ. \
+        get('SLACK_NOTIFICATION_URL', 'https://hooks.slack.com/services/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')
     SERVICE_SLEEP_INTERVAL = os.environ.get('PROCESS_SLEEP_INTERVAL', 5)

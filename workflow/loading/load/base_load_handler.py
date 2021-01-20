@@ -14,7 +14,7 @@ class BaseLoadHandler(object, metaclass=ABCMeta):
         self.queries.append(query)
 
     def _get_items_from_query(self, query: Query):
-        return self.db_handler.get_many_by_filter_and_sort(
+        return self.db_handler.get_many_by_filter(
             filter_=query.filter_,
             sort_=query.sort_,
             limit=query.limit,

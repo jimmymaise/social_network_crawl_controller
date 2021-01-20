@@ -27,3 +27,7 @@ class Constant:
     AM_API_UPDATE_CRAWL_ACCOUNT_PATH = 'account_update'
 
     DEFAULT_UNKNOWN_ERROR_CODE = 'error_unknown'
+
+    MONGODB_FIND_TYPE_FIND_ONE = 'find_one'
+    MONGODB_FIND_TYPE_FIND_MANY = 'find'
+

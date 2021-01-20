@@ -4,6 +4,8 @@ import urllib.parse
 from pymongo import MongoClient
 from pymongo import UpdateOne, DeleteOne
 
+from core.utils.constant import Constant
+
 
 # Import config
 
@@ -22,7 +24,6 @@ class DBConnection(object):
 
 
 class BaseDBHandler(object):
-    # ********** Constructor **********
     def __init__(self, connection: DBConnection):
         self.client = connection.client
         self.database = connection.db
@@ -30,51 +31,60 @@ class BaseDBHandler(object):
 
     def get_one_by_filter(self,
                           filter_,
-                          selected_fields=None):
-        if selected_fields is None:
-            result = self.collection.find_one(filter_)
-        else:
-            selected_fieldsdict = self._create_fields_dict(selected_fields)
-            result = self.collection.find_one(filter_, selected_fieldsdict)
-        return result
+                          sort_,
+                          limit=None,
+                          selected_fields=None,
+                          must_have_fields=None,
+                          not_have_fields=None):
+
+        return self._get_one_or_many_by_filter(filter_=filter_, sort_=sort_, limit=limit,
+                                               selected_fields=selected_fields,
+                                               must_have_fields=must_have_fields,
+                                               not_have_fields=not_have_fields,
+                                               find_type=Constant.MONGODB_FIND_TYPE_FIND_ONE,
+                                               )
 
     def get_many_by_filter(self,
                            filter_,
+                           sort_=None,
+                           limit=None,
                            selected_fields=None,
                            must_have_fields=None,
                            not_have_fields=None):
-        if must_have_fields:
-            for must_have_field in must_have_fields:
-                filter_[must_have_field] = {'$exists': True}
-        if not_have_fields:
-            for not_have_field in not_have_fields:
-                filter_[not_have_field] = {'$exists': False}
-        if selected_fields is None:
-            result = self.collection.find(filter_)
-        else:
-            selected_fields_dict = self._create_fields_dict(selected_fields)
-            result = self.collection.find(filter_, selected_fields_dict)
-        return result
 
-    def get_many_by_filter_and_sort(self,
-                                    filter_,
-                                    sort_,
-                                    limit=None,
-                                    selected_fields=None,
-                                    must_have_fields=None,
-                                    not_have_fields=None):
-        if must_have_fields:
-            for must_have_field in must_have_fields:
-                filter_[must_have_field] = {'$exists': True}
-        if not_have_fields:
-            for not_have_field in not_have_fields:
-                filter_[not_have_field] = {'$exists': False}
-        if selected_fields is None:
-            result = self.collection.find(filter_)
-        else:
-            selected_fields_dict = self._create_fields_dict(selected_fields)
-            result = self.collection.find(filter_, selected_fields_dict).sort(sort_)
-        return result
+        return self._get_one_or_many_by_filter(filter_=filter_, sort_=sort_, limit=limit,
+                                               selected_fields=selected_fields,
+                                               must_have_fields=must_have_fields,
+                                               not_have_fields=not_have_fields,
+                                               find_type=Constant.MONGODB_FIND_TYPE_FIND_MANY,
+                                               )
+
+    def _get_one_or_many_by_filter(self,
+                                   find_type,
+                                   **get_by_filter_kwargs
+                                   ):
+        filter_ = get_by_filter_kwargs['filter_']
+        must_have_fields = get_by_filter_kwargs.get('must_have_fields')
+        not_have_fields = get_by_filter_kwargs.get('not_have_fields')
+        selected_fields = get_by_filter_kwargs.get('selected_fields')
+        sort_ = get_by_filter_kwargs.get('sort_')
+        limit = get_by_filter_kwargs.get('limit')
+
+        for must_have_field in (must_have_fields or []):
+            filter_[must_have_field] = {'$exists': True}
+
+        for not_have_field in (not_have_fields or []):
+            filter_[not_have_field] = {'$exists': False}
+
+        selected_fields_dict = self._create_fields_dict(selected_fields) if selected_fields else None
+        collection_find = getattr(self.collection, find_type)(filter_, selected_fields_dict)
+
+        if find_type == Constant.MONGODB_FIND_TYPE_FIND_ONE:
+            return collection_find
+
+        if sort_:
+            collection_find = collection_find.sort(sort_)
+        return collection_find.limit(limit or 0)
 
     def insert_one(self,
                    one_info):
@@ -200,10 +210,10 @@ class BaseDBHandler(object):
 
     @staticmethod
     def _create_fields_dict(selected_fields):
-        selected_fieldsdict = {}
-        for _selected_field in selected_fields:
-            selected_fieldsdict[_selected_field] = 1
-        return selected_fieldsdict
+        selected_fields_dict = {}
+        for selected_field in selected_fields:
+            selected_fields_dict[selected_field] = 1
+        return selected_fields_dict
 
     def count_by_filter(self,
                         filter_):
