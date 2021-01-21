@@ -115,30 +115,36 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
 
     def _build_media_updated_objects(self, collected_data) -> list:
         media_updated_objects = []
-        media_stored_object_builder_by_post = StoredObjectBuilder()
-        media_stored_object_builder_by_post.add_mapping('collected_post', {'full_picture': 'link'})
-        media_stored_object = media_stored_object_builder_by_post.build(collected_post=collected_data['post'])
-        media_stored_object['_id'] = Common.hash_url(media_stored_object['link'])
-        media_updated_objects.append(self._make_updated_object(
-            filter_={'_id': media_stored_object['_id']},
-            stored_object=media_stored_object,
-            upsert=True
 
-        ))
-        if not collected_data.get('user', {}).get('avatar'):
-            return media_stored_object
+        if collected_data.get('post', {}).get('full_picture'):
+            media_updated_objects.append(
+                self._build_media_updated_object(item_having_media=collected_data['post'],
+                                                 mapping={'full_picture': 'link'}))
 
-        media_stored_object_builder_by_user = StoredObjectBuilder()
-        media_stored_object_builder_by_user.add_mapping('collected_user', {'avatar': 'link'})
-        media_stored_object = media_stored_object_builder_by_user.build(collected_user=collected_data['user'])
-        media_stored_object['_id'] = Common.hash_url(media_stored_object['link'])
-        media_updated_objects.append(self._make_updated_object(
-            filter_={'_id': media_stored_object['_id']},
-            stored_object=media_stored_object,
-            upsert=True
-        ))
+        if collected_data.get('user', {}).get('avatar'):
+            media_updated_objects.append(
+                self._build_media_updated_object(item_having_media=collected_data['user'],
+                                                 mapping={'avatar': 'link'}))
+
+        if collected_data.get('page', {}).get('avatar'):
+            media_updated_objects.append(
+                self._build_media_updated_object(item_having_media=collected_data['page'],
+                                                 mapping={'avatar': 'link'}))
 
         return media_updated_objects
+
+    def _build_media_updated_object(self, item_having_media, mapping):
+
+        media_stored_object_builder = StoredObjectBuilder()
+        media_stored_object_builder.add_mapping('item', mapping)
+        media_stored_object = media_stored_object_builder.build(item=item_having_media)
+        media_stored_object['_id'] = Common.hash_url(media_stored_object['link'])
+        return self._make_updated_object(
+            filter_={'_id': media_stored_object['_id']},
+            stored_object=media_stored_object,
+            upsert=True
+
+        )
 
     def _build_report_updated_object(self, collected_data, loaded_item):
         today_date = self.now.strftime("%Y-%m-%d")
