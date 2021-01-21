@@ -1,5 +1,6 @@
 import re
 
+from core.utils.constant import Constant
 from workflow.collect.utils.constant import APICollectConstant
 
 
@@ -14,14 +15,12 @@ class APICollectUtils:
 
     @classmethod
     def _post_link_valid_patterns(cls):
-        only_num_pattern = '[a-z0-9]+'
-        fb_username_pattern = '[a-z0-9\.\-\_]+'
 
         param_patterns = {
-            'user_name': fb_username_pattern,
-            'user_id': only_num_pattern,
-            'post_id': only_num_pattern,
-            'album_id': only_num_pattern,
+            'user_name': Constant.REGEX_PATTERN_FB_USERNAME,
+            'user_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
+            'post_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
+            'album_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
         }
         post_link_template_dict = APICollectConstant.POST_LINK_VALID_TEMPLATE_DICT
 

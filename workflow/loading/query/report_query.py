@@ -6,7 +6,6 @@ class ReportQuery:
     @staticmethod
     def get_reports_for_search_report_service(service_config: dict):
         filter_ = {
-            'social_type': Constant.SOCIAL_TYPE_PROFILE,
             'country_code': {'$in': service_config.get('MARKET')},
             f'{service_config["service_name"]}_status.status': {'$nin': ['success']},
         }

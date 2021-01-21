@@ -33,3 +33,7 @@ class Constant:
     MONGODB_FIND_TYPE_FIND_ONE = 'find_one'
     MONGODB_FIND_TYPE_FIND_MANY = 'find'
 
+    REGEX_PATTERN_ONLY_NUMBER = '[0-9]+'
+    REGEX_PATTERN_FB_USERNAME = '[a-z0-9\.\-\_]+'
+
+
