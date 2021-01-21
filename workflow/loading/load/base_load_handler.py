@@ -1,5 +1,6 @@
 from abc import ABCMeta
 
+from core.logger.logger_handler import Logger
 from workflow.loading.query.base_query import Query
 
 
@@ -9,6 +10,7 @@ class BaseLoadHandler(object, metaclass=ABCMeta):
         self.items = []
         self.queries = []
         self.db_handler = db_handler
+        self.logger = Logger.get_logger()
 
     def add_query(self, query: Query):
         self.queries.append(query)
