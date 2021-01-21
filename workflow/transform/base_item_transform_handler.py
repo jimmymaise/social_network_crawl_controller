@@ -1,10 +1,12 @@
 from abc import abstractmethod
 
+from core.logger.logger_handler import Logger
+
 
 class BaseItemTransformHandler(object):
     @abstractmethod
     def __init__(self):
-        pass
+        self.logger = Logger.get_logger()
 
     @abstractmethod
     def process_item(self, loaded_item, collected_data):

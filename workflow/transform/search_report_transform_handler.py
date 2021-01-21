@@ -46,6 +46,8 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
                     collection_name=Constant.COLLECTION_NAME_USER,
                     updated_object_list=[self._build_user_updated_object(collected_data)])
                 )
+            else:
+                self.logger.warning(f'User transform schema error {collected_user_schema_error}')
         if collected_data.get('page'):
             _, collected_page_schema_error = self._validate_schema(data=collected_data['page'], schema=PageObjectSchema)
             if not collected_page_schema_error:
@@ -53,6 +55,8 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
                     collection_name=Constant.COLLECTION_NAME_PAGE,
                     updated_object_list=[self._build_page_updated_object(collected_data)])
                 )
+            else:
+                self.logger.warning(f'Page transform schema error {collected_page_schema_error}')
         return transformed_data
 
     def _build_post_updated_object(self, collected_data):
@@ -60,9 +64,11 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         post_stored_object_builder.set_get_all_fields_from_collected_object('collected_post',
                                                                             excluded_fields='full_picture')
         post_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id'})
+        post_stored_object_builder.add_mapping('collected_page', {'app_id': 'page_id'})
 
         post_stored_object = post_stored_object_builder.build(collected_post=collected_data['post'],
-                                                              collected_user=collected_data['user'])
+                                                              collected_page=collected_data.get('page'),
+                                                              collected_user=collected_data.get('user'))
 
         post_updated_object = self._make_updated_object(
             filter_={'_id': post_stored_object['_id']},
@@ -80,7 +86,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         page_stored_object = page_stored_object_builder.build(collected_page=collected_data['page'])
 
         page_updated_object = self._make_updated_object(
-            filter_={'_id': page_stored_object['_id']},
+            filter_={'app_id': page_stored_object['app_id']},
             stored_object=page_stored_object,
             upsert=False
         )
@@ -103,8 +109,11 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
     def _build_kol_updated_object(self, collected_data):
         kol_stored_object_builder = StoredObjectBuilder()
         kol_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id', 'username': 'username'})
+        kol_stored_object_builder.add_mapping('collected_page', {'app_id': 'app_id', 'username': 'username'})
 
-        kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data['user'])
+        kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data.get('user'),
+                                                            collected_page=collected_data.get('page')
+                                                            )
         kol_updated_object = self._make_updated_object(
             filter_={'username': kol_stored_object['username']},
             stored_object=kol_stored_object,
