@@ -75,7 +75,10 @@ class CollectionService:
                 collected_data = self._collect_data(loaded_item)
                 transformed_data = self._transform_data(loaded_item, collected_data)
                 self._store_data(transformed_data)
+                self.logger.info(f'Load Item Id {loaded_item["_id"]} successful!')
+
             except Exception as e:
+                self.logger.error(f'Load Item Id {loaded_item["_id"]}, Error: {e}')
                 self._update_failed_status(load_id=loaded_item['_id'], exception=e)
 
     def start(self):
