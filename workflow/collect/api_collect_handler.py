@@ -35,3 +35,7 @@ class APICollectHandler(BaseCollectHandler):
             raise ErrorResponseFormat(f'API Response Schema error: {schema_errors}')
 
         return response.json()[post_detail_api_request_data.response_data_key]
+
+    def get_comment_from_lambdas(self, lambda_base_url, post_link, api_key,
+                                 social_type=Constant.SOCIAL_TYPE_PROFILE):
+        pass
