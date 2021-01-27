@@ -29,8 +29,6 @@ class CollectionService:
                                                          'exception_detail': str(exception),
                                                          'latest_updated_time': int(time.time())
                                                          },
-                         'response_server.is_update_report': True,
-                         'response_server.num_update': 0,
                      }
                  }
              ]
