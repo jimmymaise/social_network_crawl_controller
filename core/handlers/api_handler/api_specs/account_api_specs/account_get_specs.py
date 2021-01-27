@@ -11,7 +11,7 @@ class AccountGetSpecs(BaseAPISpecs):
                          headers={},
                          body={},
                          request_schema=AccountGetAPIRequestSchema,
-                         response_data_schema=AccountGetAPIResponseSchema)
+                         response_schema=AccountGetAPIResponseSchema)
 
     def set_headers(self, **kwargs):
         raise NotImplementedError()
@@ -28,7 +28,7 @@ class AccountGetSpecs(BaseAPISpecs):
         self.body = _body
 
 
-class AccountGetAPIResponseSchema(Schema):
+class AccountGetAPIResponseDataItemSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
@@ -36,6 +36,13 @@ class AccountGetAPIResponseSchema(Schema):
     info = fields.Str()
     type = fields.Str()
     username = fields.Str()
+
+
+class AccountIGetAPIResponseSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    data = fields.Nested(AccountGetAPIResponseDataItemSchema)
 
 
 class AccountGetAPIRequestSchema(Schema):

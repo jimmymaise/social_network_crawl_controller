@@ -11,7 +11,7 @@ class AccountUpdateSpecs(BaseAPISpecs):
                          headers={},
                          body={},
                          request_schema=AccountUpdateAPIRequestSchema,
-                         response_data_schema=AccountUpdateAPIResponseSchema)
+                         response_schema=AccountUpdateAPIResponseSchema)
 
     def set_headers(self, **kwargs):
         raise NotImplementedError()

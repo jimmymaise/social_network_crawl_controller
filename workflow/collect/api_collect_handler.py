@@ -34,8 +34,9 @@ class APICollectHandler(BaseCollectHandler):
         if schema_errors:
             raise ErrorResponseFormat(f'API Response Schema error: {schema_errors}')
 
-        return response.json()[post_detail_api_request_data.response_data_key]
+        return response.json()
 
-    def get_comment_from_lambdas(self, lambda_base_url, post_link, api_key,
-                                 social_type=Constant.SOCIAL_TYPE_PROFILE):
-        pass
+    def get_comments_from_lambda(self, post_app_id, cursor, api_key,
+                                 social_type=Constant.SOCIAL_TYPE_PROFILE, ):
+
+        account_info, account_id = self.crawl_account_handler.get_account_id_token()

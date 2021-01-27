@@ -43,10 +43,10 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
             raise ErrorAPIServerConnection(f'Error {str(e)}')
         return response
 
-    def _validate_response_data_schema(self, response_body, response_data_schema, response_data_key=None):
-        response_data = response_body.get(response_data_key) if response_data_key else response_body
-        response_data, errors = self._validate_schema(response_data, response_data_schema)
-        return response_data, errors
+    def _validate_response_schema(self, response_body, response_schema):
+
+        _, errors = self._validate_schema(response_body, response_schema)
+        return response_body, errors
 
     def call_api(self, request_data: BaseAPISpecs, max_attempts: int = 1, retry_time_sleep: int = 3):
         _, request_schema_errors = self._validate_schema(request_data.body, request_data.request_schema)
@@ -69,8 +69,7 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
 
         self._handle_success_request(response)
         response_body = response.json()
-        data, response_schema_errors = self._validate_response_data_schema(response_body=response_body,
-                                                                           response_data_schema=request_data.response_data_schema,
-                                                                           response_data_key=request_data.response_data_key
-                                                                           )
+        data, response_schema_errors = self._validate_response_schema(response_body=response_body,
+                                                                      response_schema=request_data.response_schema,
+                                                                      )
         return response, success, response_schema_errors

@@ -11,7 +11,7 @@ class PostCommentAPISpecs(BaseAPISpecs):
                          headers={},
                          body={},
                          request_schema=PostCommentAPIRequestSchema,
-                         response_data_schema=PostCommentAPIResponseSchema)
+                         response_schema=PostCommentAPIResponseSchema)
 
     def set_body(self, post_link: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
         self.body = {'link': post_link,
@@ -23,56 +23,29 @@ class PostCommentAPISpecs(BaseAPISpecs):
         self.headers = {'X-API-KEY': api_key}
 
 
-class BaseUserSchema(Schema):
+class PostCommentAPIResponseDataItemSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    _id = fields.Int()
-    username = fields.Str()
-    avatar = fields.Str()
+    comment = fields.Dict(required=True)
+    page = fields.Dict()
+    user = fields.Dict()
 
 
-class BasePageSchema(Schema):
+class PostCommentAPIResponsePagingItemSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    _id = fields.Int()
-    app_id = fields.Int()
-    username = fields.Str()
-    avatar = fields.Str()
-
-
-class BasePostSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    _id = fields.Int()
-    content = fields.Str()
-    full_picture = fields.Str()
-    num_reaction = fields.Int()
-    num_comment = fields.Int()
-    num_share = fields.Int()
-    view_count = fields.Int()
-    feedback_id = fields.Str()
-
-
-class BaseStatusSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    status_code = fields.Int()
-    cookie_status = fields.Int()
-    details = fields.Str()
+    has_next_page = fields.Bool(required=True)
+    next_cursor = fields.Str(required=True, allow_none=True)
 
 
 class PostCommentAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    user = fields.Nested(BaseUserSchema)
-    page = fields.Nested(BasePageSchema)
-
-    post = fields.Nested(BasePostSchema, required=True)
+    data = fields.List(PostCommentAPIResponseDataItemSchema)
+    paging = fields.Dict()
 
 
 class PostCommentAPIRequestSchema(Schema):

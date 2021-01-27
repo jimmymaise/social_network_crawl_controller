@@ -11,7 +11,7 @@ class PostDetailAPISpecs(BaseAPISpecs):
                          headers={},
                          body={},
                          request_schema=PostDetailAPIRequestSchema,
-                         response_data_schema=PostDetailAPIResponseSchema)
+                         response_schema=PostDetailAPIResponseSchema)
 
     def set_body(self, post_link: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
         self.body = {'link': post_link,
@@ -65,14 +65,20 @@ class BaseStatusSchema(Schema):
     details = fields.Str()
 
 
-class PostDetailAPIResponseSchema(Schema):
+class PostDetailAPIResponseDataItemSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
     user = fields.Nested(BaseUserSchema)
     page = fields.Nested(BasePageSchema)
-
     post = fields.Nested(BasePostSchema, required=True)
+
+
+class PostDetailAPIResponseSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    data = fields.Nested(PostDetailAPIResponseDataItemSchema)
 
 
 class PostDetailAPIRequestSchema(Schema):
