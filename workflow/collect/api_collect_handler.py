@@ -42,13 +42,13 @@ class APICollectHandler(BaseCollectHandler):
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
-        post_detail_api_request_data = PostCommentAPISpecs()
-        post_detail_api_request_data.set_body(post_app_id=post_app_id, account_info=account_info,
-                                              social_type=social_type, cursor=cursor)
-        post_detail_api_request_data.set_headers(api_key)
+        post_comment_api_request_data = PostCommentAPISpecs()
+        post_comment_api_request_data.set_body(post_app_id=post_app_id, account_info=account_info,
+                                               social_type=social_type, cursor=cursor)
+        post_comment_api_request_data.set_headers(api_key)
 
         response, success, schema_errors = lambda_api_handler.call_api(
-            request_data=post_detail_api_request_data
+            request_data=post_comment_api_request_data
         )
 
         if not success:

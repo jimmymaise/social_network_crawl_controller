@@ -34,13 +34,13 @@ class CommentReportService(CollectionService):
         next_cursor = None
 
         while has_next_page is True:
-            response = collect_handler.get_comments_from_lambda(
+            response_body = collect_handler.get_comments_from_lambda(
                 lambda_base_url=self.system_config.LAMBDA_BASE_URL,
                 post_app_id=loaded_item['post_app_id'],
                 api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
                 cursor=next_cursor,
                 social_type=loaded_item.get('social_type', Constant.SOCIAL_TYPE_PROFILE))
-            response_body = response.json()
+
             has_next_page = response_body['paging']['has_next_page']
             next_cursor = response_body['paging']['next_cursor']
             for item in response_body['data']:

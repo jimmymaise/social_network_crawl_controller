@@ -45,8 +45,8 @@ class PostCommentAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    data = fields.List(PostCommentAPIResponseDataItemSchema)
-    paging = fields.Dict()
+    data = fields.List(fields.Nested(PostCommentAPIResponseDataItemSchema),required=True)
+    paging = fields.Dict(required=True)
 
 
 class PostCommentAPIRequestSchema(Schema):
@@ -55,5 +55,5 @@ class PostCommentAPIRequestSchema(Schema):
 
     post_app_id = fields.Str()
     social_type = fields.Str()
-    account_info = fields.Dict()
-    cursor = fields.Str()
+    account_info = fields.Dict(allow_none=True)
+    cursor = fields.Str(allow_none=True)

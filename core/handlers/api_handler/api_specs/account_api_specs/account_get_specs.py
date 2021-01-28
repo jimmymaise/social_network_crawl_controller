@@ -38,7 +38,7 @@ class AccountGetAPIResponseDataItemSchema(Schema):
     username = fields.Str()
 
 
-class AccountIGetAPIResponseSchema(Schema):
+class AccountGetAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 

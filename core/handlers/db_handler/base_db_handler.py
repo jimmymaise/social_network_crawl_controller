@@ -224,6 +224,7 @@ class BaseDBHandler(object):
     def bulk_write_many_update_objects(self, update_objects):
         if not update_objects:
             return
+
         requests = [UpdateOne(filter=update_object['filter'],
                               update={update_object.get('operator', '$set'): update_object['update']},
                               upsert=update_object.get('upsert', True),

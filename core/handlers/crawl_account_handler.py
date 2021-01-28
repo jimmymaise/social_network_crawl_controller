@@ -1,4 +1,4 @@
-import logging
+from core.logger.logger_handler import Logger
 
 from core.handlers.api_handler.account_api_handler import AccountAPIRequestHandler
 from core.handlers.api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
@@ -16,7 +16,7 @@ class CrawlAccountHandler:
         self.account_api = AccountAPIRequestHandler(account_base_url)
         self.account_spec = AccountGetSpecs()
         self.account_spec.set_body(self.social_network, self.service_name, self.country)
-        self.logger = logging.getLogger()
+        self.logger = Logger.get_logger()
 
     def get_account_id_token(self):
         response, success, schema_errors = self.account_api.call_api(
@@ -25,7 +25,7 @@ class CrawlAccountHandler:
             retry_time_sleep=Constant.AM_DEFAULT_SLEEP_TIME
         )
         account_info, account_id = None, None
-        if success and not schema_errors:
+        if success and not schema_errors and response.json().get('data'):
             account_data = response.json().get('data')
             account_info = account_data['info']
             account_id = account_data['accountId']

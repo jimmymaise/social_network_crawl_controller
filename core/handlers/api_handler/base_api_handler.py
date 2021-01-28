@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 import requests
 
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.logger.logger_handler import Logger
 from core.utils import retry
 from core.utils.exceptions import ErrorRequestFormat, ErrorAPIServerConnection
 
@@ -10,6 +11,7 @@ from core.utils.exceptions import ErrorRequestFormat, ErrorAPIServerConnection
 class BaseApiRequestHandler(object, metaclass=ABCMeta):
     def __init__(self, base_url):
         self.base_url = base_url
+        self.logger = Logger.get_logger()
 
     @abstractmethod
     def _handle_failed_request(self, response, request_data=None):
@@ -34,7 +36,8 @@ class BaseApiRequestHandler(object, metaclass=ABCMeta):
         return data, error
 
     def _process_request(self, request_data: BaseAPISpecs):
-        print(f'{self.base_url}/{request_data.path}')
+        self.logger.info(f'{self.base_url}/{request_data.path}')
+        self.logger.info(request_data.body)
         try:
             response = getattr(requests, request_data.method)(url=f'{self.base_url}/{request_data.path}',
                                                               headers=request_data.headers,

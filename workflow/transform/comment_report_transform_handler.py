@@ -24,39 +24,36 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             for item in collected_data_chunk:
                 comment_objects.append(self._build_comment_updated_object(item))
                 post_comment_objects.append(self._build_post_comment_updated_object(item))
-                user_objects.append(self._build_user_updated_object(item))
-                page_objects.append(self._build_page_updated_object(item))
 
                 if item.get('user'):
+                    user_objects.append(self._build_user_updated_object(item))
                     media_objects.append(self._build_media_updated_object(item['user'], mapping={'avatar': 'link'}))
+                if item.get('page'):
+                    page_objects.append(self._build_page_updated_object(item))
 
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_COMMENT,
-                updated_object_list=[self._build_comment_updated_object(comment_object) for comment_object in
-                                     comment_objects])
+                updated_object_list=comment_objects)
 
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_POST_COMMENT,
-                updated_object_list=[self._build_comment_updated_object(post_comment_object) for post_comment_object in
-                                     post_comment_objects])
+                updated_object_list=post_comment_objects)
 
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_USER,
-                updated_object_list=[self._build_comment_updated_object(user_object) for user_object in user_objects])
+                updated_object_list=user_objects)
 
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_PAGE,
-                updated_object_list=[self._build_comment_updated_object(page_object) for page_object in page_objects])
+                updated_object_list=page_objects)
 
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_MEDIA,
-                updated_object_list=[self._build_comment_updated_object(media_object) for media_object in
-                                     media_objects])
+                updated_object_list=media_objects)
 
-        report_object = self._build_report_updated_object(loaded_item)
         yield self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_REPORT,
-            updated_object_list=[self._build_comment_updated_object(report_object)])
+            updated_object_list=[self._build_report_updated_object(loaded_item)])
 
     def _build_comment_updated_object(self, collected_item):
         comment_stored_object_builder = StoredObjectBuilder()
@@ -87,8 +84,8 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
 
         post_comment_stored_object = post_comment_stored_object_builder.build(
             collected_comment=collected_item['comment'],
-            page=collected_item.get('page'),
-            user=collected_item.get('user'),
+            collected_page=collected_item.get('page'),
+            collected_user=collected_item.get('user'),
         )
         post_comment_stored_object['_id'] = Common.md5_hash(f'{post_comment_stored_object["post_id"]}'
                                                             f'{post_comment_stored_object["comment_id"]}'
@@ -111,7 +108,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
             stored_object=user_stored_object,
-            upsert=False
+            upsert=True
         )
         return user_updated_object
 
@@ -132,12 +129,12 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
         page_stored_object_builder.set_get_all_fields_from_collected_object('collected_page',
                                                                             excluded_fields=None)
 
-        page_stored_object = page_stored_object_builder.build(collected_page=collected_item['page'])
+        page_stored_object = page_stored_object_builder.build(collected_page=collected_item.get('page'))
 
         page_updated_object = self._make_updated_object(
             filter_={'app_id': page_stored_object['app_id']},
             stored_object=page_stored_object,
-            upsert=False
+            upsert=True
         )
         return page_updated_object
 

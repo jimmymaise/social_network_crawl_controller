@@ -1,6 +1,6 @@
 {
   "SERVICES": {
-    "SEARCH_REPORT": {
+    "COMMENT_REPORT": {
       "MARKET": [
         "vi", "id"
       ],
@@ -10,7 +10,7 @@
       "LIKER_COLLECT_PERIOD": 172800,
       "POST_TIME_OFFSET": 86400,
       "NUM_REPORTS": 1,
-      "LOGGER_NAME": "SearchReport"
+      "LOGGER_NAME": "CommentReport"
     }
   }
 }
