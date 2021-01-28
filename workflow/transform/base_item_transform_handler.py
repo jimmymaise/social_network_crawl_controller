@@ -1,12 +1,15 @@
+import datetime
 from abc import abstractmethod
 
 from core.logger.logger_handler import Logger
 
 
-class BaseItemTransformHandler(object):
+class BaseItemTransformHandler:
     @abstractmethod
-    def __init__(self):
+    def __init__(self, service_name):
         self.logger = Logger.get_logger()
+        self.service_name = service_name
+        self.now = datetime.datetime.now()
 
     @abstractmethod
     def process_item(self, loaded_item, collected_data):
@@ -36,3 +39,14 @@ class BaseItemTransformHandler(object):
             'collection_name': collection_name,
             'items': updated_object_list
         }
+
+    def _build_report_statuses_object(self):
+
+        report_statuses_object = {
+            f'{self.service_name}_status': {'status': 'success',
+                                            'latest_updated_time': int(self.now.timestamp())
+                                            },
+            'response_server.is_update_report': True,
+            'response_server.num_update': 0,
+        }
+        return report_statuses_object

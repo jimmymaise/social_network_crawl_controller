@@ -13,10 +13,11 @@ class PostCommentAPISpecs(BaseAPISpecs):
                          request_schema=PostCommentAPIRequestSchema,
                          response_schema=PostCommentAPIResponseSchema)
 
-    def set_body(self, post_link: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
-        self.body = {'link': post_link,
+    def set_body(self, post_app_id: str, cursor: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
+        self.body = {'post_app_id': post_app_id,
                      'social_type': social_type,
-                     'account_info': account_info
+                     'account_info': account_info,
+                     'cursor': cursor
                      }
 
     def set_headers(self, api_key):

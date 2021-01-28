@@ -1,3 +1,4 @@
+from core.handlers.api_handler.api_specs.lambda_api_specs.post_comment_api_specs import PostCommentAPISpecs
 from core.handlers.api_handler.api_specs.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from core.handlers.api_handler.lambda_api_handler import LambdaApiRequestHandler
 from core.handlers.crawl_account_handler import CrawlAccountHandler
@@ -36,7 +37,23 @@ class APICollectHandler(BaseCollectHandler):
 
         return response.json()
 
-    def get_comments_from_lambda(self, post_app_id, cursor, api_key,
-                                 social_type=Constant.SOCIAL_TYPE_PROFILE, ):
+    def get_comments_from_lambda(self, lambda_base_url, post_app_id, cursor, api_key,
+                                 social_type=Constant.SOCIAL_TYPE_PROFILE):
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
+        post_detail_api_request_data = PostCommentAPISpecs()
+        post_detail_api_request_data.set_body(post_app_id=post_app_id, account_info=account_info,
+                                              social_type=social_type, cursor=cursor)
+        post_detail_api_request_data.set_headers(api_key)
+
+        response, success, schema_errors = lambda_api_handler.call_api(
+            request_data=post_detail_api_request_data
+        )
+
+        if not success:
+            raise ErrorResponseFailed(f'API Response: {response.text}')
+        if schema_errors:
+            raise ErrorResponseFormat(f'API Response Schema error: {schema_errors}')
+
+        return response.json()

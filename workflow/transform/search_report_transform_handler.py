@@ -12,9 +12,7 @@ from workflow.transform.stored_object.stored_object_builder import StoredObjectB
 
 class SearchReportTransformHandler(BaseItemTransformHandler):
     def __init__(self, service_name):
-        super().__init__()
-        self.service_name = service_name
-        self.now = datetime.now()
+        super().__init__(service_name)
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []
@@ -147,7 +145,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         media_stored_object_builder = StoredObjectBuilder()
         media_stored_object_builder.add_mapping('item', mapping)
         media_stored_object = media_stored_object_builder.build(item=item_having_media)
-        media_stored_object['_id'] = Common.hash_url(media_stored_object['link'])
+        media_stored_object['_id'] = Common.md5_hash(media_stored_object['link'])
         return self._make_updated_object(
             filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,
@@ -201,13 +199,4 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         today_report_history['taken_at_timestamp'] = int(self.now.timestamp())
         return today_report_history
 
-    def _build_report_statuses_object(self):
 
-        report_statuses_object = {
-            f'{self.service_name}_status': {'status': 'success',
-                                            'latest_updated_time': int(self.now.timestamp())
-                                            },
-            'response_server.is_update_report': False,
-            'response_server.last_time_update': 0,
-        }
-        return report_statuses_object

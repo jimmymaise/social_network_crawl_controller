@@ -6,7 +6,7 @@ from services.base_collection_service import CollectionService
 from workflow.collect.api_collect_handler import APICollectHandler
 from workflow.loading.load.report_load_handler import ReportLoadHandler
 from workflow.loading.query.report_query import ReportQuery
-from workflow.transform.search_report_transform_handler import SearchReportTransformHandler
+from workflow.transform.comment_report_transform_handler import CommentReportTransformHandler
 
 
 class CommentReportService(CollectionService):
@@ -30,15 +30,23 @@ class CommentReportService(CollectionService):
                                                     service_name=self.service_name,
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
-        collected_data = collect_handler.get_post_detail_data_from_lambda(
-            lambda_base_url=self.system_config.LAMBDA_BASE_URL,
-            post_link=loaded_item['post_link'],
-            api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
-            social_type=loaded_item.get('social_type', Constant.SOCIAL_TYPE_PROFILE))
+        has_next_page = True
+        next_cursor = None
 
-        return collected_data
+        while has_next_page is True:
+            response = collect_handler.get_comments_from_lambda(
+                lambda_base_url=self.system_config.LAMBDA_BASE_URL,
+                post_app_id=loaded_item['post_app_id'],
+                api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
+                cursor=next_cursor,
+                social_type=loaded_item.get('social_type', Constant.SOCIAL_TYPE_PROFILE))
+            response_body = response.json()
+            has_next_page = response_body['paging']['has_next_page']
+            next_cursor = response_body['paging']['next_cursor']
+            for item in response_body['data']:
+                yield item
 
     def _transform_data(self, loaded_items, collected_data):
-        search_report_transform = SearchReportTransformHandler(service_name=self.service_name)
-        transformed_data = search_report_transform.process_item(loaded_items, collected_data)
+        comment_report_transform = CommentReportTransformHandler(service_name=self.service_name)
+        transformed_data = comment_report_transform.process_item(loaded_items, collected_data)
         return transformed_data

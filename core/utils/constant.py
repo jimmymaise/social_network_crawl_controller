@@ -21,6 +21,10 @@ class Constant:
     COLLECTION_NAME_PAGE = 'pages'
 
     COLLECTION_NAME_MEDIA = 'medias'
+    COLLECTION_NAME_COMMENT = 'comments'
+    COLLECTION_NAME_POST_COMMENT = 'post_comments'
+
+
     COLLECTION_NAME_POST = 'posts'
     COLLECTION_SERVICE_ERROR_NAME = 'collection_service_error_name'
 

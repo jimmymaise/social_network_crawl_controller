@@ -11,9 +11,10 @@ class Common:
             retry_object.fn, last_result, sleep)
 
     @classmethod
-    def hash_url(cls,
-                 _str):
-        _str = _str.encode()
-        hash_object = base64.b64encode(hashlib.md5(_str).digest())
+    def md5_hash(cls, str_input):
+        if isinstance(str_input, str):
+            str_input = str_input.encode()
+
+        hash_object = base64.b64encode(hashlib.md5(str_input).digest())
         result = hash_object.decode()
         return result
