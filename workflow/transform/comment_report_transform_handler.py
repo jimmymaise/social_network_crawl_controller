@@ -17,7 +17,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
         super().__init__(service_name)
 
     def process_item(self, loaded_item, collected_data):
-        collected_data_chunks_iter = more_itertools.ichunked(collected_data, 50)
+        collected_data_chunks_iter = more_itertools.ichunked(collected_data, Constant.DEFAULT_TRANSFORM_ITEM_BATCH)
         for collected_data_chunk in collected_data_chunks_iter:
             comment_objects = []
             post_comment_objects = []
@@ -174,9 +174,8 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
         report_builder = StoredObjectBuilder()
         report_builder.set_get_all_fields_from_collected_object('report_statuses', None)
 
-        report_stored_object = report_builder.build(
-            report_statuses=self._build_report_statuses_object(),
-        )
+        report_stored_object = report_builder.build(report_statuses=self._build_report_statuses_object())
+        report_stored_object['comment_report_status.status'] = 'new'
         report_stored_object['_id'] = loaded_item['_id']
         report_updated_object = self._make_updated_object(
             filter_={'_id': loaded_item['_id']},
