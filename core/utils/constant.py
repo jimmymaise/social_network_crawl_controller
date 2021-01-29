@@ -3,7 +3,7 @@ class Constant:
     AM_DEFAULT_SLEEP_TIME = 3
 
     DEFAULT_MAXIMUM_DAYS_AFTER_TAKEN = 7
-    SERVICE_CONFIG_FILE_NAME = 'service_config_sample.json'
+    SERVICE_CONFIG_FOLDER_NAME = 'service_config_samples'
 
     TOP_LEVEL_SCOPE = '__main__'
     LOG_FORMAT = '%(asctime)s - %(name)s: [%(levelname)s]: %(message)s'

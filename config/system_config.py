@@ -11,7 +11,7 @@ class SystemConfig:
     MONGO_DB_PASSWORD = os.environ.get('MONGODB_PASS')
 
     LAMBDA_BASE_URL = os.environ.get('LAMBDA_BASE_URL',
-                                     'https://1bidkl51r1.execute-api.us-west-2.amazonaws.com/fb/')
+                                     'https://0t17hgh9td.execute-api.us-west-2.amazonaws.com/prod/')
     LAMBDA_X_API_KEY_POST_DETAIL = os.getenv('LAMBDA_X_API_KEY_POST_DETAIL', 'VNbGgsRzyF9NORS1HCAPt4d2TJsdNBFbrp4iUpM7')
 
     SLACK_NOTIFICATION_URL = os.environ. \
