@@ -30,5 +30,3 @@ class UserObjectSchema(Schema):
     last_time_crawl_reaction = fields.Str()
     fake = fields.Str()
     branded_post = fields.Str()
-
-

@@ -1,7 +1,7 @@
 from core.utils.constant import Constant
-from services.search_report_service import SearchReportService
-from services.comment_report_service import CommentReportService
 from services.base_collection_service import CollectionService
+from services.comment_report_service import CommentReportService
+from services.search_report_service import SearchReportService
 
 
 class ServiceFactory:

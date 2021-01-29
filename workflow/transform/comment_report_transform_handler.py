@@ -4,7 +4,10 @@ import more_itertools
 
 from core.utils.common import Common
 from core.utils.constant import Constant
+from core.utils.exceptions import ErrorStoreFormat
 from workflow.transform.base_item_transform_handler import BaseItemTransformHandler
+from workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
+from workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
 from workflow.transform.stored_object.stored_object_builder import StoredObjectBuilder
 
 
@@ -22,14 +25,31 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             page_objects = []
 
             for item in collected_data_chunk:
+                _, collected_post_schema_error = self._validate_schema(data=item['comment'],
+                                                                       schema=PostObjectSchema)
+
+                if collected_post_schema_error:
+                    raise ErrorStoreFormat(f'Schema error {str(collected_post_schema_error)}')
+
                 comment_objects.append(self._build_comment_updated_object(item))
                 post_comment_objects.append(self._build_post_comment_updated_object(item))
 
                 if item.get('user'):
-                    user_objects.append(self._build_user_updated_object(item))
-                    media_objects.append(self._build_media_updated_object(item['user'], mapping={'avatar': 'link'}))
+                    _, collected_user_schema_error = self._validate_schema(data=item['user'],
+                                                                           schema=UserObjectSchema)
+                    if not collected_user_schema_error:
+                        user_objects.append(self._build_user_updated_object(item))
+                        media_objects.append(self._build_media_updated_object(item['user'], mapping={'avatar': 'link'}))
+                    else:
+                        self.logger.warning(f'User transform schema error {collected_user_schema_error}')
+
                 if item.get('page'):
-                    page_objects.append(self._build_page_updated_object(item))
+                    _, collected_user_schema_error = self._validate_schema(data=item['page'],
+                                                                           schema=UserObjectSchema)
+                    if not collected_user_schema_error:
+                        page_objects.append(self._build_page_updated_object(item))
+                    else:
+                        self.logger.warning(f'Page transform schema error {collected_user_schema_error}')
 
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_COMMENT,

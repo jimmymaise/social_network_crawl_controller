@@ -45,7 +45,7 @@ class PostCommentAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    data = fields.List(fields.Nested(PostCommentAPIResponseDataItemSchema),required=True)
+    data = fields.List(fields.Nested(PostCommentAPIResponseDataItemSchema), required=True)
     paging = fields.Dict(required=True)
 
 

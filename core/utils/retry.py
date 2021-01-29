@@ -1,6 +1,6 @@
-from core.logger.logger_handler import Logger
-
 from tenacity import *  # noqa: F403
+
+from core.logger.logger_handler import Logger
 
 
 def warning_when_retry(attempt, sleep, last_result):

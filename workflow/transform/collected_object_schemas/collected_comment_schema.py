@@ -4,6 +4,7 @@ from marshmallow import Schema, fields, EXCLUDE
 class CommentObjectSchema(Schema):
     class Meta:
         unknown = EXCLUDE
+
     _id = fields.Str()
     fbid = fields.Int()
     post_id = fields.Int()
