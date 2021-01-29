@@ -2,6 +2,8 @@ import os
 
 
 class SystemConfig:
+    DEFAULT_SERVICE_LOCAL = 'comment_report'
+
     AM_BASE_URL = os.getenv('AM_BASE_URL', 'http://34.219.102.184:9099')
 
     MONGO_DB_HOST = os.environ.get('MONGODB_HOST', 'localhost')
