@@ -1,7 +1,7 @@
 class Constant:
     AM_MAX_REQUEST = 3
     AM_DEFAULT_SLEEP_TIME = 3
-
+    DEFAULT_LIMIT_NUM_ITEM = 10
     DEFAULT_MAXIMUM_DAYS_AFTER_TAKEN = 7
     SERVICE_CONFIG_FOLDER_NAME = 'service_config_samples'
 

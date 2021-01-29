@@ -17,8 +17,8 @@ class ReportQuery:
             f'{service_config["SERVICE_NAME"]}_status.status': {'$nin': ['success']},
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
-        sort_ = [("search_report_status.latest_update_time", 1)]
-        limit = 10
+        sort_ = [(f'{service_config["SERVICE_NAME"]}_status.latest_update_time', 1)]
+        limit = Constant.DEFAULT_LIMIT_NUM_ITEM
         return Query(filter_=filter_, sort_=sort_, limit=limit, selected_fields=[], priority=1)
 
     @staticmethod
@@ -33,6 +33,6 @@ class ReportQuery:
             f'{service_config["SERVICE_NAME"]}_status.status': {'$nin': ['success', 'wait_search']},
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
-        sort_ = [("search_report_status.latest_update_time", 1)]
-        limit = 10
+        sort_ = [(f'{service_config["SERVICE_NAME"]}_status.latest_update_time', 1)]
+        limit = Constant.DEFAULT_LIMIT_NUM_ITEM
         return Query(filter_=filter_, sort_=sort_, limit=limit, selected_fields=[], priority=1)
