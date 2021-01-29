@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from core.utils.common import Common
 from core.utils.constant import Constant
 from core.utils.exceptions import ErrorStoreFormat
@@ -198,5 +196,3 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         today_report_history = today_report_history_builder.build(collected_post=collected_data['post'])
         today_report_history['taken_at_timestamp'] = int(self.now.timestamp())
         return today_report_history
-
-
