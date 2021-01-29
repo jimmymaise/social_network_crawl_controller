@@ -169,7 +169,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
                                     '_id': 'user_id'})
         report_builder.add_mapping('collected_page',
                                    {'username': 'username',
-                                    '_id': 'page_id'})
+                                    'app_id': 'page_id'})
 
         report_builder.set_get_all_fields_from_collected_object('report_statuses', None)
 
