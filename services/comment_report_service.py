@@ -12,7 +12,7 @@ from workflow.transform.comment_report_transform_handler import CommentReportTra
 class CommentReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config)
-        self.service_name = service_config['service_name'] = Constant.SERVICE_NAME_COMMENT_REPORT
+        self.service_name = Constant.SERVICE_NAME_COMMENT_REPORT
         self.logger = Logger().init_logger(logger_name=self.service_name)
 
     def _load_items(self) -> list:

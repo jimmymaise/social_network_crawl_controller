@@ -14,7 +14,7 @@ class ReportQuery:
         filter_ = {
             'country_code': {'$in': service_config.get('MARKET')},
             'taken_at_timestamp': {'$gt': current_timestamp - maximum_seconds_after_taken},
-            f'{service_config["service_name"]}_status.status': {'$nin': ['success']},
+            f'{service_config["SERVICE_NAME"]}_status.status': {'$nin': ['success']},
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
         sort_ = [("search_report_status.latest_update_time", 1)]
@@ -30,7 +30,7 @@ class ReportQuery:
         filter_ = {
             'country_code': {'$in': service_config.get('MARKET')},
             'taken_at_timestamp': {'$gt': current_timestamp - maximum_seconds_after_taken},
-            f'{service_config["service_name"]}_status.status': {'$nin': ['success', 'wait_search']},
+            f'{service_config["SERVICE_NAME"]}_status.status': {'$nin': ['success', 'wait_search']},
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
         sort_ = [("search_report_status.latest_update_time", 1)]
