@@ -120,7 +120,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
         )
         post_comment_stored_object['_id'] = Common.md5_hash(f'{post_comment_stored_object["post_id"]}'
                                                             f'{post_comment_stored_object["comment_id"]}'
-                                                            f'{post_comment_stored_object["user_id"]}')
+                                                            f'{post_comment_stored_object.get("user_id", "")}')
 
         post_comment_stored_object = self._make_updated_object(
             filter_={'_id': post_comment_stored_object['_id']},
