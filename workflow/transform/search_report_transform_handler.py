@@ -185,6 +185,8 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
             stored_object=report_stored_object,
             upsert=False
         )
+        report_stored_object['comment_report_status.status'] = 'new'
+
         return report_updated_object
 
     def _build_history_report_object(self, collected_data):
