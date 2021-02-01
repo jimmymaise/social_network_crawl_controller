@@ -83,4 +83,4 @@ class CollectionService:
         self.logger.info(f'Starting service {self.service_name}')
         while True:
             self._process()
-            time.sleep(SystemConfig.SERVICE_SLEEP_INTERVAL)
+            time.sleep(int(SystemConfig.SERVICE_SLEEP_INTERVAL))
