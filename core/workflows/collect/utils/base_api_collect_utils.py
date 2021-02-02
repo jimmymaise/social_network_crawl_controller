@@ -2,6 +2,9 @@ import re
 
 
 class BaseApiCollectUtils:
+    post_link_param_patterns = None
+    post_link_template_dict = None
+
     @classmethod
     def is_validate_post_link_format(cls, post_link):
         for case, pattern_str in cls._post_link_valid_patterns().items():
@@ -11,12 +14,13 @@ class BaseApiCollectUtils:
         return False
 
     @classmethod
-    def _post_link_valid_patterns(cls, post_link_template_dict, post_link_param_patterns):
+    def _post_link_valid_patterns(cls):
 
-        pattern_dict = {pattern_key: cls._make_url_pattern_from_url_template(pattern_url, **post_link_param_patterns)
-                        for
-                        pattern_key, pattern_url in
-                        post_link_template_dict.items()}
+        pattern_dict = {
+            pattern_key: cls._make_url_pattern_from_url_template(pattern_url, **cls.post_link_param_patterns)
+            for
+            pattern_key, pattern_url in
+            cls.post_link_template_dict.items()}
         return pattern_dict
 
     @staticmethod
