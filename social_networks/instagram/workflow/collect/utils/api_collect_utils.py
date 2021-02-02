@@ -5,9 +5,7 @@ from social_networks.instagram.workflow.collect.utils.constant import APICollect
 
 class APICollectUtils(BaseApiCollectUtils):
     param_patterns = {
-        'user_name': Constant.REGEX_PATTERN_FB_USERNAME,
-        'user_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
-        'post_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
-        'album_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
+        'shortcode': Constant.REGEX_PATTERN_IG_SHORT_CODE,
+        'highlight_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
     }
     post_link_template_dict = APICollectConstant.POST_LINK_VALID_TEMPLATE_DICT

@@ -32,28 +32,21 @@ class BaseUserSchema(Schema):
     avatar = fields.Str()
 
 
-class BasePageSchema(Schema):
-    class Meta:
-        unknown = EXCLUDE
-
-    _id = fields.Int()
-    app_id = fields.Int()
-    username = fields.Str()
-    avatar = fields.Str()
-
-
 class BasePostSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    _id = fields.Int()
-    content = fields.Str()
-    full_picture = fields.Str()
-    num_reaction = fields.Int()
-    num_comment = fields.Int()
-    num_share = fields.Int()
-    view_count = fields.Int()
-    feedback_id = fields.Str()
+    content = fields.Str(required=True)
+    display_url = fields.Str()
+    num_like = fields.Int(required=True)
+    num_comment = fields.Int(required=True)
+    view_count = fields.Int(required=True)
+    taken_at_timestamp = fields.Int(required=True)
+
+    shortcode = fields.Str(required=True)
+    user_id = fields.Int(required=True)
+    post_type = fields.Str(required=True)
+    _id = fields.Int(required=True)
 
 
 class BaseStatusSchema(Schema):
@@ -70,7 +63,6 @@ class PostDetailAPIResponseDataItemSchema(Schema):
         unknown = EXCLUDE
 
     user = fields.Nested(BaseUserSchema)
-    page = fields.Nested(BasePageSchema)
     post = fields.Nested(BasePostSchema, required=True)
 
 
