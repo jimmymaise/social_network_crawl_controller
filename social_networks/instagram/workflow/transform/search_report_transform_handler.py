@@ -2,10 +2,10 @@ from core.utils.common import Common
 from core.utils.exceptions import ErrorStoreFormat
 from core.workflows.transform.base_item_transform_handler import BaseItemTransformHandler
 from core.workflows.transform.stored_object.stored_object_builder import StoredObjectBuilder
-from social_networks.facebook.utils.constant import Constant
-from social_networks.facebook.workflow.transform.collected_object_schemas.collected_page_schema import PageObjectSchema
-from social_networks.facebook.workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
-from social_networks.facebook.workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
+from social_networks.instagram.utils.constant import Constant
+from social_networks.instagram.workflow.transform.collected_object_schemas.collected_page_schema import PageObjectSchema
+from social_networks.instagram.workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
+from social_networks.instagram.workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
 
 
 class SearchReportTransformHandler(BaseItemTransformHandler):
