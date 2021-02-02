@@ -1,6 +1,6 @@
 from config.service_config import ServiceConfigs
 from config.system_config import SystemConfig
-from services.service_factory import ServiceFactory
+from social_networks.facebook.services.service_factory import ServiceFactory
 
 
 class ServicesRunner:
