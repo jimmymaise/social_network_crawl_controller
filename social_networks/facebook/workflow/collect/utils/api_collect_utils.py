@@ -1,10 +1,11 @@
 import re
 
+from core.workflows.collect.utils.base_api_collect_utils import BaseApiCollectUtils
 from social_networks.facebook.utils.constant import Constant
 from social_networks.facebook.workflow.collect.utils.constant import APICollectConstant
 
 
-class APICollectUtils:
+class APICollectUtils(BaseApiCollectUtils):
     @classmethod
     def is_validate_post_link_format(cls, post_link):
         for case, pattern_str in cls._post_link_valid_patterns().items():

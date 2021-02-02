@@ -1,10 +1,10 @@
-from social_networks.facebook.handlers.api_handler.lambda_api_specs.post_comment_api_specs import PostCommentAPISpecs
-from social_networks.facebook.handlers.api_handler.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
 from core.handlers.api_handler.lambda_api_handler import LambdaApiRequestHandler
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from social_networks.facebook.utils.constant import Constant
 from core.utils.exceptions import ErrorResponseFailed, ErrorResponseFormat, ErrorLinkFormat
 from core.workflows.collect.base_collect_handler import BaseCollectHandler
+from social_networks.facebook.handlers.api_handler.lambda_api_specs.post_comment_api_specs import PostCommentAPISpecs
+from social_networks.facebook.handlers.api_handler.lambda_api_specs.post_detail_api_specs import PostDetailAPISpecs
+from social_networks.facebook.utils.constant import Constant
 from social_networks.facebook.workflow.collect.utils.api_collect_utils import APICollectUtils
 
 

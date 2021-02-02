@@ -1,7 +1,7 @@
 import time
 
-from social_networks.facebook.utils.constant import Constant
 from core.workflows.loading.query.base_query import Query
+from social_networks.facebook.utils.constant import Constant
 
 
 class ReportQuery:

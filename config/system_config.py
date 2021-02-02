@@ -3,6 +3,7 @@ import os
 
 class SystemConfig:
     DEFAULT_SERVICE_LOCAL = 'comment_report'
+    SOCIAL_NETWORK = os.environ.get('SOCIAL_NETWORK', 'FACEBOOK')
 
     AM_BASE_URL = os.getenv('AM_BASE_URL', 'http://34.219.102.184:9099')
 

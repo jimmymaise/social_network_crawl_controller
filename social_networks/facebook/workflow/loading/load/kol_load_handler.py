@@ -1,6 +1,6 @@
+from core.workflows.loading.load.base_load_handler import BaseLoadHandler
 from social_networks.facebook.handlers.db_handler.kol_db_handler import KOLDBHandler
 from social_networks.facebook.utils.constant import Constant
-from core.workflows.loading.load.base_load_handler import BaseLoadHandler
 
 
 class KOLLoadHandler(BaseLoadHandler):

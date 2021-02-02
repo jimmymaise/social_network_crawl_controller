@@ -2,6 +2,8 @@
 import base64
 import hashlib
 
+from pathlib import Path
+
 
 class Common:
     @staticmethod
@@ -18,3 +20,7 @@ class Common:
         hash_object = base64.b64encode(hashlib.md5(str_input).digest())
         result = hash_object.decode()
         return result
+
+    @staticmethod
+    def get_project_root() -> Path:
+        return Path(__file__).parents[2]

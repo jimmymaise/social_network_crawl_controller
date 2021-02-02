@@ -1,6 +1,6 @@
 from core.utils.common import Common
-from social_networks.facebook.utils.constant import Constant
 from core.utils.exceptions import ErrorStoreFormat
+from social_networks.facebook.utils.constant import Constant
 from social_networks.facebook.workflow.transform.base_item_transform_handler import BaseItemTransformHandler
 from social_networks.facebook.workflow.transform.collected_object_schemas.collected_page_schema import PageObjectSchema
 from social_networks.facebook.workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema

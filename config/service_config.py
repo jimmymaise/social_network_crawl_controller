@@ -1,9 +1,9 @@
 import base64
 import json
 import os
-from pathlib import Path
 
 from config.system_config import SystemConfig
+from core.utils.common import Common
 from core.utils.constant import Constant
 
 
@@ -15,7 +15,8 @@ class ServiceConfigs:
             return json.loads(base64.b64decode(os.environ.get('SERVICE_CONFIG')))
 
         elif os.environ.get('ENV', '').lower() == 'local':
-            service_config_file_path = f'{str(Path(__file__).resolve().parents[0])}' \
+            service_config_file_path = f'{Common.get_project_root()}/social_networks/' \
+                                       f'{SystemConfig.SOCIAL_NETWORK.lower()}' \
                                        f'/{Constant.SERVICE_CONFIG_FOLDER_NAME}/{SystemConfig.DEFAULT_SERVICE_LOCAL}.json'
             with open(service_config_file_path, 'r') as service_config_file:
                 service_config_str = service_config_file.read()

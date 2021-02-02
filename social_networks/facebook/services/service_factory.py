@@ -1,14 +1,17 @@
-from social_networks.facebook.utils.constant import Constant
+from enum import Enum
+
 from core.services.base_collection_service import CollectionService
 from social_networks.facebook.services.comment_report_service import CommentReportService
 from social_networks.facebook.services.search_report_service import SearchReportService
 
 
+class ServiceEnum(Enum):
+    search_report = SearchReportService
+    comment_report = CommentReportService
+
+
 class ServiceFactory:
     @staticmethod
     def create_service(service_name, service_config) -> CollectionService:
-        if service_name.upper() == Constant.SERVICE_NAME_SEARCH_REPORT.upper():
-            return SearchReportService(service_config)
-
-        if service_name.upper() == Constant.SERVICE_NAME_COMMENT_REPORT.upper():
-            return CommentReportService(service_config)
+        service_class = getattr(ServiceEnum, service_name.lower()).value
+        return service_class(service_config)

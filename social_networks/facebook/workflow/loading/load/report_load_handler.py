@@ -1,5 +1,5 @@
-from social_networks.facebook.utils.constant import Constant
 from core.workflows.loading.load.base_load_handler import BaseLoadHandler
+from social_networks.facebook.utils.constant import Constant
 
 
 class ReportLoadHandler(BaseLoadHandler):
