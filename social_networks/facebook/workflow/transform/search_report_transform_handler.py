@@ -66,6 +66,8 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
                                                               collected_page=collected_data.get('page'),
                                                               collected_user=collected_data.get('user'))
 
+        post_stored_object['full_picture'] = Common.md5_hash(collected_data['post']['full_picture'])
+
         post_updated_object = self._make_updated_object(
             filter_={'_id': post_stored_object['_id']},
             stored_object=post_stored_object,
@@ -94,6 +96,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
                                                                             excluded_fields='avatar')
 
         user_stored_object = user_stored_object_builder.build(collected_user=collected_data['user'])
+        user_stored_object['avatar'] = Common.md5_hash(collected_data['user']['avatar'])
 
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
@@ -129,11 +132,6 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         if collected_data.get('user', {}).get('avatar'):
             media_updated_objects.append(
                 self._build_media_updated_object(item_having_media=collected_data['user'],
-                                                 mapping={'avatar': 'link'}))
-
-        if collected_data.get('page', {}).get('avatar'):
-            media_updated_objects.append(
-                self._build_media_updated_object(item_having_media=collected_data['page'],
                                                  mapping={'avatar': 'link'}))
 
         return media_updated_objects
