@@ -4,7 +4,7 @@ from social_networks.facebook.workflow.collect.utils.constant import APICollectC
 
 
 class APICollectUtils(BaseApiCollectUtils):
-    param_patterns = {
+    post_link_param_patterns = {
         'user_name': Constant.REGEX_PATTERN_FB_USERNAME,
         'user_id': Constant.REGEX_PATTERN_ONLY_NUMBER,
         'post_id': Constant.REGEX_PATTERN_ONLY_NUMBER,

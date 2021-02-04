@@ -36,16 +36,17 @@ class BasePostSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    content = fields.Str(required=True)
+    content = fields.List(fields.Str(), required=True)
     display_url = fields.Str()
     num_like = fields.Int(required=True)
     num_comment = fields.Int(required=True)
-    view_count = fields.Int(required=True)
+    video_view_count = fields.Int()
     taken_at_timestamp = fields.Int(required=True)
 
     shortcode = fields.Str(required=True)
     user_id = fields.Int(required=True)
     post_type = fields.Str(required=True)
+    location = fields.Dict()
     _id = fields.Int(required=True)
 
 

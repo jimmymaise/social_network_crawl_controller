@@ -11,9 +11,7 @@ from social_networks.facebook.workflow.transform.comment_report_transform_handle
 
 class CommentReportService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT)
-        self.service_name = Constant.SERVICE_NAME_COMMENT_REPORT
-        self.logger = Logger().init_logger(logger_name=self.service_name)
+        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,Constant.SERVICE_NAME_COMMENT_REPORT)
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)

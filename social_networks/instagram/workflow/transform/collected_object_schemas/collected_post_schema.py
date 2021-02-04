@@ -9,7 +9,7 @@ class PostObjectSchema(Schema):
     shortcode = fields.Str(required=True)
     user_id = fields.Int()
     post_type = fields.Str()
-    content = fields.Str()
+    content = fields.List(fields.Str())
     taken_at_timestamp = fields.Int()
     display_url = fields.Str()
     num_like = fields.Int(required=True)

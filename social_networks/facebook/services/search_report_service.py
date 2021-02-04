@@ -11,10 +11,8 @@ from social_networks.facebook.workflow.transform.search_report_transform_handler
 
 class SearchReportService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT)
-        self.service_name = service_config['service_name'] = Constant.SERVICE_NAME_SEARCH_REPORT
-        self.logger = Logger().init_logger(logger_name=self.service_name,
-                                           remove_old_log=True, )
+        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,Constant.SERVICE_NAME_SEARCH_REPORT)
+
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
