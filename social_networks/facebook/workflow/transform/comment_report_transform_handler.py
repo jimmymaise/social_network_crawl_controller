@@ -135,6 +135,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
                                                                             excluded_fields='avatar')
 
         user_stored_object = user_stored_object_builder.build(collected_user=collected_item['user'])
+        user_stored_object['avatar'] = Common.md5_hash(collected_item['user']['avatar'])
 
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},

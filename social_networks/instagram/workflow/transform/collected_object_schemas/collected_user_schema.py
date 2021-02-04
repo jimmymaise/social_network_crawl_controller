@@ -7,7 +7,7 @@ class UserObjectSchema(Schema):
 
     _id = fields.Int(required=True)
     username = fields.Str(required=True)
-    avatar = fields.Str()
+    avatar = fields.Str(required=True)
     mini_avatar = fields.Str()
     full_name = fields.Str()
     bio = fields.Str()

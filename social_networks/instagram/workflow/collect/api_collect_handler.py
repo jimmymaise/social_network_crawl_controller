@@ -42,6 +42,8 @@ class APICollectHandler(BaseCollectHandler):
                                  social_type=Constant.SOCIAL_TYPE_PROFILE):
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        if not account_info:
+            raise ErrorNotAvailableAccount()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
         post_comment_api_request_data = PostCommentAPISpecs()
         post_comment_api_request_data.set_body(post_app_id=post_app_id, account_info=account_info,

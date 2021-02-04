@@ -7,7 +7,6 @@ from core.utils.exceptions import ErrorStoreFormat
 from core.workflows.transform.base_item_transform_handler import BaseItemTransformHandler
 from core.workflows.transform.stored_object.stored_object_builder import StoredObjectBuilder
 from social_networks.instagram.utils.constant import Constant
-from social_networks.instagram.workflow.transform.collected_object_schemas.collected_page_schema import PageObjectSchema
 from social_networks.instagram.workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
 from social_networks.instagram.workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
 
@@ -78,14 +77,6 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             else:
                 self.logger.warning(f'User transform schema error {collected_user_schema_error}')
 
-        if item.get('page'):
-            _, collected_page_schema_error = self._validate_schema(data=item['page'],
-                                                                   schema=PageObjectSchema)
-            if not collected_page_schema_error:
-                page_objects.append(self._build_page_updated_object(item))
-            else:
-                self.logger.warning(f'Page transform schema error {collected_page_schema_error}')
-
     def _build_comment_updated_object(self, collected_item):
         comment_stored_object_builder = StoredObjectBuilder()
         comment_stored_object_builder.set_get_all_fields_from_collected_object('collected_comment',
@@ -135,6 +126,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
                                                                             excluded_fields='avatar')
 
         user_stored_object = user_stored_object_builder.build(collected_user=collected_item['user'])
+        user_stored_object['avatar'] = Common.md5_hash(collected_item['user']['avatar'])
 
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
@@ -154,20 +146,6 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             stored_object=media_stored_object,
             upsert=True
         )
-
-    def _build_page_updated_object(self, collected_item):
-        page_stored_object_builder = StoredObjectBuilder()
-        page_stored_object_builder.set_get_all_fields_from_collected_object('collected_page',
-                                                                            excluded_fields=None)
-
-        page_stored_object = page_stored_object_builder.build(collected_page=collected_item.get('page'))
-
-        page_updated_object = self._make_updated_object(
-            filter_={'app_id': page_stored_object['app_id']},
-            stored_object=page_stored_object,
-            upsert=True
-        )
-        return page_updated_object
 
     def _build_report_updated_object(self, loaded_item):
 
