@@ -1,5 +1,4 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.logger.logger_handler import Logger
 from core.services.base_collection_service import CollectionService
 from social_networks.instagram.handlers.db_handler.report_db_handler import ReportDBHandler
 from social_networks.instagram.utils.constant import Constant
@@ -13,8 +12,6 @@ class SearchReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config, Constant.COLLECTION_NAME_REPORT, Constant.SERVICE_NAME_SEARCH_REPORT)
         self.service_name = service_config['service_name'] = Constant.SERVICE_NAME_SEARCH_REPORT
-        self.logger = Logger().init_logger(logger_name=self.service_name,
-                                           remove_old_log=True, )
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
