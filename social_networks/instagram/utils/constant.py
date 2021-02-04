@@ -3,7 +3,6 @@ from core.utils.constant import Constant as CoreConstant
 
 class Constant(CoreConstant):
     SOCIAL_TYPE_PROFILE = 'instagram'
-    SOCIAL_TYPE_FAN_PAGE = 'instagram_page'
     SOCIAL_NETWORK_INSTAGRAM = 'instagram'
 
     SERVICE_NAME_SEARCH_REPORT = 'search_report'
@@ -12,7 +11,6 @@ class Constant(CoreConstant):
     COLLECTION_NAME_REPORT = 'reports'
     COLLECTION_NAME_KOL = 'kols'
     COLLECTION_NAME_USER = 'users'
-    COLLECTION_NAME_PAGE = 'pages'
 
     COLLECTION_NAME_MEDIA = 'medias'
     COLLECTION_NAME_COMMENT = 'comments'

@@ -29,7 +29,6 @@ class PostCommentAPIResponseDataItemSchema(Schema):
         unknown = EXCLUDE
 
     comment = fields.Dict(required=True)
-    page = fields.Dict()
     user = fields.Dict()
 
 

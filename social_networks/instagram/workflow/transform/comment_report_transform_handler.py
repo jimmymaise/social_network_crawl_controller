@@ -22,14 +22,12 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             post_comment_objects = []
             user_objects = []
             media_objects = []
-            page_objects = []
 
             for item in collected_data_chunk:
                 self._parse_item_to_stored_object_lists(item=item,
                                                         comment_objects=comment_objects,
                                                         user_objects=user_objects,
                                                         media_objects=media_objects,
-                                                        page_objects=page_objects,
                                                         post_comment_objects=post_comment_objects)
 
             yield self._make_transformed_item(
@@ -45,10 +43,6 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
                 updated_object_list=user_objects)
 
             yield self._make_transformed_item(
-                collection_name=Constant.COLLECTION_NAME_PAGE,
-                updated_object_list=page_objects)
-
-            yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_MEDIA,
                 updated_object_list=media_objects)
 
@@ -57,7 +51,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             updated_object_list=[self._build_report_updated_object(loaded_item)])
 
     def _parse_item_to_stored_object_lists(self, item, comment_objects, post_comment_objects, user_objects,
-                                           media_objects, page_objects):
+                                           media_objects):
 
         _, collected_post_schema_error = self._validate_schema(data=item['comment'],
                                                                schema=PostObjectSchema)
@@ -101,12 +95,9 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
 
         post_comment_stored_object_builder.add_mapping('collected_user',
                                                        {'_id': 'user_id'})
-        post_comment_stored_object_builder.add_mapping('collected_page',
-                                                       {'app_id': 'user_id'})
 
         post_comment_stored_object = post_comment_stored_object_builder.build(
             collected_comment=collected_item['comment'],
-            collected_page=collected_item.get('page'),
             collected_user=collected_item.get('user'),
         )
         post_comment_stored_object['_id'] = Common.md5_hash(f'{post_comment_stored_object["post_id"]}'
