@@ -1,16 +1,20 @@
-from abc import ABC
-from marshmallow import Schema, EXCLUDE
+from marshmallow import Schema, EXCLUDE, fields
+
 from core.handlers.api_handler.api_specs.base_api_specs import BaseAPISpecs
+from core.utils.constant import Constant
 
 
-class AccountGetSpecs(BaseAPISpecs, ABC):
+class AccountGetSpecs(BaseAPISpecs):
     def __init__(self):
         super().__init__(method='post',
-                         path='request',
+                         path=Constant.AM_API_GET_CRAWL_ACCOUNT_PATH,
                          headers={},
                          body={},
                          request_schema=AccountGetAPIRequestSchema,
-                         response_data_schema=AccountGetAPIResponseSchema)
+                         response_schema=AccountGetAPIResponseSchema)
+
+    def set_headers(self, **kwargs):
+        raise NotImplementedError()
 
     def set_body(self, social_network, service, country=None):
         _body = {
@@ -24,11 +28,26 @@ class AccountGetSpecs(BaseAPISpecs, ABC):
         self.body = _body
 
 
+class AccountGetAPIResponseDataItemSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    accountId = fields.Str()
+    info = fields.Str()
+    type = fields.Str()
+    username = fields.Str()
+
+
 class AccountGetAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
+
+    data = fields.Nested(AccountGetAPIResponseDataItemSchema)
 
 
 class AccountGetAPIRequestSchema(Schema):
     class Meta:
         unknown = EXCLUDE
+
+    api_type = fields.Str()
+    api_body = fields.Dict()

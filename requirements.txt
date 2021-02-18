@@ -1,0 +1,5 @@
+marshmallow
+pymongo
+requests
+tenacity
+more_itertools

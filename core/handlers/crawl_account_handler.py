@@ -1,8 +1,7 @@
-import logging
-
 from core.handlers.api_handler.account_api_handler import AccountAPIRequestHandler
 from core.handlers.api_handler.api_specs.account_api_specs.account_get_specs import AccountGetSpecs
 from core.handlers.api_handler.api_specs.account_api_specs.account_update_specs import AccountUpdateSpecs
+from core.logger.logger_handler import Logger
 from core.utils.constant import Constant
 
 
@@ -10,14 +9,13 @@ class CrawlAccountHandler:
 
     def __init__(self, account_base_url, social_network, service_name, country=None):
         super().__init__()
-        self.type = 'api'
         self.social_network = social_network
         self.service_name = service_name
         self.country = country
         self.account_api = AccountAPIRequestHandler(account_base_url)
         self.account_spec = AccountGetSpecs()
         self.account_spec.set_body(self.social_network, self.service_name, self.country)
-        self.logger = logging.getLogger()
+        self.logger = Logger.get_logger()
 
     def get_account_id_token(self):
         response, success, schema_errors = self.account_api.call_api(
@@ -26,10 +24,11 @@ class CrawlAccountHandler:
             retry_time_sleep=Constant.AM_DEFAULT_SLEEP_TIME
         )
         account_info, account_id = None, None
-        if success and not schema_errors:
+        if success and not schema_errors and response.json().get('data'):
             account_data = response.json().get('data')
             account_info = account_data['info']
             account_id = account_data['accountId']
+        self.logger.warning(f'Cannot get account from account manager. Response {response.text}')
         return account_info, account_id
 
     def update_account_token(self, account_id, status_code, message):

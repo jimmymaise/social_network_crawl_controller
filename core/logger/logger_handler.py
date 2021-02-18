@@ -33,13 +33,12 @@ class Logger:
         self.app_logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
     @staticmethod
-    def _setup_logger_console(logger, is_use_color_log=True):
+    def _setup_logger_console(logger):
 
         # Just need to display in console when running task file directly
         # define a Handler which writes INFO messages or higher to the sys.stderr
 
         console = logging.StreamHandler(sys.stdout)
-
         console.setLevel(logging.INFO)
         logger.addHandler(console)
 
@@ -74,7 +73,9 @@ class Logger:
             self.add_log_file_handler(logger=logger, level=logging.ERROR, log_file_path=error_log_file_path,
                                       mode=mode, log_format=log_format)
 
-        self._setup_logger_console(logger)
+        logging.basicConfig(format=log_format,
+                            level=log_level, datefmt='%Y-%m-%d %H:%M:%S')
+        # self._setup_logger_console(logger)
 
         logger.info('*********************INIT LOGGING***********************')
         self.app_logger = logger

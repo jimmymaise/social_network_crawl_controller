@@ -7,6 +7,15 @@ class ErrorLinkFormat(Exception):
         return self.message
 
 
+class ErrorNotAvailableAccount(Exception):
+    def __init__(self, message='ErrorNotAvailableAccount'):
+        self.message = message
+        self.collection_service_error_name = 'error_not_available_account'
+
+    def __str__(self):
+        return self.message
+
+
 class ErrorResponseFailed(Exception):
     def __init__(self, message='ErrorResponseFailed'):
         self.message = message
@@ -29,6 +38,15 @@ class ErrorResponseFormat(Exception):
     def __init__(self, message='ErrorResponseFormat'):
         self.message = message
         self.collection_service_error_name = 'error_response_format'
+
+    def __str__(self):
+        return self.message
+
+
+class ErrorAPIServerConnection(Exception):
+    def __init__(self, message='ErrorAPIServerConnection'):
+        self.message = message
+        self.collection_service_error_name = 'error_api_server_connection'
 
     def __str__(self):
         return self.message
