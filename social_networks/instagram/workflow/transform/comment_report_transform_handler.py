@@ -62,8 +62,8 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
         if collected_comment_schema_error:
             raise ErrorStoreFormat(f'Schema error {str(collected_comment_schema_error)}')
 
-        comment_objects.append(self._build_comment_updated_object(item))
         post_id = loaded_item['post_id']
+        comment_objects.append(self._build_comment_updated_object(item, post_id))
         post_comment_objects.append(self._build_post_comment_updated_object(item, post_id))
 
         if item.get('user'):
@@ -75,13 +75,13 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             else:
                 self.logger.warning(f'User transform schema error {collected_user_schema_error}')
 
-    def _build_comment_updated_object(self, collected_item):
+    def _build_comment_updated_object(self, collected_item, post_id):
         comment_stored_object_builder = StoredObjectBuilder()
         comment_stored_object_builder.set_get_all_fields_from_collected_object('collected_comment',
                                                                                excluded_fields=None)
 
         comment_stored_object = comment_stored_object_builder.build(collected_comment=collected_item['comment'])
-
+        comment_stored_object['post_id'] = post_id
         comment_stored_object['updated_at'] = datetime.now().timestamp()
         comment_updated_object = self._make_updated_object(
             filter_={'_id': comment_stored_object['_id']},
