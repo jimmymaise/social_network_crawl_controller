@@ -7,7 +7,8 @@ from core.utils.exceptions import ErrorStoreFormat
 from core.workflows.transform.base_item_transform_handler import BaseItemTransformHandler
 from core.workflows.transform.stored_object.stored_object_builder import StoredObjectBuilder
 from social_networks.instagram.utils.constant import Constant
-from social_networks.instagram.workflow.transform.collected_object_schemas.collected_post_schema import PostObjectSchema
+from social_networks.instagram.workflow.transform.collected_object_schemas.collected_comment_schema import \
+    CommentObjectSchema
 from social_networks.instagram.workflow.transform.collected_object_schemas.collected_user_schema import UserObjectSchema
 
 
@@ -25,6 +26,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
 
             for item in collected_data_chunk:
                 self._parse_item_to_stored_object_lists(item=item,
+                                                        loaded_item=loaded_item,
                                                         comment_objects=comment_objects,
                                                         user_objects=user_objects,
                                                         media_objects=media_objects,
@@ -50,17 +52,19 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             collection_name=Constant.COLLECTION_NAME_REPORT,
             updated_object_list=[self._build_report_updated_object(loaded_item)])
 
-    def _parse_item_to_stored_object_lists(self, item, comment_objects, post_comment_objects, user_objects,
+    def _parse_item_to_stored_object_lists(self, item, loaded_item, comment_objects, post_comment_objects,
+                                           user_objects,
                                            media_objects):
 
-        _, collected_post_schema_error = self._validate_schema(data=item['comment'],
-                                                               schema=PostObjectSchema)
+        _, collected_comment_schema_error = self._validate_schema(data=item['comment'],
+                                                                  schema=CommentObjectSchema)
 
-        if collected_post_schema_error:
-            raise ErrorStoreFormat(f'Schema error {str(collected_post_schema_error)}')
+        if collected_comment_schema_error:
+            raise ErrorStoreFormat(f'Schema error {str(collected_comment_schema_error)}')
 
         comment_objects.append(self._build_comment_updated_object(item))
-        post_comment_objects.append(self._build_post_comment_updated_object(item))
+        post_id = loaded_item['post_id']
+        post_comment_objects.append(self._build_post_comment_updated_object(item, post_id))
 
         if item.get('user'):
             _, collected_user_schema_error = self._validate_schema(data=item['user'],
@@ -87,11 +91,10 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
 
         return comment_updated_object
 
-    def _build_post_comment_updated_object(self, collected_item):
+    def _build_post_comment_updated_object(self, collected_item, post_id):
         post_comment_stored_object_builder = StoredObjectBuilder()
         post_comment_stored_object_builder.add_mapping('collected_comment',
-                                                       {'_id': 'comment_id',
-                                                        'post_id': 'post_id'})
+                                                       {'_id': 'comment_id'})
 
         post_comment_stored_object_builder.add_mapping('collected_user',
                                                        {'_id': 'user_id'})
@@ -100,6 +103,7 @@ class CommentReportTransformHandler(BaseItemTransformHandler):
             collected_comment=collected_item['comment'],
             collected_user=collected_item.get('user'),
         )
+        post_comment_stored_object['post_id'] = post_id
         post_comment_stored_object['_id'] = Common.md5_hash(f'{post_comment_stored_object["post_id"]}'
                                                             f'{post_comment_stored_object["comment_id"]}'
                                                             f'{post_comment_stored_object.get("user_id", "")}')

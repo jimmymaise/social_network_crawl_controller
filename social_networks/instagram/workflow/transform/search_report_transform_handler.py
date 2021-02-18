@@ -123,6 +123,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         )
 
     def _build_report_updated_object(self, collected_data, loaded_item):
+
         today_date = self.now.strftime("%Y-%m-%d")
 
         report_statuses = self._build_report_statuses_object()
@@ -132,7 +133,9 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
                                    {f'history_report.{today_date}': 'history_report'
                                     })
         report_builder.add_mapping('collected_post',
-                                   {'_id': 'post_id'})
+                                   {'_id': 'post_id',
+                                    'shortcode': 'shortcode'
+                                    })
         report_builder.add_mapping('collected_user',
                                    {'username': 'username',
                                     '_id': 'user_id'})

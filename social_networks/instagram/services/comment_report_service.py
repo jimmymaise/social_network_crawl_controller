@@ -1,5 +1,4 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.logger.logger_handler import Logger
 from core.services.base_collection_service import CollectionService
 from social_networks.instagram.handlers.db_handler.report_db_handler import ReportDBHandler
 from social_networks.instagram.utils.constant import Constant
@@ -11,7 +10,8 @@ from social_networks.instagram.workflow.transform.comment_report_transform_handl
 
 class CommentReportService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,service_name=Constant.SERVICE_NAME_COMMENT_REPORT)
+        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,
+                         service_name=Constant.SERVICE_NAME_COMMENT_REPORT)
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
@@ -34,7 +34,7 @@ class CommentReportService(CollectionService):
         while has_next_page is True:
             response_body = collect_handler.get_comments_from_lambda(
                 lambda_base_url=self.system_config.LAMBDA_BASE_URL,
-                post_app_id=loaded_item['post_app_id'],
+                shortcode=loaded_item['shortcode'],
                 api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
                 cursor=next_cursor,
                 social_type=loaded_item.get('social_type', Constant.SOCIAL_TYPE_PROFILE))

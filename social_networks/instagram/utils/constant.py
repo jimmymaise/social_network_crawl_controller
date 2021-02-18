@@ -4,7 +4,7 @@ from core.utils.constant import Constant as CoreConstant
 class Constant(CoreConstant):
     SOCIAL_TYPE_PROFILE = 'instagram'
     SOCIAL_NETWORK_INSTAGRAM = 'instagram'
-
+    DEFAULT_PAGING_NUM_ITEM = 50
     SERVICE_NAME_SEARCH_REPORT = 'search_report'
     SERVICE_NAME_COMMENT_REPORT = 'comment_report'
 

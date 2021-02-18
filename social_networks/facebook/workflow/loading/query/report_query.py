@@ -18,7 +18,7 @@ class ReportQuery:
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
         sort_ = [(f'{service_config["SERVICE_NAME"]}_status.latest_update_time', 1)]
-        limit = Constant.DEFAULT_LIMIT_NUM_ITEM
+        limit = Constant.DEFAULT_LOAD_LIMIT_NUM_ITEM
         return Query(filter_=filter_, sort_=sort_, limit=limit, selected_fields=[], priority=1)
 
     @staticmethod
@@ -34,5 +34,5 @@ class ReportQuery:
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
         sort_ = [(f'{service_config["SERVICE_NAME"]}_status.latest_update_time', 1)]
-        limit = Constant.DEFAULT_LIMIT_NUM_ITEM
+        limit = Constant.DEFAULT_LOAD_LIMIT_NUM_ITEM
         return Query(filter_=filter_, sort_=sort_, limit=limit, selected_fields=[], priority=1)

@@ -13,8 +13,9 @@ class PostCommentAPISpecs(BaseAPISpecs):
                          request_schema=PostCommentAPIRequestSchema,
                          response_schema=PostCommentAPIResponseSchema)
 
-    def set_body(self, post_app_id: str, cursor: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
-        self.body = {'post_app_id': post_app_id,
+    def set_body(self, shortcode: str, cursor: str, account_info: dict, social_type=Constant.SOCIAL_TYPE_PROFILE):
+        self.body = {'shortcode': shortcode,
+                     'num_item': Constant.DEFAULT_PAGING_NUM_ITEM,
                      'social_type': social_type,
                      'account_info': account_info,
                      'cursor': cursor
@@ -52,7 +53,7 @@ class PostCommentAPIRequestSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    post_app_id = fields.Str()
-    social_type = fields.Str()
+    shortcode = fields.Str()
+    num_item = fields.Int()
     account_info = fields.Dict(allow_none=True)
     cursor = fields.Str(allow_none=True)
