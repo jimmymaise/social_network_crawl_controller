@@ -3,3 +3,4 @@ pymongo
 requests
 tenacity
 more_itertools
+dataclasses

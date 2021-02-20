@@ -41,7 +41,12 @@ Userful links:
 2. Collection Service Architect: https://docs.google.com/spreadsheets/d/1ohwvANLR1Kt-edxBajDPlTAfnn4p3hzZBVteqYsO28Q/edit#gid=0
 
 
+## Development
 
+### Prepare
+- Setup docker local: Docker database for dev env: https://gitlab.com/hiip-bigdata/dev-enviroment
+- Build mongodb for facebook or instagram
 
-
-
+### How to run
+- Export the config: `source localvar.sh`
+- Run main: `python main.py`
