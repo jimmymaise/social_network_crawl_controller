@@ -59,7 +59,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         post_updated_object = self._make_updated_object(
             filter_={'_id': post_stored_object['_id']},
             stored_object=post_stored_object,
-            upsert=False
+            upsert=True
         )
 
         return post_updated_object
@@ -76,7 +76,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
             stored_object=user_stored_object,
-            upsert=False
+            upsert=True
         )
         return user_updated_object
 
@@ -115,6 +115,7 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         media_stored_object_builder.add_mapping('item', mapping)
         media_stored_object = media_stored_object_builder.build(item=item_having_media)
         media_stored_object['_id'] = Common.md5_hash(media_stored_object['link'])
+        media_stored_object['type'] = "Image"
         return self._make_updated_object(
             filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,
@@ -150,6 +151,8 @@ class SearchReportTransformHandler(BaseItemTransformHandler):
         )
         report_stored_object['_id'] = loaded_item['_id']
         report_stored_object[f'history_report.{today_date}'] = self._build_history_report_object(collected_data)
+        report_stored_object['response_server.num_update'] = 0
+        report_stored_object['tracking_status'] = 'Pending'
         report_updated_object = self._make_updated_object(
             filter_={'_id': loaded_item['_id']},
             stored_object=report_stored_object,
