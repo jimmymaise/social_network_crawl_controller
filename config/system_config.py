@@ -17,6 +17,10 @@ class SystemConfig:
                                      'https://6hxeqgmr58.execute-api.us-west-2.amazonaws.com/ig')
     LAMBDA_X_API_KEY_POST_DETAIL = os.getenv('LAMBDA_X_API_KEY_POST_DETAIL', 'Rcp9a7US932wBZtp5Dd7P8rN5rY02UQF3qIw8iBO')
 
+    LAMBDA_X_API_KEY_USER_DETAIL = os.getenv('LAMBDA_X_API_KEY_USER_DETAIL', 'Rcp9a7US932wBZtp5Dd7P8rN5rY02UQF3qIw8iBO')
+
     SLACK_NOTIFICATION_URL = os.environ. \
         get('SLACK_NOTIFICATION_URL', 'https://hooks.slack.com/services/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')
     SERVICE_SLEEP_INTERVAL = os.environ.get('PROCESS_SLEEP_INTERVAL', 5)
+    S3_BUCKET_NAME = 'abcd'
+    S3_IMAGE_PATH = f'images/{SOCIAL_NETWORK.lower()}'

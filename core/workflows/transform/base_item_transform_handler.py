@@ -50,3 +50,13 @@ class BaseItemTransformHandler:
             'response_server.num_update': 0,
         }
         return report_statuses_object
+
+    def _build_kol_statuses_object(self):
+
+        report_statuses_object = {
+            f'{self.service_name}_status': {'status': 'success',
+                                            'latest_updated_time': int(self.now.timestamp())
+                                            },
+            'response_server.num_update': 0,
+        }
+        return report_statuses_object
