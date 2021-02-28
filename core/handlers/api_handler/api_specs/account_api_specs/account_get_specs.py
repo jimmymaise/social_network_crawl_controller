@@ -32,8 +32,8 @@ class AccountGetAPIResponseDataItemSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    accountId = fields.Str()
-    info = fields.Str()
+    account_id = fields.Str()
+    info = fields.Raw(required=True)
     type = fields.Str()
     username = fields.Str()
 
