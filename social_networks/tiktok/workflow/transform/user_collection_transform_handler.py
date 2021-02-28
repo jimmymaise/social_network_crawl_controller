@@ -52,13 +52,14 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
             stored_object=user_stored_object,
-            upsert=False
+            upsert=True
         )
         return user_updated_object
 
     def _build_kol_updated_object(self, collected_data):
         kol_stored_object_builder = StoredObjectBuilder()
-        kol_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id', 'username': 'username'})
+        kol_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id', 'username': 'username'}, )
+        kol_stored_object_builder.set_get_all_fields_from_collected_object('report_statuses', None)
 
         kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data.get('user'),
                                                             report_statuses=self._build_kol_statuses_object()

@@ -26,19 +26,19 @@ class UserDetailStatSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    follower_count = fields.Dict(required=True)
-    following_count = fields.Str()
+    follower_count = fields.Int(required=True)
+    following_count = fields.Int()
     heart = fields.Int()
     heart_count = fields.Int()
     video_count = fields.Int()
     digg_count = fields.Int()
 
 
-class UserDetailAPIResponseDataItemSchema(Schema):
+class BaseUserSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    id = fields.Dict(required=True)
+    _id = fields.Str(required=True)
     short_id = fields.Str()
     unique_id = fields.Str()
     username = fields.Str()
@@ -56,27 +56,25 @@ class UserDetailAPIResponseDataItemSchema(Schema):
     bio_link = fields.Dict()
     comment_setting = fields.Int()
     duet_setting = fields.Int()
-    stitch_setting = fields.Str()
+    stitch_setting = fields.Int()
     private_account = fields.Bool()
     secret = fields.Bool()
     room_id = fields.Str()
     stats = fields.Nested(UserDetailStatSchema)
 
 
-class UserDetailAPIResponsePagingItemSchema(Schema):
+class UserDetailAPIResponseDataItemSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    has_next_page = fields.Bool(required=True)
-    next_cursor = fields.Str(required=True, allow_none=True)
+    user = fields.Nested(BaseUserSchema, required=True)
 
 
 class UserDetailAPIResponseSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    data = fields.List(fields.Nested(UserDetailAPIResponseDataItemSchema), required=True)
-    paging = fields.Dict(required=True)
+    data = fields.Nested(UserDetailAPIResponseDataItemSchema, required=True)
 
 
 class UserDetailAPIRequestSchema(Schema):

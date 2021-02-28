@@ -6,7 +6,7 @@ from social_networks.tiktok.utils.constant import Constant
 
 class ReportQuery:
     @staticmethod
-    def get_reports_for_user_collection_service(service_config: dict):
+    def get_kols_for_user_collection_service(service_config: dict):
         maximum_days_after_taken = Constant.DEFAULT_MAXIMUM_DAYS_AFTER_TAKEN
         maximum_seconds_after_taken = maximum_days_after_taken * Constant.TIME_ONE_DAY_TO_SECONDS
         current_timestamp = int(time.time())

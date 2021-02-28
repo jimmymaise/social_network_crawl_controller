@@ -5,18 +5,18 @@ from social_networks.tiktok.utils.constant import Constant
 from social_networks.tiktok.workflow.collect.api_collect_handler import APICollectHandler
 from social_networks.tiktok.workflow.loading.load.report_load_handler import ReportLoadHandler
 from social_networks.tiktok.workflow.loading.query.kol_query import KOLQuery
-from social_networks.tiktok.workflow.transform.user_collection_transform_handler import AccountInformationReportTransformHandler
+from social_networks.tiktok.workflow.transform.user_collection_transform_handler import UserCollectionTransformHandler
 
 
-class AccountInformationReportService(CollectionService):
+class UserCollectionService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,
+        super().__init__(service_config, Constant.COLLECTION_NAME_KOL,
                          service_name=Constant.SERVICE_NAME_USER_COLLECTION)
 
     def _load_items(self) -> list:
         kol_db_handler = KOLDBHandler(self.db_connection)
         loader = ReportLoadHandler(kol_db_handler)
-        query = KOLQuery.get_reports_for_user_collection_service(self.service_config)
+        query = KOLQuery.get_kols_for_user_collection_service(self.service_config)
 
         loader.add_query(query)
         load_items = loader.load_items()
@@ -28,7 +28,7 @@ class AccountInformationReportService(CollectionService):
                                                     service_name=self.service_name,
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
-        api_response = collect_handler.get_account_information_from_lambda(
+        api_response = collect_handler.get_user_detail_from_lambda(
             lambda_base_url=self.system_config.LAMBDA_BASE_URL,
             username=loaded_item['username'],
             api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL)
@@ -36,6 +36,6 @@ class AccountInformationReportService(CollectionService):
         return collected_data
 
     def _transform_data(self, loaded_items, collected_data):
-        user_collection_transform = AccountInformationReportTransformHandler(service_name=self.service_name)
+        user_collection_transform = UserCollectionTransformHandler(service_name=self.service_name)
         transformed_data = user_collection_transform.process_item(loaded_items, collected_data)
         return transformed_data

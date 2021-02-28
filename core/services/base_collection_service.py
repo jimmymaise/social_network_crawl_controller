@@ -9,21 +9,21 @@ from core.utils.constant import Constant
 
 
 class CollectionService:
-    def __init__(self, service_config: dict, collection_report_name: str, service_name: str):
+    def __init__(self, service_config: dict, collection_for_error_report_name: str, service_name: str):
         self.service_name = service_name
         self.system_config = SystemConfig
         self.service_config = service_config
         self.db_connection = self._create_db_connection_by_system_config()
         self.logger = Logger().init_logger(logger_name=f'{self.system_config.SOCIAL_NETWORK}-{self.service_name}')
 
-        self.collection_report_name = collection_report_name
+        self.collection_for_error_report_name = collection_for_error_report_name
 
     def _update_failed_status(self, load_id, exception):
         error_code = getattr(exception, Constant.COLLECTION_SERVICE_ERROR_NAME, Constant.DEFAULT_UNKNOWN_ERROR_CODE)
         self.logger.error(exception, exc_info=True)
 
         self._store_data([
-            {'collection_name': self.collection_report_name,
+            {'collection_name': self.collection_for_error_report_name,
              'items': [
                  {
                      'filter': {'_id': load_id},

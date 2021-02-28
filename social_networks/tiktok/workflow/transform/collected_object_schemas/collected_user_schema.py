@@ -5,8 +5,8 @@ class UserStatSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    follower_count = fields.Dict(required=True)
-    following_count = fields.Str()
+    follower_count = fields.Int(required=True)
+    following_count = fields.Int()
     heart = fields.Int()
     heart_count = fields.Int()
     video_count = fields.Int()
@@ -18,7 +18,7 @@ class UserObjectSchema(Schema):
         unknown = EXCLUDE
 
     stats = fields.Nested(UserStatSchema)
-    id = fields.Dict(required=True)
+    _id = fields.Str(required=True)
     short_id = fields.Str()
     unique_id = fields.Str()
     username = fields.Str()
@@ -36,7 +36,7 @@ class UserObjectSchema(Schema):
     bio_link = fields.Dict()
     comment_setting = fields.Int()
     duet_setting = fields.Int()
-    stitch_setting = fields.Str()
+    stitch_setting = fields.Int()
     private_account = fields.Bool()
     secret = fields.Bool()
     room_id = fields.Str()

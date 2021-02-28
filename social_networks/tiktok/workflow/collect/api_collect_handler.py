@@ -63,11 +63,10 @@ class APICollectHandler(BaseCollectHandler):
 
         return response.json()
 
-    def get_account_information_from_lambda(self, lambda_base_url, username, api_key) -> dict:
+    def get_user_detail_from_lambda(self, lambda_base_url, username, api_key) -> dict:
 
         account_info, account_id = self.crawl_account_handler.get_account_id_token()
-        if not account_info:
-            raise ErrorNotAvailableAccount()
+
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
 
         post_detail_api_request_data = UserDetailAPISpecs()

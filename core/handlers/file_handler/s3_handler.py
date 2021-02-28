@@ -121,7 +121,10 @@ class S3Handler:
     def copy_file_from_external_url_to_s3(self, external_url, s3_folder_path, bucket):
         url_parse_obj = urlparse(external_url)
         file_prefix = datetime.today().strftime('%Y%m%d-%H%M%S')
-        tmp_file_download_path = f'/tmp/{file_prefix}_{os.path.basename(url_parse_obj.path)}'
+        file_name = os.path.basename(url_parse_obj.path)
+        tmp_file_download_path = f'/tmp/{file_prefix}_{file_name}'
         FileHandler.download_file_from_url(url=external_url, save_file_path=tmp_file_download_path)
-        self.upload(filename=tmp_file_download_path, bucket=bucket, s3_path=s3_folder_path)
+        link = self.upload(filename=tmp_file_download_path, bucket=bucket,
+                           s3_full_path=f'{s3_folder_path}/{file_name}')
         FileHandler.delete_file_path(file_path=tmp_file_download_path)
+        return link
