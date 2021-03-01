@@ -118,13 +118,28 @@ class S3Handler:
         bucket_name, s3_file_path = self._get_bucket_name_and_file_path_from_s3_file_url(s3_file_url)
         self.s3_client.download_file(bucket_name, s3_file_path, out_file_path)
 
-    def copy_file_from_external_url_to_s3(self, external_url, s3_folder_path, bucket):
+    def copy_file_from_external_url_to_s3(self, external_url, s3_folder_path, bucket, is_overwrite_if_exist=False):
         url_parse_obj = urlparse(external_url)
-        file_prefix = datetime.today().strftime('%Y%m%d-%H%M%S')
         file_name = os.path.basename(url_parse_obj.path)
+        s3_full_path = f'{s3_folder_path}/{file_name}'
+
+        if not is_overwrite_if_exist and self.is_s3_path_exists_in_bucket(s3_path=s3_full_path,
+                                                                          bucket_name=bucket):
+            link = 's3://{bucket}/{key}'.format(bucket=bucket, key=s3_full_path)
+            self.logger.info(f'File Exist! {link}')
+            return link
+
+        file_prefix = datetime.today().strftime('%Y%m%d-%H%M%S')
         tmp_file_download_path = f'/tmp/{file_prefix}_{file_name}'
         FileHandler.download_file_from_url(url=external_url, save_file_path=tmp_file_download_path)
         link = self.upload(filename=tmp_file_download_path, bucket=bucket,
                            s3_full_path=f'{s3_folder_path}/{file_name}')
         FileHandler.delete_file_path(file_path=tmp_file_download_path)
         return link
+
+    def is_s3_path_exists_in_bucket(self, s3_path, bucket_name):
+        bucket = self.s3_resource.Bucket(bucket_name)
+        objs = list(bucket.objects.filter(Prefix=s3_path))
+        if any([w.key == s3_path for w in objs]):
+            return True
+        return False

@@ -1,7 +1,6 @@
 from config.system_config import SystemConfig
 from core.handlers.file_handler.file_handler import FileHandler
 from core.handlers.file_handler.s3_handler import S3Handler
-from core.utils.common import Common
 from core.utils.exceptions import ErrorStoreFormat
 from core.workflows.transform.base_item_transform_handler import BaseItemTransformHandler
 from core.workflows.transform.stored_object.stored_object_builder import StoredObjectBuilder
@@ -47,7 +46,7 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
 
         user_stored_object = user_stored_object_builder.build(collected_user=collected_data['user'])
 
-        user_stored_object['avatar'] = Common.md5_hash(collected_data['user']['avatar'])
+        user_stored_object['avatar'] = self._get_image_id_from_tiktok_url(url=collected_data['user']['avatar'])
 
         user_updated_object = self._make_updated_object(
             filter_={'_id': user_stored_object['_id']},
@@ -78,11 +77,11 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         if collected_data.get('user', {}).get('avatar'):
             media_updated_objects.append(
                 self._build_media_updated_object(item_having_media=collected_data['user'],
-                                                 mapping={'avatar': 'link'}))
+                                                 mapping={'avatar': 'link'}, media_type='avatar'))
 
         return media_updated_objects
 
-    def _build_media_updated_object(self, item_having_media, mapping):
+    def _build_media_updated_object(self, item_having_media, mapping, media_type):
 
         media_stored_object_builder = StoredObjectBuilder()
         media_stored_object_builder.add_mapping('item', mapping)
@@ -90,12 +89,14 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         media_stored_object['link'] = self.s3_handler.copy_file_from_external_url_to_s3(
             external_url=media_stored_object['link'],
             bucket=SystemConfig.S3_BUCKET_NAME,
-            s3_folder_path=SystemConfig.S3_IMAGE_PATH
+            s3_folder_path=f'{SystemConfig.S3_IMAGE_PATH}/{media_type}'
         )
-        file_name_no_extension = FileHandler.get_file_name_from_url(media_stored_object['link'],
-                                                                    is_have_extension=False)
-        media_stored_object['_id'] = file_name_no_extension
+        media_stored_object['_id'] = self._get_image_id_from_tiktok_url(url=media_stored_object['link'])
         return self._make_updated_object(
             filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,
             upsert=True)
+
+    @staticmethod
+    def _get_image_id_from_tiktok_url(url):
+        return FileHandler.get_file_name_from_url(url=url, is_have_extension=False)
