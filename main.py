@@ -27,4 +27,5 @@ class ServicesRunner:
         service.start()
 
 
-ServicesRunner().run()
+if __name__ == '__main__':
+    ServicesRunner().run()
