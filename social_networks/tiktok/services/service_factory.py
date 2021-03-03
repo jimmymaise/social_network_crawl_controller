@@ -1,14 +1,10 @@
 from enum import Enum
 
 from core.services.base_collection_service import CollectionService
-from social_networks.tiktok.services.comment_report_service import CommentReportService
-from social_networks.tiktok.services.search_report_service import SearchReportService
 from social_networks.tiktok.services.user_collection_service import UserCollectionService
 
 
 class ServiceEnum(Enum):
-    search_report = SearchReportService
-    comment_report = CommentReportService
     user_collection = UserCollectionService
 
 

@@ -2,7 +2,6 @@ from core.utils.constant import Constant as CoreConstant
 
 
 class Constant(CoreConstant):
-    S3_BUCKET = 'tin-chicken'
     SOCIAL_TYPE_PROFILE = 'tiktok'
     SOCIAL_NETWORK_TIKTOK = 'tiktok'
     DEFAULT_PAGING_NUM_ITEM = 50
