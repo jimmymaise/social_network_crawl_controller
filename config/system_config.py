@@ -22,5 +22,5 @@ class SystemConfig:
     SLACK_NOTIFICATION_URL = os.environ. \
         get('SLACK_NOTIFICATION_URL', 'https://hooks.slack.com/services/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')
     SERVICE_SLEEP_INTERVAL = os.environ.get('PROCESS_SLEEP_INTERVAL', 5)
-    S3_BUCKET_NAME = 'aduro-data-dev'
-    S3_IMAGE_PATH = f'temp/images/{SOCIAL_NETWORK.lower()}'
+    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', 'aduro-data-dev')
+    S3_IMAGE_PATH = os.environ.get('S3_IMAGE_PATH', f'images/{SOCIAL_NETWORK.lower()}')
