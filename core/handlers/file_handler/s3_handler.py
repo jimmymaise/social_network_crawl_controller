@@ -119,7 +119,6 @@ class S3Handler:
         self.s3_client.download_file(bucket_name, s3_file_path, out_file_path)
 
     def copy_file_from_external_url_to_s3(self, external_url, s3_folder_path, bucket, is_overwrite_if_exist=False):
-        return external_url
         url_parse_obj = urlparse(external_url)
         file_name = os.path.basename(url_parse_obj.path)
         s3_full_path = f'{s3_folder_path}/{file_name}'
