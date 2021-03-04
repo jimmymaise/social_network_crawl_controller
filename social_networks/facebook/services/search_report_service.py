@@ -1,5 +1,4 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.logger.logger_handler import Logger
 from core.services.base_collection_service import CollectionService
 from social_networks.facebook.handlers.db_handler.report_db_handler import ReportDBHandler
 from social_networks.facebook.utils.constant import Constant
@@ -11,8 +10,7 @@ from social_networks.facebook.workflow.transform.search_report_transform_handler
 
 class SearchReportService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,Constant.SERVICE_NAME_SEARCH_REPORT)
-
+        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT, Constant.SERVICE_NAME_SEARCH_REPORT)
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
