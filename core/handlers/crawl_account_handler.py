@@ -23,13 +23,12 @@ class CrawlAccountHandler:
             max_attempts=Constant.AM_MAX_REQUEST,
             retry_time_sleep=Constant.AM_DEFAULT_SLEEP_TIME
         )
-        account_data, account_id = None, None
+
         if success and response.json().get('data'):
-            account_data = response.json().get('data')
-            account_id = account_data['account_id']
+            account_info = response.json().get('data')
+            return account_info
         else:
             self.logger.warning(f'Cannot get account from account manager. Response {response.text}')
-        return account_data, account_id
 
     def update_account_token(self, account_id, status_code, message):
         account_spec = AccountUpdateSpecs()
