@@ -2,10 +2,12 @@ from enum import Enum
 
 from core.services.base_collection_service import CollectionService
 from social_networks.tiktok.services.user_collection_service import UserCollectionService
+from social_networks.tiktok.services.posts_collection_service import PostsCollectionService
 
 
 class ServiceEnum(Enum):
     user_collection = UserCollectionService
+    posts_collection = PostsCollectionService
 
 
 class ServiceFactory:

@@ -8,10 +8,12 @@ class Constant(CoreConstant):
     SERVICE_NAME_SEARCH_REPORT = 'search_report'
     SERVICE_NAME_COMMENT_REPORT = 'comment_report'
     SERVICE_NAME_USER_COLLECTION = 'user_collection'
+    SERVICE_NAME_POSTS_COLLECTION = 'posts_collection'
 
     COLLECTION_NAME_REPORT = 'reports'
     COLLECTION_NAME_KOL = 'kols'
     COLLECTION_NAME_USER = 'users'
+    COLLECTION_NAME_POSTS = 'posts'
 
     COLLECTION_NAME_MEDIA = 'medias'
     COLLECTION_NAME_COMMENT = 'comments'
@@ -24,3 +26,4 @@ class Constant(CoreConstant):
 
     LAMBDA_API_CRAWL_POST_DETAIL_PATH = 'post-details'
     LAMBDA_API_CRAWL_USER_DETAIL_PATH = 'user-details'
+    LAMBDA_API_CRAWL_USER_POSTS_PATH = 'user-posts'
