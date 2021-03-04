@@ -7,13 +7,13 @@ from social_networks.tiktok.handlers.api_handler.lambda_api_specs.user_detail_ap
 
 
 class APICollectHandler(BaseCollectHandler):
-    def __init__(self, crawl_account_handler: CrawlAccountHandler):
+    def __init__(self, crawl_account_handler: CrawlAccountHandler = None):
         super().__init__()
         self.crawl_account_handler = crawl_account_handler
 
     def get_user_detail_from_lambda(self, lambda_base_url, username, api_key) -> dict:
 
-        account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        account_info = self.crawl_account_handler and self.crawl_account_handler.get_account_id_token()
 
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
 

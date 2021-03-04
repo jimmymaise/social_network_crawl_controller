@@ -18,7 +18,7 @@ class APICollectHandler(BaseCollectHandler):
         if not APICollectUtils.is_validate_post_link_format(post_link):
             raise ErrorLinkFormat(f'Post Link Error:{post_link}')
 
-        account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        account_info = self.crawl_account_handler.get_account_id_token()
         if not account_info:
             raise ErrorNotAvailableAccount()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
@@ -41,7 +41,7 @@ class APICollectHandler(BaseCollectHandler):
     def get_comments_from_lambda(self, lambda_base_url, shortcode, cursor, api_key,
                                  social_type=Constant.SOCIAL_TYPE_PROFILE):
 
-        account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        account_info = self.crawl_account_handler.get_account_id_token()
         if not account_info:
             raise ErrorNotAvailableAccount()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)

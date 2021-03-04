@@ -27,11 +27,11 @@ class UserCollectionService(CollectionService):
                                                     social_network=Constant.SOCIAL_NETWORK_TIKTOK,
                                                     service_name=self.service_name,
                                                     country=None)
-        collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
+        collect_handler = APICollectHandler(crawl_account_handler=None)
         api_response = collect_handler.get_user_detail_from_lambda(
             lambda_base_url=self.system_config.LAMBDA_BASE_URL,
             username=loaded_item['username'],
-            api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL)
+            api_key=self.system_config.LAMBDA_X_API_KEY)
         collected_data = api_response['data']
         return collected_data
 
