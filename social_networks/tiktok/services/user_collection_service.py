@@ -8,11 +8,11 @@ from social_networks.tiktok.workflow.transform.user_collection_transform_handler
 
 
 class UserCollectionService(CollectionService):
-    def __init__(self, service_config):
+    def __init__(self, service_config, on_demand_handler=None):
         super().__init__(service_config, Constant.COLLECTION_NAME_KOL,
-                         service_name=Constant.SERVICE_NAME_USER_COLLECTION)
+                         service_name=Constant.SERVICE_NAME_USER_COLLECTION, on_demand_handler=on_demand_handler)
 
-    def _load_items(self) -> list:
+    def _load_items_from_db(self) -> list:
         kol_db_handler = KOLDBHandler(self.db_connection)
         loader = ReportLoadHandler(kol_db_handler)
         query = KOLQuery.get_kols_for_user_collection_service(self.service_config)

@@ -12,7 +12,7 @@ class SearchReportService(CollectionService):
     def __init__(self, service_config):
         super().__init__(service_config, Constant.COLLECTION_NAME_REPORT, Constant.SERVICE_NAME_SEARCH_REPORT)
 
-    def _load_items(self) -> list:
+    def _load_items_from_db(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
         loader = ReportLoadHandler(report_db_handler)
         query = ReportQuery.get_reports_for_search_report_service(self.service_config)

@@ -12,6 +12,7 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
     def __init__(self, service_name):
         super().__init__(service_name)
         self.s3_handler = S3Handler()
+        self.system_config = SystemConfig.get_system_config()
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []
@@ -21,22 +22,21 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
             raise ErrorStoreFormat(f'Schema error {str(collected_user_schema_error)}')
 
         transformed_data.append(self._make_transformed_item(
+            collection_name=Constant.COLLECTION_NAME_USER,
+            updated_object_list=[self._build_user_updated_object(collected_data)],
+            sending_queue_name=self.system_config.USER_SQS_QUEUE_NAME
+        ))
+
+        transformed_data.append(self._make_transformed_item(
+            collection_name=Constant.COLLECTION_NAME_KOL,
+            updated_object_list=[self._build_kol_updated_object(collected_data)])
+        )
+
+        transformed_data.append(self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_MEDIA,
             updated_object_list=self._build_media_updated_objects(collected_data))
         )
-        if collected_data.get('user'):
-            _, collected_user_schema_error = self._validate_schema(data=collected_data['user'], schema=UserObjectSchema)
-            if not collected_user_schema_error:
-                transformed_data.append(self._make_transformed_item(
-                    collection_name=Constant.COLLECTION_NAME_KOL,
-                    updated_object_list=[self._build_kol_updated_object(collected_data)])
-                )
-                transformed_data.append(self._make_transformed_item(
-                    collection_name=Constant.COLLECTION_NAME_USER,
-                    updated_object_list=[self._build_user_updated_object(collected_data)])
-                )
-            else:
-                self.logger.warning(f'User transform schema error {collected_user_schema_error}')
+
         return transformed_data
 
     def _build_user_updated_object(self, collected_data):
@@ -88,8 +88,8 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         media_stored_object = media_stored_object_builder.build(item=item_having_media)
         media_stored_object['link'] = self.s3_handler.copy_file_from_external_url_to_s3(
             external_url=media_stored_object['link'],
-            bucket=SystemConfig.S3_BUCKET_NAME,
-            s3_folder_path=f'{SystemConfig.S3_IMAGE_PATH}/{media_type}'
+            bucket=self.system_config.S3_BUCKET_NAME,
+            s3_folder_path=f'{self.system_config.S3_IMAGE_PATH}/{media_type}'
         )
         media_stored_object['_id'] = self._get_image_id_from_tiktok_url(url=media_stored_object['link'])
         return self._make_updated_object(

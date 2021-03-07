@@ -1,7 +1,29 @@
 import os
 
+system_config = None
+
 
 class SystemConfig:
+
+    @staticmethod
+    def set_system_config(config):
+        global system_config
+        system_config = config
+
+    @staticmethod
+    def get_system_config():
+        global system_config
+
+        if system_config:
+            return system_config
+        if not os.environ.get('LAMBDA'):
+            system_config = SchedulerSystemConfig
+            return system_config
+
+        raise Exception('NotInvalidConfig')
+
+
+class SchedulerSystemConfig:
     DEFAULT_SERVICE_LOCAL = os.environ.get('DEFAULT_SERVICE_LOCAL', 'user_collection')
     SOCIAL_NETWORK = os.environ.get('SOCIAL_NETWORK', 'TIKTOK')
 
@@ -22,3 +44,4 @@ class SystemConfig:
     SERVICE_SLEEP_INTERVAL = os.environ.get('PROCESS_SLEEP_INTERVAL', 5)
     S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', 'aduro-data-dev')
     S3_IMAGE_PATH = os.environ.get('S3_IMAGE_PATH', f'images/{SOCIAL_NETWORK.lower()}')
+    USER_SQS_QUEUE_NAME = '1234'

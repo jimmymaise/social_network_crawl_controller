@@ -34,14 +34,14 @@ class BaseItemTransformHandler:
         }
 
     @staticmethod
-    def _make_transformed_item(collection_name: str, updated_object_list: list):
+    def _make_transformed_item(collection_name: str, updated_object_list: list, sending_queue_name=None):
         return {
             'collection_name': collection_name,
+            'sending_queue_name': sending_queue_name,
             'items': updated_object_list
         }
 
     def _build_report_statuses_object(self):
-
         report_statuses_object = {
             f'{self.service_name}_status': {'status': 'success',
                                             'latest_updated_time': int(self.now.timestamp())
@@ -52,7 +52,6 @@ class BaseItemTransformHandler:
         return report_statuses_object
 
     def _build_kol_statuses_object(self):
-
         report_statuses_object = {
             f'{self.service_name}_status': {'status': 'success',
                                             'latest_updated_time': int(self.now.timestamp())
