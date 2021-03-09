@@ -8,7 +8,7 @@ from social_networks.tiktok.workflow.loading.load.report_load_handler import Rep
 from social_networks.tiktok.workflow.loading.load.user_load_handler import UserLoadHandler
 from social_networks.tiktok.workflow.loading.query.kol_query import KOLQuery
 from social_networks.tiktok.workflow.loading.query.user_query import UserQuery
-from social_networks.tiktok.workflow.transform.user_collection_transform_handler import UserCollectionTransformHandler
+from social_networks.tiktok.workflow.transform.posts_collection_transform_handler import PostsCollectionTransformHandler
 
 
 class PostsCollectionService(CollectionService):
@@ -47,6 +47,6 @@ class PostsCollectionService(CollectionService):
         return collected_data
 
     def _transform_data(self, loaded_items, collected_data):
-        user_collection_transform = UserCollectionTransformHandler(service_name=self.service_name)
-        transformed_data = user_collection_transform.process_item(loaded_items, collected_data)
+        posts_collection_transform = PostsCollectionTransformHandler(service_name=self.service_name)
+        transformed_data = posts_collection_transform.process_item(loaded_items, collected_data)
         return transformed_data
