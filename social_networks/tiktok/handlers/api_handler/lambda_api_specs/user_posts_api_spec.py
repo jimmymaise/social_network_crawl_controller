@@ -13,10 +13,13 @@ class UserPostsAPISpecs(BaseAPISpecs):
                          request_schema=UserDetailAPIRequestSchema,
                          response_schema=UserDetailAPIResponseSchema)
 
-    def set_body(self, sec_uid: str):
+    def set_body(self, sec_uid: str, cursor: int):
         self.body = {
-            'sec_uid': sec_uid,
+            'sec_uid': sec_uid
         }
+
+        if cursor is not None:
+            self.body['cursor'] = cursor
 
     def set_headers(self, api_key):
         self.headers = {'X-API-KEY': api_key}
@@ -83,3 +86,4 @@ class UserDetailAPIRequestSchema(Schema):
         unknown = EXCLUDE
 
     username = fields.Str()
+    cursor = fields.Int(allow_none=True)

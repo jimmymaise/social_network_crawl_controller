@@ -39,12 +39,22 @@ class PostsCollectionService(CollectionService):
                                                     service_name=self.service_name,
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
-        api_response = collect_handler.get_user_posts_from_lambda(
-            lambda_base_url=self.system_config.LAMBDA_BASE_URL,
-            sec_uid=loaded_item['sec_uid'],
-            api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL)
-        collected_data = api_response['data']
-        return collected_data
+        has_next_page = True
+        next_cursor = None
+
+        while has_next_page is True:
+            self.logger.info(f'Next cursor {next_cursor}')
+            response_body = collect_handler.get_user_posts_from_lambda(
+                lambda_base_url=self.system_config.LAMBDA_BASE_URL,
+                api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
+                sec_uid=loaded_item['sec_uid'],
+                cursor=next_cursor
+            )
+
+            has_next_page = response_body['paging']['has_next_page']
+            next_cursor = response_body['paging']['next_cursor']
+            for item in response_body['data']:
+                yield item
 
     def _transform_data(self, loaded_items, collected_data):
         posts_collection_transform = PostsCollectionTransformHandler(service_name=self.service_name)
