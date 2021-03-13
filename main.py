@@ -1,3 +1,4 @@
+import os
 from enum import Enum
 
 from config.service_config import ServiceConfigs
@@ -30,15 +31,17 @@ class ServicesRunner:
 
 class ServiceOnDemandRunner:
     def __init__(self, event, context):
-        self.system_config = SystemConfig
-        self.service_config = ServiceConfigs.get_service_config()
         self.on_demand_handler = OnDemandHandler(event=event, context=context)
+        service_name, social_network = self.on_demand_handler.get_service_name_social_network_from_event()
+        self.system_config = SystemConfig.get_system_config(social_network)
+        os.environ['LAMBDA'] = 'LAMBDA'
 
     def run(self):
         service_name, social_network = self.on_demand_handler.get_service_name_social_network_from_event()
-        service_factory = getattr(SocialNetworkServiceFactory, social_network).value
+        service_factory = getattr(SocialNetworkServiceFactory, social_network.upper()).value
+
         service = service_factory.create_service(service_name=service_name,
-                                                 service_config=self.service_config,
+                                                 service_config=None,
                                                  on_demand_handler=self.on_demand_handler
                                                  )
         service.start()
@@ -49,4 +52,14 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    ServicesRunner().run()
+    # ServicesRunner().run()
+    lambda_handler({
+        'Records': [{'social_type': 'tiktok',
+                     'social_name': 'cuti',
+                     'social_app_id': '123',
+                     'social_user_name': 'fandom',
+                     'country_code': 'vi',
+                     'hiip_user_id': 1234,
+
+                     'taken_at_timestamp': 11,
+                     'service_name': 'user_collection', }]}, {})

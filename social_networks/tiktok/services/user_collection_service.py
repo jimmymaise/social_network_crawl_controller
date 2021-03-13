@@ -1,5 +1,6 @@
 from core.services.base_collection_service import CollectionService
 from social_networks.tiktok.handlers.db_handler.kol_db_handler import KOLDBHandler
+from social_networks.tiktok.handlers.queue_handler.message_schemas.user_message_schema import ReceivingUserMessageSchema
 from social_networks.tiktok.utils.constant import Constant
 from social_networks.tiktok.workflow.collect.api_collect_handler import APICollectHandler
 from social_networks.tiktok.workflow.loading.load.report_load_handler import ReportLoadHandler
@@ -11,6 +12,15 @@ class UserCollectionService(CollectionService):
     def __init__(self, service_config, on_demand_handler=None):
         super().__init__(service_config, Constant.COLLECTION_NAME_KOL,
                          service_name=Constant.SERVICE_NAME_USER_COLLECTION, on_demand_handler=on_demand_handler)
+        self.receive_message_schema = ReceivingUserMessageSchema
+        self.message_mapping = {
+            'hiip_user_id': 'hiip_user_id',
+            'country_code': 'country_code',
+            'user_id': 'social_id',
+            'app_id': 'social_app_id',
+            'username': 'social_user_name',
+            '_id': 'hiip_user_id'
+        }
 
     def _load_items_from_db(self) -> list:
         kol_db_handler = KOLDBHandler(self.db_connection)

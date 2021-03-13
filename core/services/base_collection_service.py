@@ -1,6 +1,8 @@
 import time
 from abc import ABC
 from abc import abstractmethod
+import json
+from bson.objectid import ObjectId
 
 from config.system_config import SystemConfig
 from core.handlers.db_handler.base_db_handler import DBConnection
@@ -8,11 +10,12 @@ from core.handlers.db_handler.base_db_handler import GeneralDBHandler
 from core.handlers.on_demand_handler.on_demand_handler import OnDemandHandler
 from core.handlers.queue_handler.sqs_handler import SQSHandler
 from core.logger.logger_handler import Logger
+from core.utils.common import Common
 from core.utils.constant import Constant
 
 
 class CollectionService(ABC):
-    def __init__(self, service_config: dict, collection_for_error_report_name: str, service_name: str,
+    def __init__(self, service_config: dict, loaded_collection_name: str, service_name: str,
                  on_demand_handler: OnDemandHandler = None):
         self.service_name = service_name
         self.on_demand_handler = on_demand_handler
@@ -20,8 +23,9 @@ class CollectionService(ABC):
         self.service_config = service_config
         self.db_connection = self._create_db_connection_by_system_config()
         self.logger = Logger().init_logger(logger_name=f'{self.system_config.SOCIAL_NETWORK}-{self.service_name}')
-
-        self.collection_for_error_report_name = collection_for_error_report_name
+        self.receive_message_schema = None
+        self.message_mapping = None
+        self.loaded_collection_name = loaded_collection_name
         self.is_on_demand = bool(on_demand_handler)
 
     def _update_failed_status(self, load_id, exception):
@@ -29,7 +33,7 @@ class CollectionService(ABC):
         self.logger.error(exception, exc_info=True)
 
         self._store_data_and_send_to_sqs([
-            {'collection_name': self.collection_for_error_report_name,
+            {'collection_name': self.loaded_collection_name,
              'items': [
                  {
                      'filter': {'_id': load_id},
@@ -57,7 +61,21 @@ class CollectionService(ABC):
     def _load_item_from_message(self):
         if not self.on_demand_handler:
             raise Exception('NotSupportOnDemandMode')
+
         item = self.on_demand_handler.message
+
+        if not (self.message_mapping and self.receive_message_schema and self.loaded_collection_name):
+            raise Exception('Must have message_mapping,receive_message_schema and loaded_collection_name')
+
+        _, error = Common.validate_schema(item, self.receive_message_schema)
+        if error:
+            raise Exception(f'Message error {error}')
+
+        if self.message_mapping['_id'] == 'ObjectId()':
+            self.message_mapping['_id'] = ObjectId()
+
+        item = Common.transform_dict_with_mapping(item, self.message_mapping)
+
         return item
 
     @abstractmethod
@@ -78,11 +96,14 @@ class CollectionService(ABC):
     def _store_data_and_send_to_sqs(self, transformed_data, **kwargs):
 
         for obj in transformed_data:
-            GeneralDBHandler(collection_name=obj['collection_name'], connection=self.db_connection). \
-                bulk_write_many_update_objects(obj['items'])
-            if obj.get('queue_name'):
+
+            if obj.get('collection_name'):
+                GeneralDBHandler(collection_name=obj['collection_name'], connection=self.db_connection). \
+                    bulk_write_many_update_objects(obj['items'])
+
+            if obj.get('sending_queue_name'):
                 for item in obj['items']:
-                    SQSHandler().send_sqs_message(message_body=item, queue_name=obj['queue_name'])
+                    SQSHandler().send_sqs_message(message_body=json.dumps(item), queue_name=obj['sending_queue_name'])
 
     def _on_demand_process(self):
         loaded_item = self._load_item_from_message()
@@ -100,7 +121,6 @@ class CollectionService(ABC):
                 transformed_data = self._transform_data(loaded_item, collected_data)
                 self._store_data_and_send_to_sqs(transformed_data)
                 self.logger.info(f'Load Item Id {loaded_item["_id"]} successful!')
-
             except Exception as e:
                 self.logger.error(f'Load Item Id {loaded_item["_id"]}, Error: {e}')
                 self._update_failed_status(load_id=loaded_item['_id'], exception=e)

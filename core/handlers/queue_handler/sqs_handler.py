@@ -3,10 +3,10 @@ import boto3
 
 class SQSHandler:
     def __init__(self, region_name=None):
-        self.sqs_client = boto3.client('sqs', region_name=region_name) if region_name else boto3.client('sqs')
+        self.sqs_client = boto3.client('sqs', region_name=region_name)
 
     def send_sqs_message(self, message_body, queue_name):
-        sqs_queue_url = self.sqs_client.get_queue_url(QueueName=queue_name)
+        sqs_queue_url = self.sqs_client.get_queue_url(QueueName=queue_name)['QueueUrl']
         response_msg = self.sqs_client.send_message(QueueUrl=sqs_queue_url,
                                                     MessageBody=message_body,
                                                     )

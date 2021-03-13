@@ -13,6 +13,7 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         super().__init__(service_name)
         self.s3_handler = S3Handler()
         self.system_config = SystemConfig.get_system_config()
+        self.s3_link_mapping = {}
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []
@@ -20,23 +21,29 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
 
         if collected_user_schema_error:
             raise ErrorStoreFormat(f'Schema error {str(collected_user_schema_error)}')
+        transformed_data.append(self._make_transformed_item(
+            collection_name=Constant.COLLECTION_NAME_MEDIA,
+            updated_object_list=self._build_media_updated_objects(collected_data))
+        )
 
         transformed_data.append(self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_USER,
             updated_object_list=[self._build_user_updated_object(collected_data)],
-            sending_queue_name=self.system_config.USER_SQS_QUEUE_NAME
         ))
 
         transformed_data.append(self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_KOL,
             updated_object_list=[self._build_kol_updated_object(collected_data)])
         )
-
+        # For sync data
         transformed_data.append(self._make_transformed_item(
-            collection_name=Constant.COLLECTION_NAME_MEDIA,
-            updated_object_list=self._build_media_updated_objects(collected_data))
-        )
-
+            sending_queue_name=self.system_config.USER_COLLECTION_RECEIVE_QUEUE_NAME,
+            updated_object_list=[self._build_user_sync_data_object(loaded_item, collected_data)],
+        ))
+        transformed_data.append(self._make_transformed_item(
+            sending_queue_name=self.system_config.POST_LIST_COLLECTION_REQUEST_QUEUE_NAME,
+            updated_object_list=[self._build_post_list_sync_request_object(collected_data)],
+        ))
         return transformed_data
 
     def _build_user_updated_object(self, collected_data):
@@ -55,6 +62,28 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         )
         return user_updated_object
 
+    def _build_user_sync_data_object(self, loaded_item, collected_data):
+        user_sync_object_builder = StoredObjectBuilder()
+        user_sync_object_builder.set_get_all_fields_from_collected_object('collected_user',
+                                                                          excluded_fields='avatar')
+
+        user_sync_object = user_sync_object_builder.build(collected_user=collected_data['user'])
+
+        user_sync_object['avatar'] = self.s3_link_mapping[collected_data['user']['avatar']]['s3_link']
+        user_sync_object['country_code'] = loaded_item['country_code']
+        return user_sync_object
+
+    @staticmethod
+    def _build_post_list_sync_request_object(collected_data):
+        post_list_request_object_builder = StoredObjectBuilder()
+        post_list_request_object_builder.add_mapping('collected_user', {'_id': 'user_id',
+                                                                        'username': 'username',
+                                                                        'sec_uid': 'sec_uid'})
+
+        post_list_request_object = post_list_request_object_builder.build(collected_user=collected_data['user'])
+        post_list_request_object['service_name'] = 'post_list_collection'
+        return post_list_request_object
+
     def _build_kol_updated_object(self, collected_data):
         kol_stored_object_builder = StoredObjectBuilder()
         kol_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id', 'username': 'username'}, )
@@ -66,7 +95,7 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         kol_updated_object = self._make_updated_object(
             filter_={'username': kol_stored_object['username']},
             stored_object=kol_stored_object,
-            upsert=False
+            upsert=True
         )
 
         return kol_updated_object
@@ -86,12 +115,17 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         media_stored_object_builder = StoredObjectBuilder()
         media_stored_object_builder.add_mapping('item', mapping)
         media_stored_object = media_stored_object_builder.build(item=item_having_media)
+        external_url = media_stored_object['link']
         media_stored_object['link'] = self.s3_handler.copy_file_from_external_url_to_s3(
-            external_url=media_stored_object['link'],
+            external_url=external_url,
             bucket=self.system_config.S3_BUCKET_NAME,
             s3_folder_path=f'{self.system_config.S3_IMAGE_PATH}/{media_type}'
         )
         media_stored_object['_id'] = self._get_image_id_from_tiktok_url(url=media_stored_object['link'])
+
+        self.s3_link_mapping[external_url] = {'s3_link': media_stored_object['link'],
+                                              '_id': media_stored_object['_id']}
+
         return self._make_updated_object(
             filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,
