@@ -1,4 +1,3 @@
-import json
 import time
 from abc import ABC
 from abc import abstractmethod
@@ -8,7 +7,6 @@ from bson.objectid import ObjectId
 from config.system_config import SystemConfig
 from core.handlers.db_handler.base_db_handler import DBConnection
 from core.handlers.db_handler.base_db_handler import GeneralDBHandler
-from core.handlers.db_handler.collection_lookup_handler import CollectionLookupHandler
 from core.handlers.on_demand_handler.on_demand_handler import OnDemandHandler
 from core.handlers.queue_handler.sqs_handler import SQSHandler
 from core.logger.logger_handler import Logger
@@ -103,28 +101,8 @@ class CollectionService(ABC):
                 bulk_write_many_update_objects(obj['items'])
 
     def _sync_data_to_sqs(self, loaded_item, transformed_data):
-        username = loaded_item['username']
-        user_collection_lookup_handler = CollectionLookupHandler(collection_name='users',
-                                                                 db_connection=self.db_connection)
-        user_collection_lookup_handler.add_lookup_field(
-            lookup_field_name='avatar',
-            collection_lookup=Constant.COLLECTION_NAME_MEDIA,
-            field_name_local='avatar',
-            field_name_foreign='_id',
-            field_name_return='link')
-
-        user_collection_lookup_handler.add_lookup_field(
-            lookup_field_name='country_code',
-            collection_lookup=Constant.COLLECTION_NAME_KOL,
-            field_name_local='username',
-            field_name_foreign='username',
-            field_name_return='country_code')
-        user_collection_lookup_handler.match(
-            {'username': username}
-        )
-        user_sync_data = user_collection_lookup_handler.query()
-        self.sqs_handler.send_sqs_message(message_body=json.dumps(user_sync_data()),
-                                          queue_name=self.system_config.USER_COLLECTION_QUEUE_NAME)
+        # Sync data to sqs
+        pass
 
     def _on_demand_process(self):
         loaded_item = self._load_item_from_message()

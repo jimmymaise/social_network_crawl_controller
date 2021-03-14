@@ -26,11 +26,11 @@ class BaseSystemConfig:
 
     AM_BASE_URL = os.getenv('AM_BASE_URL', 'http://34.219.102.184:9099')
 
-    MONGO_DB_HOST = os.getenv('MONGODB_HOST', 'localhost')
-    MONGO_DB_PORT = os.getenv('MONGODB_PORT', 27017)
-    MONGO_DB_DATABASE_NAME = os.getenv('MONGODB_DB', 'tiktok')
-    MONGO_DB_USERNAME = os.getenv('MONGODB_USER')
-    MONGO_DB_PASSWORD = os.getenv('MONGODB_PASS')
+    MONGO_DB_HOST = os.getenv('MONGO_DB_HOST', 'localhost')
+    MONGO_DB_PORT = os.getenv('MONGO_DB_PORT', 27017)
+    MONGO_DB_DATABASE_NAME = os.getenv('MONGO_DB_DATABASE_NAME', 'tiktok')
+    MONGO_DB_USERNAME = os.getenv('MONGO_DB_USERNAME')
+    MONGO_DB_PASSWORD = os.getenv('MONGO_DB_PASSWORD')
 
     LAMBDA_BASE_URL = os.getenv('LAMBDA_BASE_URL',
                                 'https://5j0ilnnh1l.execute-api.us-west-2.amazonaws.com/tt')
