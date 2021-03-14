@@ -23,11 +23,12 @@ class BaseItemTransformHandler:
     @staticmethod
     def _validate_schema(data, schema):
         error = {}
+        value = data
         try:
-            schema().load(data)
+            value = dict(schema().load(data))
         except Exception as e:
             error = e
-        return data, error
+        return value, error
 
     @staticmethod
     def _make_updated_object(filter_, stored_object, upsert=True):

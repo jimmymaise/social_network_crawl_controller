@@ -46,7 +46,7 @@ class PostsCollectionService(CollectionService):
             self.logger.info(f'Next cursor {next_cursor}')
             response_body = collect_handler.get_user_posts_from_lambda(
                 lambda_base_url=self.system_config.LAMBDA_BASE_URL,
-                api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
+                api_key=self.system_config.LAMBDA_X_API_KEY,
                 sec_uid=loaded_item['sec_uid'],
                 cursor=next_cursor
             )
