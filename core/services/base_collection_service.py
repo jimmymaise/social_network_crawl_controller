@@ -1,12 +1,14 @@
+import json
 import time
 from abc import ABC
 from abc import abstractmethod
-import json
+
 from bson.objectid import ObjectId
 
 from config.system_config import SystemConfig
 from core.handlers.db_handler.base_db_handler import DBConnection
 from core.handlers.db_handler.base_db_handler import GeneralDBHandler
+from core.handlers.db_handler.collection_lookup_handler import CollectionLookupHandler
 from core.handlers.on_demand_handler.on_demand_handler import OnDemandHandler
 from core.handlers.queue_handler.sqs_handler import SQSHandler
 from core.logger.logger_handler import Logger
@@ -27,12 +29,13 @@ class CollectionService(ABC):
         self.message_mapping = None
         self.loaded_collection_name = loaded_collection_name
         self.is_on_demand = bool(on_demand_handler)
+        self.sqs_handler = SQSHandler()
 
     def _update_failed_status(self, load_id, exception):
         error_code = getattr(exception, Constant.COLLECTION_SERVICE_ERROR_NAME, Constant.DEFAULT_UNKNOWN_ERROR_CODE)
         self.logger.error(exception, exc_info=True)
 
-        self._store_data_and_send_to_sqs([
+        self._store_data_to_db([
             {'collection_name': self.loaded_collection_name,
              'items': [
                  {
@@ -93,17 +96,35 @@ class CollectionService(ABC):
         # Play something with self.item_transform
         pass
 
-    def _store_data_and_send_to_sqs(self, transformed_data, **kwargs):
+    def _store_data_to_db(self, transformed_data, **kwargs):
 
         for obj in transformed_data:
+            GeneralDBHandler(collection_name=obj['collection_name'], connection=self.db_connection). \
+                bulk_write_many_update_objects(obj['items'])
 
-            if obj.get('collection_name'):
-                GeneralDBHandler(collection_name=obj['collection_name'], connection=self.db_connection). \
-                    bulk_write_many_update_objects(obj['items'])
+    def _sync_data_to_sqs(self, loaded_item, transformed_data):
+        username = loaded_item['username']
+        user_collection_lookup_handler = CollectionLookupHandler(collection_name='users',
+                                                                 db_connection=self.db_connection)
+        user_collection_lookup_handler.add_lookup_field(
+            lookup_field_name='avatar',
+            collection_lookup=Constant.COLLECTION_NAME_MEDIA,
+            field_name_local='avatar',
+            field_name_foreign='_id',
+            field_name_return='link')
 
-            if obj.get('sending_queue_name'):
-                for item in obj['items']:
-                    SQSHandler().send_sqs_message(message_body=json.dumps(item), queue_name=obj['sending_queue_name'])
+        user_collection_lookup_handler.add_lookup_field(
+            lookup_field_name='country_code',
+            collection_lookup=Constant.COLLECTION_NAME_KOL,
+            field_name_local='username',
+            field_name_foreign='username',
+            field_name_return='country_code')
+        user_collection_lookup_handler.match(
+            {'username': username}
+        )
+        user_sync_data = user_collection_lookup_handler.query()
+        self.sqs_handler.send_sqs_message(message_body=json.dumps(user_sync_data()),
+                                          queue_name=self.system_config.USER_COLLECTION_QUEUE_NAME)
 
     def _on_demand_process(self):
         loaded_item = self._load_item_from_message()
@@ -119,7 +140,8 @@ class CollectionService(ABC):
             try:
                 collected_data = self._collect_data(loaded_item)
                 transformed_data = self._transform_data(loaded_item, collected_data)
-                self._store_data_and_send_to_sqs(transformed_data)
+                self._store_data_to_db(transformed_data)
+                self._sync_data_to_sqs(loaded_item, transformed_data)
                 self.logger.info(f'Load Item Id {loaded_item["_id"]} successful!')
             except Exception as e:
                 self.logger.error(f'Load Item Id {loaded_item["_id"]}, Error: {e}')

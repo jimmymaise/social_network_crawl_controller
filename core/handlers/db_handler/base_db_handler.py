@@ -29,6 +29,9 @@ class BaseDBHandler(object):
         self.database = connection.db
         self.collection = None
 
+    def aggregate(self, aggregate: list):
+        return self.collection.aggregate(aggregate)
+
     def get_one_by_filter(self,
                           filter_,
                           sort_,

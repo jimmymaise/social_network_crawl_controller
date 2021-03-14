@@ -35,15 +35,6 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
             collection_name=Constant.COLLECTION_NAME_KOL,
             updated_object_list=[self._build_kol_updated_object(collected_data)])
         )
-        # For sync data
-        transformed_data.append(self._make_transformed_item(
-            sending_queue_name=self.system_config.USER_COLLECTION_RECEIVE_QUEUE_NAME,
-            updated_object_list=[self._build_user_sync_data_object(loaded_item, collected_data)],
-        ))
-        transformed_data.append(self._make_transformed_item(
-            sending_queue_name=self.system_config.POST_LIST_COLLECTION_REQUEST_QUEUE_NAME,
-            updated_object_list=[self._build_post_list_sync_request_object(collected_data)],
-        ))
         return transformed_data
 
     def _build_user_updated_object(self, collected_data):
@@ -61,28 +52,6 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
             upsert=True
         )
         return user_updated_object
-
-    def _build_user_sync_data_object(self, loaded_item, collected_data):
-        user_sync_object_builder = StoredObjectBuilder()
-        user_sync_object_builder.set_get_all_fields_from_collected_object('collected_user',
-                                                                          excluded_fields='avatar')
-
-        user_sync_object = user_sync_object_builder.build(collected_user=collected_data['user'])
-
-        user_sync_object['avatar'] = self.s3_link_mapping[collected_data['user']['avatar']]['s3_link']
-        user_sync_object['country_code'] = loaded_item['country_code']
-        return user_sync_object
-
-    @staticmethod
-    def _build_post_list_sync_request_object(collected_data):
-        post_list_request_object_builder = StoredObjectBuilder()
-        post_list_request_object_builder.add_mapping('collected_user', {'_id': 'user_id',
-                                                                        'username': 'username',
-                                                                        'sec_uid': 'sec_uid'})
-
-        post_list_request_object = post_list_request_object_builder.build(collected_user=collected_data['user'])
-        post_list_request_object['service_name'] = 'post_list_collection'
-        return post_list_request_object
 
     def _build_kol_updated_object(self, collected_data):
         kol_stored_object_builder = StoredObjectBuilder()

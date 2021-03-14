@@ -45,7 +45,5 @@ class BaseSystemConfig:
     SERVICE_SLEEP_INTERVAL = get_config_by_key('PROCESS_SLEEP_INTERVAL', 5)
     S3_BUCKET_NAME = get_config_by_key('S3_BUCKET_NAME', 'hiip-asia-media')
     S3_IMAGE_PATH = get_config_by_key('S3_IMAGE_PATH', f'images/{SOCIAL_NETWORK.lower()}')
-    USER_COLLECTION_RECEIVE_QUEUE_NAME = 'sync-new-user-data'
-    POST_LIST_COLLECTION_RECEIVE_QUEUE_NAME = 'sync-new-post-data'
-    USER_COLLECTION_REQUEST_QUEUE_NAME = '1234'
-    POST_LIST_COLLECTION_REQUEST_QUEUE_NAME = 'sync-new-post-data'
+    QUEUE_NAME_USER_DATA_SYNC = 'sync-new-user-data'
+    QUEUE_NAME_POST_LIST_COLLECTION = 'sync-new-post-data'

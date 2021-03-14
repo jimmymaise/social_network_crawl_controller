@@ -34,10 +34,9 @@ class BaseItemTransformHandler:
         }
 
     @staticmethod
-    def _make_transformed_item(*,updated_object_list: list = None, collection_name: str = None, sending_queue_name=None):
+    def _make_transformed_item(*, updated_object_list: list = None, collection_name: str = None):
         return {
             'collection_name': collection_name,
-            'sending_queue_name': sending_queue_name,
             'items': updated_object_list
         }
 
