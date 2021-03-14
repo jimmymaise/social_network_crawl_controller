@@ -31,10 +31,10 @@ class ServicesRunner:
 
 class ServiceOnDemandRunner:
     def __init__(self, event, context):
+        os.environ['LAMBDA'] = 'LAMBDA'
         self.on_demand_handler = OnDemandHandler(event=event, context=context)
         service_name, social_network = self.on_demand_handler.get_service_name_social_network_from_event()
         self.system_config = SystemConfig.get_system_config(social_network)
-        os.environ['LAMBDA'] = 'LAMBDA'
 
     def run(self):
         service_name, social_network = self.on_demand_handler.get_service_name_social_network_from_event()
