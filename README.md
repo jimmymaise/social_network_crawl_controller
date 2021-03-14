@@ -14,7 +14,7 @@ Note:
 
 - It may have issue when connect to account_manager service. In order to work arround, add sample data for account_info.
 For example, in socail_networks/instagram/workflow/collect/api_collect_handler.py, inside func get_comments_from_lambda, we can set below data right after the line 
-`account_info, account_id = self.crawl_account_handler.get_account_id_token()`
+`account_info = self.crawl_account_handler.get_account_id_token()`
 
            
 		 

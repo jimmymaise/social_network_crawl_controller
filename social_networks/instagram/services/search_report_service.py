@@ -31,7 +31,7 @@ class SearchReportService(CollectionService):
         api_response = collect_handler.get_post_detail_data_from_lambda(
             lambda_base_url=self.system_config.LAMBDA_BASE_URL,
             post_link=loaded_item['post_link'],
-            api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL)
+            api_key=self.system_config.LAMBDA_X_API_KEY)
         collected_data = api_response['data']
         return collected_data
 

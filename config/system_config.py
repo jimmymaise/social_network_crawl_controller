@@ -15,9 +15,7 @@ class SystemConfig:
 
     LAMBDA_BASE_URL = os.environ.get('LAMBDA_BASE_URL',
                                      'https://5j0ilnnh1l.execute-api.us-west-2.amazonaws.com/tt')
-    LAMBDA_X_API_KEY_POST_DETAIL = os.getenv('LAMBDA_X_API_KEY_POST_DETAIL', 'Rcp9a7US932wBZtp5Dd7P8rN5rY02UQF3qIw8iBO')
-
-    LAMBDA_X_API_KEY_USER_DETAIL = os.getenv('LAMBDA_X_API_KEY_USER_DETAIL', 'Rcp9a7US932wBZtp5Dd7P8rN5rY02UQF3qIw8iBO')
+    LAMBDA_X_API_KEY = os.getenv('LAMBDA_X_API_KEY', 'Rcp9a7US932wBZtp5Dd7P8rN5rY02UQF3qIw8iBO')
 
     SLACK_NOTIFICATION_URL = os.environ. \
         get('SLACK_NOTIFICATION_URL', 'https://hooks.slack.com/services/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')

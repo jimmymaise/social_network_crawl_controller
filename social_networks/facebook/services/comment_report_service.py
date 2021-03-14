@@ -1,5 +1,4 @@
 from core.handlers.crawl_account_handler import CrawlAccountHandler
-from core.logger.logger_handler import Logger
 from core.services.base_collection_service import CollectionService
 from social_networks.facebook.handlers.db_handler.report_db_handler import ReportDBHandler
 from social_networks.facebook.utils.constant import Constant
@@ -11,7 +10,7 @@ from social_networks.facebook.workflow.transform.comment_report_transform_handle
 
 class CommentReportService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT,Constant.SERVICE_NAME_COMMENT_REPORT)
+        super().__init__(service_config, Constant.COLLECTION_NAME_REPORT, Constant.SERVICE_NAME_COMMENT_REPORT)
 
     def _load_items(self) -> list:
         report_db_handler = ReportDBHandler(self.db_connection)
@@ -35,7 +34,7 @@ class CommentReportService(CollectionService):
             response_body = collect_handler.get_comments_from_lambda(
                 lambda_base_url=self.system_config.LAMBDA_BASE_URL,
                 post_app_id=loaded_item['post_app_id'],
-                api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
+                api_key=self.system_config.LAMBDA_X_API_KEY,
                 cursor=next_cursor,
                 social_type=loaded_item.get('social_type', Constant.SOCIAL_TYPE_PROFILE))
 

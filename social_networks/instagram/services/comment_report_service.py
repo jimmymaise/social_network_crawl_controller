@@ -35,7 +35,7 @@ class CommentReportService(CollectionService):
             response_body = collect_handler.get_comments_from_lambda(
                 lambda_base_url=self.system_config.LAMBDA_BASE_URL,
                 shortcode=loaded_item['shortcode'],
-                api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL,
+                api_key=self.system_config.LAMBDA_X_API_KEY,
                 cursor=next_cursor,
                 social_type=loaded_item.get('social_type', Constant.SOCIAL_TYPE_PROFILE))
 

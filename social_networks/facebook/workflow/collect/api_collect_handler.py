@@ -19,7 +19,7 @@ class APICollectHandler(BaseCollectHandler):
         if not APICollectUtils.is_validate_post_link_format(post_link):
             raise ErrorLinkFormat(f'Post Link Error:{post_link}')
 
-        account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        account_info = self.crawl_account_handler.get_account_id_token()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
 
         post_detail_api_request_data = PostDetailAPISpecs()
@@ -40,7 +40,7 @@ class APICollectHandler(BaseCollectHandler):
     def get_comments_from_lambda(self, lambda_base_url, post_app_id, cursor, api_key,
                                  social_type=Constant.SOCIAL_TYPE_PROFILE):
 
-        account_info, account_id = self.crawl_account_handler.get_account_id_token()
+        account_info = self.crawl_account_handler.get_account_id_token()
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
         post_comment_api_request_data = PostCommentAPISpecs()
         post_comment_api_request_data.set_body(post_app_id=post_app_id, account_info=account_info,

@@ -1,4 +1,3 @@
-from core.handlers.crawl_account_handler import CrawlAccountHandler
 from core.services.base_collection_service import CollectionService
 from social_networks.tiktok.handlers.db_handler.kol_db_handler import KOLDBHandler
 from social_networks.tiktok.utils.constant import Constant
@@ -23,15 +22,12 @@ class UserCollectionService(CollectionService):
         return load_items
 
     def _collect_data(self, loaded_item):
-        crawl_account_handler = CrawlAccountHandler(account_base_url=self.system_config.AM_BASE_URL,
-                                                    social_network=Constant.SOCIAL_NETWORK_TIKTOK,
-                                                    service_name=self.service_name,
-                                                    country=None)
-        collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
+        # Currently we don't need to have tiktok account for crawling user collection
+        collect_handler = APICollectHandler(crawl_account_handler=None)
         api_response = collect_handler.get_user_detail_from_lambda(
             lambda_base_url=self.system_config.LAMBDA_BASE_URL,
             username=loaded_item['username'],
-            api_key=self.system_config.LAMBDA_X_API_KEY_POST_DETAIL)
+            api_key=self.system_config.LAMBDA_X_API_KEY)
         collected_data = api_response['data']
         return collected_data
 
