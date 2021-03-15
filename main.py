@@ -1,3 +1,7 @@
+try:
+    import unzip_requirements
+except ImportError:
+    pass
 import os
 from enum import Enum
 
@@ -53,13 +57,16 @@ def lambda_handler(event, context):
 
 if __name__ == '__main__':
     # ServicesRunner().run()
-    lambda_handler({
-        'Records': [{'social_type': 'tiktok',
-                     'social_name': 'cuti',
-                     'social_app_id': '123',
-                     'social_user_name': 'fandom',
-                     'country_code': 'vi',
-                     'hiip_user_id': 1234,
+    message = {"social_type": "tiktok",
+               "social_name": "cuti",
+               "social_app_id": "123",
+               "social_user_name": "fandom",
+               "country_code": "vi",
+               "hiip_user_id": 1234,
 
-                     'taken_at_timestamp': 11,
-                     'service_name': 'user_collection', }]}, {})
+               "taken_at_timestamp": 11,
+               "service_name": "user_collection"}
+
+    data = {"Records": [
+        "{\"social_type\": \"tiktok\", \"social_name\": \"cuti\", \"social_app_id\": \"123\", \"social_user_name\": \"fandom\", \"country_code\": \"vi\", \"hiip_user_id\": 1234, \"taken_at_timestamp\": 11, \"service_name\": \"user_collection\"}"]}
+    lambda_handler(data, {})
