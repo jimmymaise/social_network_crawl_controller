@@ -21,11 +21,14 @@ class BaseItemTransformHandler:
         pass
 
     @staticmethod
-    def _validate_schema(data, schema):
+    def _validate_schema(data, schema, dump=False):
         error = {}
         value = data
         try:
-            value = dict(schema().load(data))
+            if dump:
+                value = dict(schema().dump(data))
+            else:
+                value = dict(schema().load(data))
         except Exception as e:
             error = e
         return value, error

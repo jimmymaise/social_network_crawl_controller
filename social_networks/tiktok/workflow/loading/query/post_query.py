@@ -15,6 +15,18 @@ class PostAggregate:
                 },
                 'average_like': {
                     '$avg': "$num_like"
+                },
+                'average_comment': {
+                    '$avg': "$num_comment"
+                },
+                'average_share': {
+                    '$avg': "$num_share"
+                },
+                'analyzed_post_from': {
+                    '$min': "$taken_at_timestamp"
+                },
+                'analyzed_post_to': {
+                    '$max': "$taken_at_timestamp"
                 }
             })
 
