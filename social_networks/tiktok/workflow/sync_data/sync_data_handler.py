@@ -12,7 +12,8 @@ class SyncDataHandler(BaseSyncDataHandler):
             'user_id': user_id,
             'username': username,
             'sec_uid': sec_uid,
-            'queue_name': queue_name
+            'service_name': 'post_list_collection',
+            'social_type': 'tiktok'
         }
         self.sqs_handler.send_sqs_message(message_body=json.dumps(request_message),
                                           queue_name=queue_name)
