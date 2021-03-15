@@ -41,8 +41,8 @@ class BaseSystemConfig:
     SERVICE_SLEEP_INTERVAL = os.getenv('PROCESS_SLEEP_INTERVAL', 5)
     S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', 'hiip-asia-media')
     S3_IMAGE_PATH = os.getenv('S3_IMAGE_PATH', f'images/{SOCIAL_NETWORK.lower()}')
-    QUEUE_NAME_USER_DATA_SYNC = 'sync-new-user-data'
-    QUEUE_NAME_POST_LIST_COLLECTION = 'sync-new-post-data'
+    QUEUE_NAME_USER_DATA_SYNC = os.getenv('QUEUE_NAME_USER_DATA_SYNC', 'user_data_sync')
+    QUEUE_NAME_POST_LIST_COLLECTION = os.getenv('QUEUE_NAME_POST_LIST_COLLECTION', 'post_list_collection')
 
     @classmethod
     def load_lambda_config(cls):
