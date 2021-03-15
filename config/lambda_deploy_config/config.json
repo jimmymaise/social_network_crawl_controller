@@ -1,0 +1,6 @@
+{
+  "runtime": "python3.7",
+  "region": "us-west-2",
+  "memorySize": 600,
+  "deploymentBucket": "hiip-asia-data-new"
+}
