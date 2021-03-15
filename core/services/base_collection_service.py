@@ -24,7 +24,7 @@ class CollectionService(ABC):
         self.db_connection = self._create_db_connection_by_system_config()
         self.logger = Logger().init_logger(logger_name=f'{self.system_config.SOCIAL_NETWORK}-{self.service_name}')
         self.receive_message_schema = None
-        self.message_mapping = None
+        self.loaded_item_message_mapping = None
         self.loaded_collection_name = loaded_collection_name
         self.is_on_demand = bool(on_demand_handler)
         self.sqs_handler = SQSHandler()
@@ -65,17 +65,17 @@ class CollectionService(ABC):
 
         item = self.on_demand_handler.message
 
-        if not (self.message_mapping and self.receive_message_schema and self.loaded_collection_name):
-            raise Exception('Must have message_mapping,receive_message_schema and loaded_collection_name')
+        if not (self.loaded_item_message_mapping and self.receive_message_schema and self.loaded_collection_name):
+            raise Exception('Must have loaded_item_message_mapping,receive_message_schema and loaded_collection_name')
 
         _, error = Common.validate_schema(item, self.receive_message_schema)
         if error:
             raise Exception(f'Message error {error}')
 
-        if self.message_mapping['_id'] == 'ObjectId()':
-            self.message_mapping['_id'] = ObjectId()
+        item = Common.transform_dict_with_mapping(item, self.loaded_item_message_mapping)
 
-        item = Common.transform_dict_with_mapping(item, self.message_mapping)
+        if not item['_id'] and self.loaded_item_message_mapping['_id'] == 'ObjectId()':
+            item['_id'] = ObjectId()
 
         return item
 

@@ -14,7 +14,7 @@ class UserCollectionService(CollectionService):
         super().__init__(service_config, Constant.COLLECTION_NAME_KOL,
                          service_name=Constant.SERVICE_NAME_USER_COLLECTION, on_demand_handler=on_demand_handler)
         self.receive_message_schema = ReceivingUserMessageSchema
-        self.message_mapping = {
+        self.loaded_item_message_mapping = {
             'hiip_user_id': 'hiip_user_id',
             'country_code': 'country_code',
             'user_id': 'social_id',
