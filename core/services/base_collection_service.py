@@ -124,6 +124,8 @@ class CollectionService(ABC):
             except Exception as e:
                 self.logger.error(f'Load Item Id {loaded_item["_id"]}, Error: {e}')
                 self._update_failed_status(load_id=loaded_item['_id'], exception=e)
+                if self.is_on_demand:
+                    raise Exception(e)
 
     def start(self):
         self.logger.info(f'Starting service {self.service_name}')

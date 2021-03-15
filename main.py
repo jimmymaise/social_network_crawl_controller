@@ -52,7 +52,10 @@ class ServiceOnDemandRunner:
 
 
 def lambda_handler(event, context):
-    return ServiceOnDemandRunner(event, context).run()
+    try:
+        return ServiceOnDemandRunner(event, context).run()
+    except Exception as e:
+        raise Exception(f'Exception: {e}, Event: {event}')
 
 
 if __name__ == '__main__':
@@ -67,6 +70,6 @@ if __name__ == '__main__':
                "taken_at_timestamp": 11,
                "service_name": "user_collection"}
 
-    data = {"Records": [
-        "{\"social_type\": \"tiktok\", \"social_name\": \"cuti\", \"social_app_id\": \"123\", \"social_user_name\": \"fandom\", \"country_code\": \"vi\", \"hiip_user_id\": 1234, \"taken_at_timestamp\": 11, \"service_name\": \"user_collection\"}"]}
+    data = {"Records": [{
+                            'body': "{\"social_type\": \"tiktok\", \"social_name\": \"cuti\", \"social_app_id\": \"123\", \"social_user_name\": \"fandom\", \"country_code\": \"vi\", \"hiip_user_id\": 1234, \"taken_at_timestamp\": 11, \"service_name\": \"user_collection\"}"}]}
     lambda_handler(data, {})

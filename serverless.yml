@@ -16,7 +16,7 @@ package:
     - ./core/**
     - ./config/**
     - ./main.py
-    - ./social_network/**
+    - ./social_networks/**
     - '!**/.pytest_cache/**'
     - '!**/__pycache__/**'
   exclude:
@@ -45,3 +45,6 @@ functions:
       runtime: python3.8
       memorySize: 128
       timeout: 120
+      events:
+        # Provide the ARN of your queue. It will trigger this lambda
+        - sqs: arn:aws:sqs:us-west-2:450253548902:user-collection
