@@ -2,5 +2,7 @@
   "runtime": "python3.7",
   "region": "us-west-2",
   "memorySize": 600,
-  "deploymentBucket": "hiip-asia-data-new"
+  "deploymentBucket": "hiip-asia-data-new",
+  "arn_sqs_user_collection": "arn:aws:sqs:us-west-2:450253548902:user_collection",
+  "role": "arn:aws:iam::450253548902:role/on-demand-collection-services-dev-us-west-2-lambdaRole"
 }

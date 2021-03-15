@@ -41,14 +41,13 @@ custom:
 
 functions:
   - main_func:
-      name:
+      role: ${self:custom.config.role}
       handler: main.lambda_handler
-      description: main_func
-      runtime: python3.8
-      memorySize: 128
+      description: "On-Demand collection services"
+      memorySize: ${self:custom.config.memorySize}
       timeout: 120
       events:
         # Provide the ARN of your queue. It will trigger this lambda
         - sqs:
-            arn: arn:aws:sqs:us-west-2:450253548902:user-collection
+            arn: ${self:custom.config.arn_sqs_user_collection}
             batchSize: 1
