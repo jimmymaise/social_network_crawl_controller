@@ -6,4 +6,4 @@ from social_networks.tiktok.utils.constant import Constant
 class PostDBHandler(BaseDBHandler):
     def __init__(self, db_connection):
         super().__init__(db_connection)
-        self.collection = self.database[Constant.COLLECTION_NAME_POSTS]
+        self.collection = self.database[Constant.COLLECTION_NAME_POST]
