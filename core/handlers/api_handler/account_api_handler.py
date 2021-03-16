@@ -13,7 +13,7 @@ class AccountAPIRequestHandler(BaseApiRequestHandler):
 
     def _handle_failed_request(self, response, request_data=None):
         payload = {Constant.SLACK_DEFAULT_NOTIFICATION_FIELD: response.text}
-        slack_webhook = SystemConfig.SLACK_NOTIFICATION_URL
+        slack_webhook = SystemConfig.get_system_config().SLACK_NOTIFICATION_URL
         requests.post(slack_webhook, data=json.dumps(payload))
 
     def _handle_success_request(self, response, request_data=None):

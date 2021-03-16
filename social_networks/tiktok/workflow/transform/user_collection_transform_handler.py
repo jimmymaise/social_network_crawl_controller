@@ -12,6 +12,8 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
     def __init__(self, service_name):
         super().__init__(service_name)
         self.s3_handler = S3Handler()
+        self.system_config = SystemConfig.get_system_config()
+        self.s3_link_mapping = {}
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []
@@ -19,24 +21,20 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
 
         if collected_user_schema_error:
             raise ErrorStoreFormat(f'Schema error {str(collected_user_schema_error)}')
-
         transformed_data.append(self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_MEDIA,
             updated_object_list=self._build_media_updated_objects(collected_data))
         )
-        if collected_data.get('user'):
-            _, collected_user_schema_error = self._validate_schema(data=collected_data['user'], schema=UserObjectSchema)
-            if not collected_user_schema_error:
-                transformed_data.append(self._make_transformed_item(
-                    collection_name=Constant.COLLECTION_NAME_KOL,
-                    updated_object_list=[self._build_kol_updated_object(collected_data)])
-                )
-                transformed_data.append(self._make_transformed_item(
-                    collection_name=Constant.COLLECTION_NAME_USER,
-                    updated_object_list=[self._build_user_updated_object(collected_data)])
-                )
-            else:
-                self.logger.warning(f'User transform schema error {collected_user_schema_error}')
+
+        transformed_data.append(self._make_transformed_item(
+            collection_name=Constant.COLLECTION_NAME_USER,
+            updated_object_list=[self._build_user_updated_object(collected_data)],
+        ))
+
+        transformed_data.append(self._make_transformed_item(
+            collection_name=Constant.COLLECTION_NAME_KOL,
+            updated_object_list=[self._build_kol_updated_object(collected_data)])
+        )
         return transformed_data
 
     def _build_user_updated_object(self, collected_data):
@@ -66,7 +64,7 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         kol_updated_object = self._make_updated_object(
             filter_={'username': kol_stored_object['username']},
             stored_object=kol_stored_object,
-            upsert=False
+            upsert=True
         )
 
         return kol_updated_object

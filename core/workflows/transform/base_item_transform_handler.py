@@ -39,7 +39,7 @@ class BaseItemTransformHandler:
         }
 
     @staticmethod
-    def _make_transformed_item(collection_name: str, updated_object_list: list):
+    def _make_transformed_item(*, updated_object_list: list = None, collection_name: str = None):
         return {
             'collection_name': collection_name,
             'items': updated_object_list
@@ -50,7 +50,6 @@ class BaseItemTransformHandler:
         return FileHandler.get_file_name_from_url(url=url, is_have_extension=False)
 
     def _build_report_statuses_object(self):
-
         report_statuses_object = {
             f'{self.service_name}_status': {'status': 'success',
                                             'latest_updated_time': int(self.now.timestamp())
@@ -61,7 +60,6 @@ class BaseItemTransformHandler:
         return report_statuses_object
 
     def _build_kol_statuses_object(self):
-
         report_statuses_object = {
             f'{self.service_name}_status': {'status': 'success',
                                             'latest_updated_time': int(self.now.timestamp())

@@ -11,6 +11,8 @@ class Constant:
     SERVICE_NAME_SEARCH_REPORT = 'search_report'
     SERVICE_NAME_COMMENT_REPORT = 'comment_report'
 
+    SERVICE_NAME_USER_COLLECTION = 'user_collection'
+
     COLLECTION_SERVICE_ERROR_NAME = 'collection_service_error_name'
 
     SLACK_DEFAULT_NOTIFICATION_FIELD = 'text'
@@ -33,3 +35,13 @@ class Constant:
     TIME_ONE_DAY_TO_SECONDS = TIME_ONE_DAY_TO_HOURS * TIME_ONE_HOUR_TO_SECONDS
 
     DEFAULT_TRANSFORM_ITEM_BATCH = 50
+
+    COLLECTION_NAME_REPORT = 'reports'
+    COLLECTION_NAME_KOL = 'kols'
+    COLLECTION_NAME_USER = 'users'
+    COLLECTION_NAME_PAGE = 'pages'
+
+    COLLECTION_NAME_MEDIA = 'medias'
+    COLLECTION_NAME_COMMENT = 'comments'
+    COLLECTION_NAME_POST_COMMENT = 'post_comments'
+    COLLECTION_NAME_POST = 'posts'

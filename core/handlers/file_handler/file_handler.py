@@ -44,6 +44,17 @@ class FileHandler:
         return dict_data
 
     @staticmethod
+    def load_env_file_to_dict(file_path):
+        dict_data = {}
+        with open(file_path, 'r') as read_file:
+            for line in read_file:
+                if line.startswith('#') or not line.strip():
+                    continue
+                key, value = line.strip().split('=', 1)
+                dict_data[key] = value
+        return dict_data
+
+    @staticmethod
     def compress_file(file_path, is_remove_file=False):
         compress_file_path = file_path + '.gz'
         with open(file_path, 'rb') as f_in:
