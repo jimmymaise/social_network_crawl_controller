@@ -1,6 +1,3 @@
-from config.system_config import SystemConfig
-from core.handlers.file_handler.file_handler import FileHandler
-from core.handlers.file_handler.s3_handler import S3Handler
 from core.utils.exceptions import ErrorStoreFormat
 from core.workflows.transform.base_item_transform_handler import BaseItemTransformHandler
 from core.workflows.transform.stored_object.stored_object_builder import StoredObjectBuilder
@@ -11,9 +8,6 @@ from social_networks.tiktok.workflow.transform.collected_object_schemas.collecte
 class UserCollectionTransformHandler(BaseItemTransformHandler):
     def __init__(self, service_name):
         super().__init__(service_name)
-        self.s3_handler = S3Handler()
-        self.system_config = SystemConfig.get_system_config()
-        self.s3_link_mapping = {}
 
     def process_item(self, loaded_item, collected_data):
         transformed_data = []

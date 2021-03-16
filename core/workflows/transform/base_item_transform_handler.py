@@ -15,6 +15,8 @@ class BaseItemTransformHandler:
         self.service_name = service_name
         self.now = datetime.datetime.now()
         self.s3_handler = S3Handler()
+        self.system_config = SystemConfig.get_system_config()
+        self.s3_link_mapping = {}
 
     @abstractmethod
     def process_item(self, loaded_item, collected_data):
@@ -72,12 +74,17 @@ class BaseItemTransformHandler:
         media_stored_object_builder = StoredObjectBuilder()
         media_stored_object_builder.add_mapping('item', mapping)
         media_stored_object = media_stored_object_builder.build(item=item_having_media)
+        external_url = media_stored_object['link']
         media_stored_object['link'] = self.s3_handler.copy_file_from_external_url_to_s3(
-            external_url=media_stored_object['link'],
-            bucket=SystemConfig.S3_BUCKET_NAME,
-            s3_folder_path=f'{SystemConfig.S3_IMAGE_PATH}/{media_type}'
+            external_url=external_url,
+            bucket=self.system_config.S3_BUCKET_NAME,
+            s3_folder_path=f'{self.system_config.S3_IMAGE_PATH}/{media_type}'
         )
         media_stored_object['_id'] = self._get_image_id_from_social_url(url=media_stored_object['link'])
+
+        self.s3_link_mapping[external_url] = {'s3_link': media_stored_object['link'],
+                                              '_id': media_stored_object['_id']}
+
         return self._make_updated_object(
             filter_={'_id': media_stored_object['_id']},
             stored_object=media_stored_object,

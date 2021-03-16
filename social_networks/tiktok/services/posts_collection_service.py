@@ -13,7 +13,7 @@ from social_networks.tiktok.workflow.transform.posts_collection_transform_handle
 
 class PostsCollectionService(CollectionService):
     def __init__(self, service_config):
-        super().__init__(service_config, Constant.COLLECTION_NAME_POSTS,
+        super().__init__(service_config, Constant.COLLECTION_NAME_POST,
                          service_name=Constant.SERVICE_NAME_POSTS_COLLECTION)
 
     def _load_items(self) -> list:
