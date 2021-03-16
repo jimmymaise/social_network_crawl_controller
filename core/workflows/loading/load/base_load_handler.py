@@ -1,7 +1,7 @@
 from abc import ABCMeta
 
 from core.logger.logger_handler import Logger
-from core.workflows.loading.query.base_query import Query
+from core.workflows.loading.query.base_query import Query, Aggregate
 
 
 class BaseLoadHandler(object, metaclass=ABCMeta):
@@ -14,6 +14,9 @@ class BaseLoadHandler(object, metaclass=ABCMeta):
 
     def add_query(self, query: Query):
         self.queries.append(query)
+
+    def aggregate(self, query: Aggregate):
+        return self.db_handler.aggregate(query.build())
 
     def _get_items_from_query(self, query: Query):
         return self.db_handler.get_many_by_filter(

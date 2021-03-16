@@ -21,24 +21,19 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
         for collected_data_chunk in collected_data_chunks_iter:
             posts_objects = []
             user_objects = []
-            media_objects = []
-
-            # Upload medias
-            for item in collected_data_chunk:
-                self._parse_item_media_to_stored_object_lists(item=item, media_objects=media_objects)
-
-            yield self._make_transformed_item(
-                collection_name=Constant.COLLECTION_NAME_MEDIA,
-                updated_object_list=media_objects)
 
             # Save posts and user
             for item in collected_data_chunk:
+                # upload media first
+                media = self._parse_item_media_to_stored_object_lists(item=item)
+                yield self._make_transformed_item(
+                    collection_name=Constant.COLLECTION_NAME_MEDIA,
+                    updated_object_list=[media])
                 self._parse_item_to_stored_object_lists(item=item,
                                                         user_objects=user_objects,
                                                         posts_objects=posts_objects)
-
             yield self._make_transformed_item(
-                collection_name=Constant.COLLECTION_NAME_POSTS,
+                collection_name=Constant.COLLECTION_NAME_POST,
                 updated_object_list=posts_objects)
 
             yield self._make_transformed_item(
@@ -61,7 +56,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
             else:
                 self.logger.warning(f'User transform schema error {collected_user_schema_error}')
 
-    def _parse_item_media_to_stored_object_lists(self, item, media_objects):
+    def _parse_item_media_to_stored_object_lists(self, item):
 
         _, collected_post_schema_error = self._validate_schema(data=item['post'], schema=PostObjectSchema)
 
@@ -69,7 +64,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
             raise ErrorStoreFormat(f'Schema error {str(collected_post_schema_error)}')
 
         if item.get('post', {}).get('display_url'):
-            media_objects.append(self._build_media_updated_object(item_having_media=item['post'], mapping={'display_url': 'link'}, media_type='display_url'))
+            return self._build_media_updated_object(item_having_media=item['post'], mapping={'display_url': 'link'}, media_type='display_url')
 
     def _build_post_updated_object(self, collected_item):
         posts_stored_object_builder = StoredObjectBuilder()
