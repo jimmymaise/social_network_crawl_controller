@@ -10,3 +10,4 @@ class Constant(CoreConstant):
 
     LAMBDA_API_CRAWL_POST_DETAIL_PATH = 'post-details'
     LAMBDA_API_CRAWL_USER_DETAIL_PATH = 'user-details'
+    LAMBDA_API_CRAWL_USER_POSTS_PATH = 'user-posts'
