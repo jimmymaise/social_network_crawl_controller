@@ -69,7 +69,7 @@ class S3Handler:
                 raise ValueError('We must have s3_full_path or s3_path')
             s3_full_path = os.path.join(s3_path, os.path.basename(filename))
         s3_full_path = str(pathlib.Path(s3_full_path))
-        if not extra_args or extra_args.get('ContentType'):
+        if not extra_args or not extra_args.get('ContentType'):
             guessed_mime_type = mimetypes.guess_type(filename)
             extra_args['ContentType'] = guessed_mime_type
 
