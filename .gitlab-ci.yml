@@ -1,0 +1,335 @@
+variables:
+  REPOSITORY_URL: $ECR_REGISTRY             # Image repository       - AWS ECR
+  TASK_NAME: ig-report-testing              # Name of Task Defintion - AWS ECS
+  CLUSTER_NAME: ig-report-service           # Name of cluster        - AWS ECS
+  SERVICE_NAME: test                        # Name of service        - AWS ECS
+  S3_ENV_BUCKET: arn:aws:s3:::hiip-asia-env # Name of bucket         - AWS S3
+  FAMILY_NAME: test-app                     # Name of family task    - AWS ECS
+
+
+stages:
+  - check_coding_convention
+  - build
+  - deploy
+  - cleanup
+
+check_coding_convention:
+  stage: check_coding_convention
+  image: python:3.8
+  tags:
+    - stag-ci-runner
+  script:
+    - pip install flake8
+    - flake8  --max-line-length 120 .
+  allow_failure: true
+
+build-docker-image:
+  stage: build
+  image: docker:19.03.10
+  tags:
+    - stag-ci-runner
+  only:
+    - master
+  before_script:
+    - apk add --no-cache python3
+    - pip3 install --upgrade pip && pip3 install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set default.region us-west-2
+    - aws configure set region us-west-2
+    - echo `aws ecr get-login --no-include-email --region us-west-2` | sh
+  script:
+    - echo "Building image..."
+    - docker system prune -f
+    - docker image prune -f
+    - docker build --rm -f docker/Dockerfile -t $REPOSITORY_URL:latest .
+    - echo "Pushing image..."
+    - docker push $REPOSITORY_URL:latest
+
+
+.deploy-service:
+  image: "registry.gitlab.com/gitlab-org/cloud-deploy/aws-ecs:latest"
+  tags:
+    - stag-cd-runner
+  before_script:
+    - echo $ENV_FILE | base64 --decode > $CLUSTER_NAME.env;
+    - aws s3 cp $CLUSTER_NAME.env s3://hiip-asia-env/$CLUSTER_NAME.env
+    - rm $CLUSTER_NAME.env
+    - apt-get update -y && apt-get install python3 less -y
+    - python3 utils/generate_aws_ecs_file.py
+    - >
+      echo "$(aws logs describe-log-groups --log-group-name-prefix $CLUSTER_NAME)" |
+      grep -Eq "$CLUSTER_NAME\/$SERVICE_NAME" &&
+      echo "Log group is existed" &&
+      aws logs create-log-stream --log-group-name $CLUSTER_NAME --log-stream-name $SERVICE_NAME
+      ||
+      echo "Create Log: group + stream prefix" &&
+      aws logs create-log-group --log-group-name $CLUSTER_NAME &&
+      aws logs create-log-stream --log-group-name $CLUSTER_NAME --log-stream-name $SERVICE_NAME
+  script:
+    - json=$(aws ecs register-task-definition --cli-input-json file://task_definition_file.json)
+    - >
+      revision=$(echo "$json" | grep -Eo '"revision": [0-9]*' | grep -Eo '[0-9]+')
+    - >
+      echo "$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME)" |
+      grep -Eq "\"reason\":\s\"MISSING\"" && echo "Service is not exists, create new" &&
+      aws ecs create-service
+      --cluster $CLUSTER_NAME
+      --service-name $SERVICE_NAME
+      --task-definition $FAMILY_NAME:$revision
+      --desired-count 1
+      --platform-version 1.4.0
+      --launch-type FARGATE
+      --network-configuration
+      "awsvpcConfiguration={subnets=[subnet-3e775115],securityGroups=[sg-0fa8da56ea647c595],assignPublicIp=ENABLED}"
+      ||
+      echo "Service is existed, update" &&
+      aws ecs update-service
+      --cluster $CLUSTER_NAME
+      --service $SERVICE_NAME
+      --task-definition $FAMILY_NAME:$revision
+
+
+deploy-ig-search-report-th:
+  stage: deploy
+  only:
+    - /^ig-search-report-th-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $IG_ENV_VAR
+    FAMILY_NAME: ig-search-report-th
+    CLUSTER_NAME: ig-cluster
+    SERVICE_NAME: ig-search-report-th
+    CONTAINER_NAME: ig-search-report-th
+    LOG_GROUP_NAME: ig-cluster
+    LOG_PREFIX_STREAM: search-report
+    LAMBDA_BASE_URL: $IG_SEARCH_REPORT_API_URL
+    LAMBDA_X_API_KEY: $IG_SEARCH_REPORT_API_KEY
+    SERVICE_CONFIG: $IG_SEARCH_REPORT_TH
+  environment:
+    name: production
+
+deploy-ig-search-report-vi:
+  stage: deploy
+  only:
+    - /^ig-search-report-vi-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $IG_ENV_VAR
+    FAMILY_NAME: ig-search-report-vi
+    CLUSTER_NAME: ig-cluster
+    SERVICE_NAME: ig-search-report-vi
+    CONTAINER_NAME: ig-search-report-vi
+    LAMBDA_BASE_URL: $IG_SEARCH_REPORT_API_URL
+    LAMBDA_X_API_KEY: $IG_SEARCH_REPORT_API_KEY
+    LOG_GROUP_NAME: ig-cluster
+    LOG_PREFIX_STREAM: search-report
+    SERVICE_CONFIG: $IG_SEARCH_REPORT_VI
+  environment:
+    name: production
+
+deploy-ig-search-report-id:
+  stage: deploy
+  only:
+    - /^ig-search-report-id-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $IG_ENV_VAR
+    FAMILY_NAME: ig-search-report-id
+    CLUSTER_NAME: ig-cluster
+    SERVICE_NAME: ig-search-report-id
+    CONTAINER_NAME: ig-search-report-id
+    LOG_GROUP_NAME: ig-cluster
+    LOG_PREFIX_STREAM: search-report
+    SERVICE_CONFIG: $IG_SEARCH_REPORT_ID
+    LAMBDA_BASE_URL: $IG_SEARCH_REPORT_API_URL
+    LAMBDA_X_API_KEY: $IG_SEARCH_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/ig-cluster.env
+  environment:
+    name: production
+
+
+deploy-fb-search-report-vi:
+  stage: deploy
+  only:
+    - /^fb-search-report-vi-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $FB_ENV_VAR
+    FAMILY_NAME: fb-search-report-vi
+    CLUSTER_NAME: fb-cluster
+    SERVICE_NAME: fb-search-report-vi
+    CONTAINER_NAME: fb-search-report-vi
+    LOG_GROUP_NAME: fb-cluster
+    LOG_PREFIX_STREAM: search-report
+    SERVICE_CONFIG: $FB_SEARCH_REPORT_VI
+    LAMBDA_BASE_URL: $FB_SEARCH_REPORT_API_URL
+    LAMBDA_X_API_KEY: $FB_SEARCH_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/fb-cluster.env
+  environment:
+    name: production
+
+
+deploy-fb-search-report-th:
+  stage: deploy
+  only:
+    - /^fb-search-report-th-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $FB_ENV_VAR
+    FAMILY_NAME: fb-search-report-th
+    CLUSTER_NAME: fb-cluster
+    SERVICE_NAME: fb-search-report-th
+    CONTAINER_NAME: fb-search-report-th
+    LOG_GROUP_NAME: fb-cluster
+    LOG_PREFIX_STREAM: search-report
+    SERVICE_CONFIG: $FB_SEARCH_REPORT_TH
+    LAMBDA_BASE_URL: $FB_SEARCH_REPORT_API_URL
+    LAMBDA_X_API_KEY: $FB_SEARCH_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/fb-cluster.env
+
+
+deploy-fb-comment-report-th:
+  stage: deploy
+  only:
+    - /^fb-comment-report-th-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $FB_ENV_VAR
+    FAMILY_NAME: fb-comment-report-th
+    CLUSTER_NAME: fb-cluster
+    SERVICE_NAME: fb-comment-report-th
+    CONTAINER_NAME: fb-comment-report-th
+    LOG_GROUP_NAME: fb-cluster
+    LOG_PREFIX_STREAM: comment-report
+    SERVICE_CONFIG: $FB_COMMENT_REPORT_TH
+    LAMBDA_BASE_URL: $FB_COMMENT_REPORT_API_URL
+    LAMBDA_X_API_KEY: $FB_COMMENT_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/fb-cluster.env
+
+
+deploy-fb-comment-report-vi:
+  stage: deploy
+  only:
+    - /^fb-comment-report-vi-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $FB_ENV_VAR
+    FAMILY_NAME: fb-comment-report-vi
+    CLUSTER_NAME: fb-cluster
+    SERVICE_NAME: fb-comment-report-vi
+    CONTAINER_NAME: fb-comment-report-vi
+    LOG_GROUP_NAME: fb-cluster
+    LOG_PREFIX_STREAM: comment-report
+    SERVICE_CONFIG: $FB_COMMENT_REPORT_VI
+    LAMBDA_BASE_URL: $FB_COMMENT_REPORT_API_URL
+    LAMBDA_X_API_KEY: $FB_COMMENT_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/fb-cluster.env
+
+
+deploy-ig-comment-report-vi:
+  stage: deploy
+  only:
+    - /^ig-comment-report-vi-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $IG_ENV_VAR
+    FAMILY_NAME: ig-comment-report-vi
+    CLUSTER_NAME: ig-cluster
+    SERVICE_NAME: ig-comment-report-vi
+    CONTAINER_NAME: ig-comment-report-vi
+    LOG_GROUP_NAME: ig-cluster
+    LOG_PREFIX_STREAM: comment-report
+    SERVICE_CONFIG: $IG_COMMENT_REPORT_VI
+    LAMBDA_BASE_URL: $IG_COMMENT_REPORT_API_URL
+    LAMBDA_X_API_KEY: $IG_COMMENT_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/ig-cluster.env
+
+
+deploy-ig-comment-report-id:
+  stage: deploy
+  only:
+    - /^ig-comment-report-id-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $IG_ENV_VAR
+    FAMILY_NAME: ig-comment-report-id
+    CLUSTER_NAME: ig-cluster
+    SERVICE_NAME: ig-comment-report-id
+    CONTAINER_NAME: ig-comment-report-id
+    LOG_GROUP_NAME: ig-cluster
+    LOG_PREFIX_STREAM: comment-report
+    SERVICE_CONFIG: $IG_COMMENT_REPORT_ID
+    LAMBDA_BASE_URL: $IG_COMMENT_REPORT_API_URL
+    LAMBDA_X_API_KEY: $IG_COMMENT_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/ig-cluster.env
+
+
+deploy-ig-comment-report-th:
+  stage: deploy
+  only:
+    - /^ig-comment-report-th-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $IG_ENV_VAR
+    FAMILY_NAME: ig-comment-report-th
+    CLUSTER_NAME: ig-cluster
+    SERVICE_NAME: ig-comment-report-th
+    CONTAINER_NAME: ig-comment-report-th
+    LOG_GROUP_NAME: ig-cluster
+    LOG_PREFIX_STREAM: comment-report
+    SERVICE_CONFIG: $IG_COMMENT_REPORT_TH
+    LAMBDA_BASE_URL: $IG_COMMENT_REPORT_API_URL
+    LAMBDA_X_API_KEY: $IG_COMMENT_REPORT_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/ig-cluster.env
+
+
+deploy-tt-user-collection-vi:
+  stage: deploy
+  only:
+    - /^tt-user-collection-vi-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $TT_ENV_VAR
+    FAMILY_NAME: tt-user-collection-vi
+    CLUSTER_NAME: tt-cluster
+    SERVICE_NAME: tt-user-collection-vi
+    CONTAINER_NAME: tt-user-collection-vi
+    LOG_GROUP_NAME: tt-cluster
+    LOG_PREFIX_STREAM: user-collection
+    SERVICE_CONFIG: $TT_USER_COLLECTION_VI
+    LAMBDA_BASE_URL: $TT_USER_COLLECTION_API_URL
+    LAMBDA_X_API_KEY: $TT_USER_COLLECTION_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/tt-cluster.env
+    S3_BUCKET_NAME: hiip-asia-media
+
+
+deploy-tt-post-collection-vi:
+  stage: deploy
+  only:
+    - /^tt-post-collection-vi-v.*$/
+  extends: .deploy-service
+  variables:
+    ENV_FILE: $TT_ENV_VAR
+    FAMILY_NAME: tt-post-collection-vi
+    CLUSTER_NAME: tt-cluster
+    SERVICE_NAME: tt-post-collection-vi
+    CONTAINER_NAME: tt-post-collection-vi
+    LOG_GROUP_NAME: tt-cluster
+    LOG_PREFIX_STREAM: post-collection
+    SERVICE_CONFIG: $TT_POST_COLLECTION_VI
+    LAMBDA_BASE_URL: $TT_POST_COLLECTION_API_URL
+    LAMBDA_X_API_KEY: $TT_POST_COLLECTION_API_KEY
+    AWS_S3_ENV_OBJECT: arn:aws:s3:::hiip-asia-env/tt-cluster.env
+    S3_BUCKET_NAME: hiip-asia-media
+
+
+cleanup-build:
+  stage: cleanup
+  tags:
+    - stag-ci-runner
+  only:
+    - tags
+  script:
+    - rm -rf task_definition_file.json
+    - docker image prune

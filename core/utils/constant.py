@@ -13,6 +13,8 @@ class Constant:
 
     SERVICE_NAME_USER_COLLECTION = 'user_collection'
 
+    SERVICE_NAME_POSTS_COLLECTION = 'posts_collection'
+
     COLLECTION_SERVICE_ERROR_NAME = 'collection_service_error_name'
 
     SLACK_DEFAULT_NOTIFICATION_FIELD = 'text'
