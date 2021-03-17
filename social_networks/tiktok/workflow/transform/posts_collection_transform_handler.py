@@ -40,6 +40,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
                     collection_name=Constant.COLLECTION_NAME_MEDIA,
                     updated_object_list=[media])
                 self._parse_item_to_stored_object_lists(item=item,
+                                                        latest_posts=latest_posts,
                                                         user_objects=user_objects,
                                                         posts_objects=posts_objects, statistics=statistics)
             yield self._make_transformed_item(
@@ -51,10 +52,14 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
                 updated_object_list=user_objects)
 
         yield self._make_transformed_item(
+            collection_name=Constant.COLLECTION_NAME_USER,
+            updated_object_list=[self._build_user_interaction_updated_object(loaded_item=loaded_item, statistics=statistics, latest_posts=latest_posts)])
+
+        yield self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_KOL,
             updated_object_list=[self._build_kol_updated_object(loaded_item)])
 
-    def _parse_item_to_stored_object_lists(self, item, posts_objects, user_objects, statistics):
+    def _parse_item_to_stored_object_lists(self, item, latest_posts, posts_objects, user_objects, statistics):
         post_data, collected_post_schema_error = self._validate_schema(data=item['post'], schema=PostObjectSchema)
 
         if collected_post_schema_error:
@@ -64,7 +69,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
         posts_objects.append(self._build_post_updated_object(item))
 
         # Build statistics
-        self._parse_item_to_statistics(post_data, statistics)
+        self._parse_item_to_statistics(post_data, statistics, latest_posts)
 
         if item.get('user'):
             _, collected_user_schema_error = self._validate_schema(data=item['user'],
@@ -76,7 +81,12 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
                 self.logger.warning(f'User transform schema error {collected_user_schema_error}')
 
     @staticmethod
-    def _parse_item_to_statistics(post, statistics):
+    def _parse_item_to_statistics(post, statistics, latest_posts):
+        # Build latest posts: Get 30 latest ids
+        if len(latest_posts) < 30:
+            latest_posts.append(post['_id'])
+
+        # Build statistics
         statistics['num_post'] += 1
         statistics['num_view'] += post['num_view']
         statistics['num_like'] += post['num_like']
@@ -136,3 +146,31 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
         )
 
         return kol_updated_object
+
+    def _build_user_interaction_updated_object(self, loaded_item, statistics, latest_posts):
+        last_time_analyze = int(datetime.now().timestamp())
+        interaction = {
+            'average_view': int(statistics['num_view'] / statistics['num_post']),
+            'average_like': int(statistics['num_like'] / statistics['num_post']),
+            'average_comment': int(statistics['num_comment'] / statistics['num_post']),
+            'average_share': int(statistics['num_share'] / statistics['num_post']),
+            'average_engagement': int(statistics['num_like'] + statistics['num_comment'] + statistics['num_share']
+                                      / statistics['num_post']),
+        }
+
+        user_updated_object = self._make_updated_object(
+            filter_={'username': loaded_item['username']},
+            stored_object={
+                'latest_posts': latest_posts,
+                'interaction': {
+                    **interaction,
+                    'video': interaction,
+                    'analyzed_post_to': statistics['analyzed_post_to'],
+                    'analyzed_post_from': statistics['analyzed_post_from'],
+                    'last_time_analyze': last_time_analyze,
+                }
+            },
+            upsert=False
+        )
+
+        return user_updated_object
