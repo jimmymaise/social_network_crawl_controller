@@ -9,6 +9,7 @@ from social_networks.tiktok.workflow.loading.load.report_load_handler import Rep
 from social_networks.tiktok.workflow.loading.load.user_load_handler import UserLoadHandler
 from social_networks.tiktok.workflow.loading.query.kol_query import KOLQuery
 from social_networks.tiktok.workflow.loading.query.user_query import UserQuery
+from social_networks.tiktok.workflow.sync_data.sync_data_handler import SyncDataHandler
 from social_networks.tiktok.workflow.transform.posts_collection_transform_handler import PostsCollectionTransformHandler
 
 
@@ -25,6 +26,7 @@ class PostListCollectionService(CollectionService):
             'sec_uid': 'sec_uid',
             '_id': 'hiip_user_id'
         }
+        self.sync_data_handler = SyncDataHandler(self.db_connection)
 
     def _load_items_from_db(self) -> list:
         kol_db_handler = KOLDBHandler(self.db_connection)
@@ -79,3 +81,9 @@ class PostListCollectionService(CollectionService):
         posts_collection_transform = PostsCollectionTransformHandler(service_name=self.service_name)
         transformed_data = posts_collection_transform.process_item(loaded_items, collected_data)
         return transformed_data
+
+    def _sync_data_to_sqs(self, loaded_item, transformed_data):
+        username = loaded_item['username']
+
+        self.sync_data_handler.user_data_sync(find_user_query={'username': username},
+                                              queue_name=self.system_config.QUEUE_NAME_USER_DATA_SYNC)
