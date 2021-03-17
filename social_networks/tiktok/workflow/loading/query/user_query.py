@@ -7,7 +7,7 @@ class UserQuery:
         filter_ = {
             'username': {'$in': list_username}
         }
-        selected_fields = ['username', 'sec_uid']
+        selected_fields = ['username', 'sec_uid', 'num_follower']
         return Query(filter_=filter_, selected_fields=selected_fields, priority=1, limit=None, sort_=None)
 
     @staticmethod

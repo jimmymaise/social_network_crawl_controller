@@ -148,15 +148,27 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
         return kol_updated_object
 
     def _build_user_interaction_updated_object(self, loaded_item, statistics, latest_posts):
-        last_time_analyze = int(datetime.now().timestamp())
+        num_follower = loaded_item['num_follower']
+        num_post = statistics['num_post']
+        average_view = Common.calculate_rate(statistics['num_view'], num_post)
+        average_like = Common.calculate_rate(statistics['num_like'], num_post)
+        average_comment = Common.calculate_rate(statistics['num_comment'], num_post)
+        average_share = Common.calculate_rate(statistics['num_share'], num_post)
+        average_engagement = average_like + average_comment + average_share
+
         interaction = {
-            'average_view': int(statistics['num_view'] / statistics['num_post']),
-            'average_like': int(statistics['num_like'] / statistics['num_post']),
-            'average_comment': int(statistics['num_comment'] / statistics['num_post']),
-            'average_share': int(statistics['num_share'] / statistics['num_post']),
-            'average_engagement': int(statistics['num_like'] + statistics['num_comment'] + statistics['num_share']
-                                      / statistics['num_post']),
+            'average_view': average_view,
+            'average_view_rate': Common.calculate_rate(average_view, num_follower),
+            'average_like': average_like,
+            'average_like_rate': Common.calculate_rate(average_like, num_follower),
+            'average_comment': average_comment,
+            'average_comment_rate': Common.calculate_rate(average_comment, num_follower),
+            'average_share': average_share,
+            'average_share_rate': Common.calculate_rate(average_share, num_follower),
+            'average_engagement': average_engagement,
+            'average_engagement_rate': Common.calculate_rate(average_engagement, num_follower),
         }
+        last_time_analyze = int(datetime.now().timestamp())
 
         user_updated_object = self._make_updated_object(
             filter_={'username': loaded_item['username']},
