@@ -1,3 +1,4 @@
+import mimetypes
 import os
 import pathlib
 from datetime import datetime
@@ -68,8 +69,12 @@ class S3Handler:
                 raise ValueError('We must have s3_full_path or s3_path')
             s3_full_path = os.path.join(s3_path, os.path.basename(filename))
         s3_full_path = str(pathlib.Path(s3_full_path))
+        if not extra_args or not extra_args.get('ContentType'):
+            guessed_mime_type = mimetypes.guess_type(filename)
+            extra_args['ContentType'] = guessed_mime_type
+
         self.s3_client.upload_file(filename, bucket, s3_full_path,
-                                   callback, extra_args)
+                                   callback, extra_args=extra_args)
         s3_url = 's3://{bucket}/{key}'.format(bucket=bucket, key=s3_full_path)
         return s3_url
 
