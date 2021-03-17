@@ -2,6 +2,7 @@ from core.handlers.crawl_account_handler import CrawlAccountHandler
 from core.services.base_collection_service import CollectionService
 from social_networks.tiktok.handlers.db_handler.kol_db_handler import KOLDBHandler
 from social_networks.tiktok.handlers.db_handler.user_db_handler import UserDBHandler
+from social_networks.tiktok.handlers.queue_handler.message_schemas.post_list_message_schema import PostListMessageSchema
 from social_networks.tiktok.utils.constant import Constant
 from social_networks.tiktok.workflow.collect.api_collect_handler import APICollectHandler
 from social_networks.tiktok.workflow.loading.load.report_load_handler import ReportLoadHandler
@@ -15,6 +16,15 @@ class PostListCollectionService(CollectionService):
     def __init__(self, service_config, on_demand_handler=None):
         super().__init__(service_config, Constant.COLLECTION_NAME_POST,
                          service_name=Constant.SERVICE_NAME_POSTS_COLLECTION, on_demand_handler=on_demand_handler)
+        self.receive_message_schema = PostListMessageSchema
+        self.loaded_item_message_mapping = {
+            'country_code': 'country_code',
+            'user_id': 'social_id',
+            'app_id': 'social_app_id',
+            'username': 'social_user_name',
+            'sec_uid': 'sec_uid',
+            '_id': 'hiip_user_id'
+        }
 
     def _load_items_from_db(self) -> list:
         kol_db_handler = KOLDBHandler(self.db_connection)
@@ -33,7 +43,16 @@ class PostListCollectionService(CollectionService):
         sec_uids = user_loader.load_items()
         return sec_uids
 
+    def _load_items_from_db_for_sqs(self, loaded_item) -> list:
+        user_db_handler = UserDBHandler(self.db_connection)
+        query_sec_uid = UserQuery.get_sec_uid_from_username([loaded_item['username']])
+        user_loader = UserLoadHandler(user_db_handler)
+        user_loader.add_query(query_sec_uid)
+        sec_uids = user_loader.load_items()
+        return sec_uids
+
     def _collect_data(self, loaded_item):
+        print(loaded_item)
         crawl_account_handler = CrawlAccountHandler(account_base_url=self.system_config.AM_BASE_URL,
                                                     social_network=Constant.SOCIAL_NETWORK_TIKTOK,
                                                     service_name=self.service_name,
@@ -51,7 +70,7 @@ class PostListCollectionService(CollectionService):
                 cursor=next_cursor
             )
 
-            has_next_page = False #response_body['paging']['has_next_page']
+            has_next_page = response_body['paging']['has_next_page']
             next_cursor = response_body['paging']['next_cursor']
             for item in response_body['data']:
                 yield item
