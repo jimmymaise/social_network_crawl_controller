@@ -43,6 +43,13 @@ class Common:
         transformed_dict = {k: dict_.get(v, default_value) for k, v in mapping.items()}
         return transformed_dict
 
+    @staticmethod
+    def calculate_rate(average, total):
+        if total is None or total == 0:
+            return 0
+
+        return int(average / total * 100)
+
 
 class Dict2Obj:
     def __init__(self, dictionary):

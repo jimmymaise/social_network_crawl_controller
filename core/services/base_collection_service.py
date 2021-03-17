@@ -84,6 +84,10 @@ class CollectionService(ABC):
         # Play something with self.loads to get data
         pass
 
+    def _load_items_from_db_for_sqs(self, loaded_item) -> list:
+        # Play something with self.loads to get data
+        return loaded_item
+
     @abstractmethod
     def _collect_data(self, loaded_items: list):
         # Play something with self.collect_handler to get data
@@ -106,6 +110,7 @@ class CollectionService(ABC):
 
     def _on_demand_process(self):
         loaded_item = self._load_item_from_message()
+        loaded_item = self._load_items_from_db_for_sqs(loaded_item)
         self._base_process([loaded_item])
 
     def _scheduler_process(self):
