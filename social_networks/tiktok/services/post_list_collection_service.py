@@ -11,12 +11,12 @@ from social_networks.tiktok.workflow.loading.query.user_query import UserQuery
 from social_networks.tiktok.workflow.transform.posts_collection_transform_handler import PostsCollectionTransformHandler
 
 
-class PostsCollectionService(CollectionService):
-    def __init__(self, service_config):
+class PostListCollectionService(CollectionService):
+    def __init__(self, service_config, on_demand_handler=None):
         super().__init__(service_config, Constant.COLLECTION_NAME_POST,
-                         service_name=Constant.SERVICE_NAME_POSTS_COLLECTION)
+                         service_name=Constant.SERVICE_NAME_POSTS_COLLECTION, on_demand_handler=on_demand_handler)
 
-    def _load_items(self) -> list:
+    def _load_items_from_db(self) -> list:
         kol_db_handler = KOLDBHandler(self.db_connection)
         user_db_handler = UserDBHandler(self.db_connection)
         loader = ReportLoadHandler(kol_db_handler)
@@ -51,7 +51,7 @@ class PostsCollectionService(CollectionService):
                 cursor=next_cursor
             )
 
-            has_next_page = response_body['paging']['has_next_page']
+            has_next_page = False #response_body['paging']['has_next_page']
             next_cursor = response_body['paging']['next_cursor']
             for item in response_body['data']:
                 yield item

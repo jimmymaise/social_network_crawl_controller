@@ -18,6 +18,16 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
 
     def process_item(self, loaded_item, collected_data):
         collected_data_chunks_iter = more_itertools.ichunked(collected_data, Constant.DEFAULT_TRANSFORM_ITEM_BATCH)
+        latest_posts = []
+        statistics = {
+            'num_post': 0,
+            'num_view': 0,
+            'num_like': 0,
+            'num_share': 0,
+            'num_comment': 0,
+            'analyzed_post_from': None,
+            'analyzed_post_to': None,
+        }
         for collected_data_chunk in collected_data_chunks_iter:
             posts_objects = []
             user_objects = []
@@ -31,7 +41,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
                     updated_object_list=[media])
                 self._parse_item_to_stored_object_lists(item=item,
                                                         user_objects=user_objects,
-                                                        posts_objects=posts_objects)
+                                                        posts_objects=posts_objects, statistics=statistics)
             yield self._make_transformed_item(
                 collection_name=Constant.COLLECTION_NAME_POST,
                 updated_object_list=posts_objects)
@@ -44,8 +54,17 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
             collection_name=Constant.COLLECTION_NAME_KOL,
             updated_object_list=[self._build_kol_updated_object(loaded_item)])
 
-    def _parse_item_to_stored_object_lists(self, item, posts_objects, user_objects):
+    def _parse_item_to_stored_object_lists(self, item, posts_objects, user_objects, statistics):
+        post_data, collected_post_schema_error = self._validate_schema(data=item['post'], schema=PostObjectSchema)
+
+        if collected_post_schema_error:
+            raise ErrorStoreFormat(f'Schema error {str(collected_post_schema_error)}')
+
+        # save posts
         posts_objects.append(self._build_post_updated_object(item))
+
+        # Build statistics
+        self._parse_item_to_statistics(post_data, statistics)
 
         if item.get('user'):
             _, collected_user_schema_error = self._validate_schema(data=item['user'],
@@ -56,13 +75,19 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
             else:
                 self.logger.warning(f'User transform schema error {collected_user_schema_error}')
 
+    @staticmethod
+    def _parse_item_to_statistics(post, statistics):
+        statistics['num_post'] += 1
+        statistics['num_view'] += post['num_view']
+        statistics['num_like'] += post['num_like']
+        statistics['num_share'] += post['num_share']
+        statistics['num_comment'] += post['num_comment']
+        if statistics['analyzed_post_from'] is None or statistics['analyzed_post_from'] > post['taken_at_timestamp']:
+            statistics['analyzed_post_from'] = post['taken_at_timestamp']
+        if statistics['analyzed_post_to'] is None or statistics['analyzed_post_to'] < post['taken_at_timestamp']:
+            statistics['analyzed_post_to'] = post['taken_at_timestamp']
+
     def _parse_item_media_to_stored_object_lists(self, item):
-
-        _, collected_post_schema_error = self._validate_schema(data=item['post'], schema=PostObjectSchema)
-
-        if collected_post_schema_error:
-            raise ErrorStoreFormat(f'Schema error {str(collected_post_schema_error)}')
-
         if item.get('post', {}).get('display_url'):
             return self._build_media_updated_object(item_having_media=item['post'], mapping={'display_url': 'link'}, media_type='display_url')
 

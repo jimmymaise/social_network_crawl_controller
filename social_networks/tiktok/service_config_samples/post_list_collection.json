@@ -1,5 +1,5 @@
 {
-  "SERVICE_NAME": "posts_collection",
+  "SERVICE_NAME": "post_list_collection",
   "MARKET": [
     "vi",
     "id"

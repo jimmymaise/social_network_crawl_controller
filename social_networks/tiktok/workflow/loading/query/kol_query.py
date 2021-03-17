@@ -19,7 +19,7 @@ class KOLQuery:
         filter_ = {
             'country_code': {'$in': service_config.get('MARKET')},
             f'user_collection_status.status': 'success',
-            f'posts_collection_status.status': {'$in': ['success', 'new']}
+            f'post_list_collection_status.status': {'$in': ['success', 'new']}
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
         sort_ = [(f'posts_collection_status.latest_update_time', 1)]
