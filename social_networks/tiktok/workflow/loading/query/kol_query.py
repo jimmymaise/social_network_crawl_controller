@@ -18,11 +18,11 @@ class KOLQuery:
     def get_kols_for_posts_collection_service(service_config: dict):
         filter_ = {
             'country_code': {'$in': service_config.get('MARKET')},
-            f'user_collection_status.status': 'success',
-            f'post_list_collection_status.status': {'$in': ['success', 'new']}
+            'user_collection_status.status': 'success',
+            'post_list_collection_status.status': {'$in': ['success', 'new']}
         }
         filter_.pop('country_code') if not service_config.get('MARKET') else None
-        sort_ = [(f'posts_collection_status.latest_update_time', 1)]
+        sort_ = [('posts_collection_status.latest_update_time', 1)]
         limit = Constant.DEFAULT_LOAD_LIMIT_NUM_ITEM
         selected_fields = ['_id', 'username']
         return Query(filter_=filter_, sort_=sort_, limit=limit, selected_fields=selected_fields, priority=1)
