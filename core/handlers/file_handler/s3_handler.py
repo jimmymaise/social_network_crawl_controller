@@ -70,11 +70,6 @@ class S3Handler:
                 raise ValueError('We must have s3_full_path or s3_path')
             s3_full_path = os.path.join(s3_path, os.path.basename(filename))
         s3_full_path = str(pathlib.Path(s3_full_path))
-        if not extra_args:
-            extra_args = dict()
-        if not extra_args.get('ContentType'):
-            guessed_mime_type = mimetypes.guess_type(filename)
-            extra_args['ContentType'] = guessed_mime_type
 
         self.s3_client.upload_file(filename, bucket, s3_full_path,
                                    callback, extra_args)
@@ -134,9 +129,6 @@ class S3Handler:
 
         if not file_extension:
             file_name += Constant.EXTENSION_DEFAULT
-        print(file_name)
-        print(external_url)
-        print(s3_folder_path)
 
         if not is_overwrite_if_exist and self.is_s3_path_exists_in_bucket(s3_path=s3_full_path,
                                                                           bucket_name=bucket):
