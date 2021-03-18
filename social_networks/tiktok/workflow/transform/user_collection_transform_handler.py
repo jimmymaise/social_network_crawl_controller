@@ -55,12 +55,12 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data.get('user'),
                                                             report_statuses=self._build_kol_statuses_object()
                                                             )
+        kol_stored_object[f'{Constant.SERVICE_NAME_POSTS_COLLECTION}_status.status'] = 'new'
         kol_updated_object = self._make_updated_object(
             filter_={'username': kol_stored_object['username']},
             stored_object=kol_stored_object,
             upsert=True
         )
-
         return kol_updated_object
 
     def _build_media_updated_objects(self, collected_data) -> list:
