@@ -54,7 +54,6 @@ class PostListCollectionService(CollectionService):
         return sec_uids
 
     def _collect_data(self, loaded_item):
-        print(loaded_item)
         crawl_account_handler = CrawlAccountHandler(account_base_url=self.system_config.AM_BASE_URL,
                                                     social_network=Constant.SOCIAL_NETWORK_TIKTOK,
                                                     service_name=self.service_name,
