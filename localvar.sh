@@ -1,6 +1,6 @@
 export ENV=local
 export SOCIAL_NETWORK=TIKTOK
-export DEFAULT_SERVICE_LOCAL=user_collectionx
+export DEFAULT_SERVICE_LOCAL=user_collection
 export MONGO_DB_HOST=localhost
 export MONGO_DB_PORT=27017
 export MONGO_DB_DATABASE_NAME=facebook
