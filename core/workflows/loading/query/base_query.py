@@ -37,4 +37,3 @@ class Aggregate:
 
     def build(self):
         return self.pipelines
-

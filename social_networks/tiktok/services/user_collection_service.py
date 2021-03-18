@@ -50,7 +50,7 @@ class UserCollectionService(CollectionService):
 
     def _sync_data_to_sqs(self, loaded_item, transformed_data):
         username = loaded_item['username']
-   
+
         user_sync_data = self.sync_data_handler.user_data_sync(find_user_query={'username': username},
                                                                queue_name=self.system_config.QUEUE_NAME_USER_DATA_SYNC)
 
