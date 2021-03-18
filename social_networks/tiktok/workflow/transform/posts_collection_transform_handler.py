@@ -84,8 +84,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
     @staticmethod
     def _parse_item_to_statistics(post, statistics, latest_posts):
         # Build latest posts: Get 30 latest ids
-        if len(latest_posts) < 30:
-            latest_posts.append(post['_id'])
+        latest_posts.append(post['_id'])
 
         # Build statistics
         statistics['num_post'] += 1
