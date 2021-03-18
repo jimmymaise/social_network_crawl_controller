@@ -7,12 +7,5 @@ class UserQuery:
         filter_ = {
             'username': {'$in': list_username}
         }
-        selected_fields = ['username', 'sec_uid']
-        return Query(filter_=filter_, selected_fields=selected_fields, priority=1, limit=None, sort_=None)
-
-    @staticmethod
-    def get_user_from_user_ids(user_ids, selected_fields=None):
-        filter_ = {
-            '_id': {'$in': user_ids}
-        }
+        selected_fields = ['username', 'sec_uid', 'num_follower']
         return Query(filter_=filter_, selected_fields=selected_fields, priority=1, limit=None, sort_=None)

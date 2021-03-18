@@ -1,9 +1,9 @@
 export ENV=local
 export SOCIAL_NETWORK=TIKTOK
-export DEFAULT_SERVICE_LOCAL=posts_collection
+export DEFAULT_SERVICE_LOCAL=post_list_collection
 export MONGO_DB_HOST=localhost
 export MONGO_DB_PORT=27017
-export MONGO_DB_DB=facebook
+export MONGO_DB_DATABASE_NAME=facebook
 export MONGO_DB_USER=dev
 export MONGO_DB_PASS=dev
-export LAMBDA_BASE_URL=https://irxs7gl9y1.execute-api.us-west-2.amazonaws.com/tt
+export LAMBDA_BASE_URL=https://moack.free.beeceptor.com
