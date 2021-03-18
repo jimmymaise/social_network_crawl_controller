@@ -47,3 +47,4 @@ class Constant:
     COLLECTION_NAME_COMMENT = 'comments'
     COLLECTION_NAME_POST_COMMENT = 'post_comments'
     COLLECTION_NAME_POST = 'posts'
+    EXTENSION_DEFAULT = '.jpeg'

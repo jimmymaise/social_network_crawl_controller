@@ -10,6 +10,7 @@ from botocore.exceptions import ClientError
 
 from core.handlers.file_handler.file_handler import FileHandler
 from core.logger.logger_handler import Logger
+from core.utils.constant import Constant
 
 
 class S3Handler:
@@ -69,12 +70,9 @@ class S3Handler:
                 raise ValueError('We must have s3_full_path or s3_path')
             s3_full_path = os.path.join(s3_path, os.path.basename(filename))
         s3_full_path = str(pathlib.Path(s3_full_path))
-        if not extra_args or not extra_args.get('ContentType'):
-            guessed_mime_type = mimetypes.guess_type(filename)
-            extra_args['ContentType'] = guessed_mime_type
 
         self.s3_client.upload_file(filename, bucket, s3_full_path,
-                                   callback, extra_args=extra_args)
+                                   callback, extra_args)
         s3_url = 's3://{bucket}/{key}'.format(bucket=bucket, key=s3_full_path)
         return s3_url
 
@@ -126,7 +124,11 @@ class S3Handler:
     def copy_file_from_external_url_to_s3(self, external_url, s3_folder_path, bucket, is_overwrite_if_exist=False):
         url_parse_obj = urlparse(external_url)
         file_name = os.path.basename(url_parse_obj.path)
+        _, file_extension = os.path.splitext(url_parse_obj.path)
         s3_full_path = f'{s3_folder_path}/{file_name}'
+
+        if not file_extension:
+            file_name += Constant.EXTENSION_DEFAULT
 
         if not is_overwrite_if_exist and self.is_s3_path_exists_in_bucket(s3_path=s3_full_path,
                                                                           bucket_name=bucket):
