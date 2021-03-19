@@ -50,6 +50,13 @@ class Common:
 
         return int(average / total * 100)
 
+    @staticmethod
+    def calculate_avg(total, number):
+        if number is None or number == 0:
+            return 0
+
+        return int(total / number)
+
 
 class Dict2Obj:
     def __init__(self, dictionary):
