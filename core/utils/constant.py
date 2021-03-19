@@ -48,3 +48,6 @@ class Constant:
     COLLECTION_NAME_POST_COMMENT = 'post_comments'
     COLLECTION_NAME_POST = 'posts'
     EXTENSION_DEFAULT = '.jpeg'
+
+    MEDIA_TYPE_POST = 'post'
+    MEDIA_TYPE_AVATAR = 'avatar'

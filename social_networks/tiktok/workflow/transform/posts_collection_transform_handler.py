@@ -100,7 +100,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
     def _parse_item_media_to_stored_object_lists(self, item):
         if item.get('post', {}).get('display_url'):
             return self._build_media_updated_object(item_having_media=item['post'], mapping={'display_url': 'link'},
-                                                    media_type='display_url')
+                                                    media_type=Constant.MEDIA_TYPE_POST)
 
     def _build_post_updated_object(self, collected_item):
         posts_stored_object_builder = StoredObjectBuilder()

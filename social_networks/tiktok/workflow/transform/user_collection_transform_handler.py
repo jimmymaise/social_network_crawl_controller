@@ -74,6 +74,6 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         if collected_data.get('user', {}).get('avatar'):
             media_updated_objects.append(
                 self._build_media_updated_object(item_having_media=collected_data['user'],
-                                                 mapping={'avatar': 'link'}, media_type='avatar'))
+                                                 mapping={'avatar': 'link'}, media_type=Constant.MEDIA_TYPE_AVATAR))
 
         return media_updated_objects
