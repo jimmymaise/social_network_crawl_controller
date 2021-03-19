@@ -5,7 +5,7 @@ class Constant(CoreConstant):
     SOCIAL_TYPE_PROFILE = 'facebook'
     SOCIAL_TYPE_FAN_PAGE = 'facebook_page'
     SOCIAL_NETWORK_FACEBOOK = 'facebook'
-    REGEX_PATTERN_FB_USERNAME = '[aA-zZ0-9\.\-\_]+'
+    REGEX_PATTERN_FB_USERNAME = r'[aA-zZ0-9\.\-\_]+'
     SERVICE_NAME_SEARCH_REPORT = 'search_report'
     SERVICE_NAME_COMMENT_REPORT = 'comment_report'
 
