@@ -50,16 +50,18 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
 
     def _build_kol_updated_object(self, loaded_item, collected_data):
         kol_stored_object_builder = StoredObjectBuilder()
-        kol_stored_object_builder.set_get_all_fields_from_collected_object(loaded_item, None)
 
         kol_stored_object_builder.add_mapping('collected_user', {'_id': 'user_id', 'username': 'username'}, )
 
-        if os.getenv('LAMBDA'):
-            kol_stored_object_builder.set_get_all_fields_from_collected_object('report_statuses', None)
+        kol_stored_object_builder.set_get_all_fields_from_collected_object('report_statuses', None)
 
         kol_stored_object = kol_stored_object_builder.build(collected_user=collected_data.get('user'),
                                                             report_statuses=self._build_kol_statuses_object()
                                                             )
+
+        if os.getenv('LAMBDA'):
+            kol_stored_object.update(loaded_item)
+
         kol_stored_object[f'{Constant.SERVICE_NAME_POSTS_COLLECTION}_status.status'] = 'new'
         kol_updated_object = self._make_updated_object(
             filter_={'username': kol_stored_object['username']},

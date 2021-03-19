@@ -194,7 +194,7 @@ class FileHandler:
     @staticmethod
     def count_total_line_in_file(file_path):
         with open(file_path) as file:
-            return sum(1 for line in file)
+            return sum(1 for _ in file)
 
     @staticmethod
     def get_file_meta_data(file_path):
@@ -225,8 +225,7 @@ class FileHandler:
         Return False if they differ, True is they are the same.
         """
         compared = filecmp.dircmp(dir1, dir2)
-        if (compared.left_only or compared.right_only or compared.diff_files
-                or compared.funny_files):
+        if compared.left_only or compared.right_only or compared.diff_files or compared.funny_files:
             return False
         for subdir in compared.common_dirs:
             if not cls.is_two_dirs_the_same(os.path.join(dir1, subdir), os.path.join(dir2, subdir)):
@@ -238,7 +237,7 @@ class FileMetaData:
     def __init__(self, file_path):
         self.file_path = file_path
         if not FileHandler.check_is_file(file_path):
-            raise NotAFileError(f'{file_path} is not a valid file path')
+            raise ValueError(f'{file_path} is not a valid file path')
         if not FileHandler.check_path_exist(file_path):
             raise FileNotFoundError(f'{file_path} does not exist')
 

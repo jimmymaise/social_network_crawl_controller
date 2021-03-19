@@ -15,6 +15,8 @@ class Constant:
 
     SERVICE_NAME_POSTS_COLLECTION = 'post_list_collection'
 
+    SERVICE_NAME_USER_DATA_SYNC = "user_data_sync"
+
     COLLECTION_SERVICE_ERROR_NAME = 'collection_service_error_name'
 
     SLACK_DEFAULT_NOTIFICATION_FIELD = 'text'
@@ -28,7 +30,7 @@ class Constant:
     MONGODB_FIND_TYPE_FIND_MANY = 'find'
 
     REGEX_PATTERN_ONLY_NUMBER = '[0-9]+'
-    REGEX_PATTERN_IG_SHORT_CODE = '[aA-zZ0-9\.\-\_]+'
+    REGEX_PATTERN_IG_SHORT_CODE = r'[aA-zZ0-9\.\-\_]+'
 
     TIME_ONE_MINUTE_TO_SECONDS = 60
     TIME_ONE_HOURS_TO_MINUTE = 60
