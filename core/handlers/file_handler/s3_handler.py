@@ -76,7 +76,7 @@ class S3Handler:
             guessed_mime_type = mimetypes.guess_type(filename)[0]
             extra_args['ContentType'] = guessed_mime_type
 
-        self.s3_client.upload_file(filename, bucket, s3_full_path, CallBack=callback,
+        self.s3_client.upload_file(filename, bucket, s3_full_path, Callback=callback,
                                    ExtraArgs=extra_args)
         s3_url = 's3://{bucket}/{key}'.format(bucket=bucket, key=s3_full_path)
         return s3_url
