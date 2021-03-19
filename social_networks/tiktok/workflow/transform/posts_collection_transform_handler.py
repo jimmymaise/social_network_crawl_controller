@@ -151,10 +151,10 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
     def _build_user_interaction_updated_object(self, loaded_item, statistics, latest_posts):
         num_follower = loaded_item['num_follower']
         num_post = statistics['num_post']
-        average_view = Common.calculate_rate(statistics['num_view'], num_post)
-        average_like = Common.calculate_rate(statistics['num_like'], num_post)
-        average_comment = Common.calculate_rate(statistics['num_comment'], num_post)
-        average_share = Common.calculate_rate(statistics['num_share'], num_post)
+        average_view = Common.calculate_avg(statistics['num_view'], num_post)
+        average_like = Common.calculate_avg(statistics['num_like'], num_post)
+        average_comment = Common.calculate_avg(statistics['num_comment'], num_post)
+        average_share = Common.calculate_avg(statistics['num_share'], num_post)
         average_engagement = average_like + average_comment + average_share
 
         interaction = {
