@@ -43,7 +43,7 @@ functions:
   - main_func:
       role: ${self:custom.config.role}
       handler: main.lambda_handler
-      description: "On-Demand collection services"
+      description: "On-Demand collection services -  Data system"
       memorySize: ${self:custom.config.memorySize}
       timeout: 120
       events:
