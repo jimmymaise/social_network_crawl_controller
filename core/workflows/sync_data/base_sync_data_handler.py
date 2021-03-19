@@ -32,7 +32,7 @@ class BaseSyncDataHandler:
         )
         user_sync_data = user_collection_lookup_handler.query()[0]
         user_sync_data['social_type'] = self.social_type
-        user_sync_data['service_name'] = 'user_sync_data'
+        user_sync_data['service_name'] = 'user_data_sync'
         self.sqs_handler.send_sqs_message(message_body=json.dumps(user_sync_data),
                                           queue_name=queue_name)
         return user_sync_data
