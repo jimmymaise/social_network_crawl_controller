@@ -33,11 +33,12 @@ class APICollectHandler(BaseCollectHandler):
 
         return response.json()
 
-    def get_user_posts_from_lambda(self, lambda_base_url, sec_uid, cursor, api_key) -> dict:
+    @staticmethod
+    def get_user_posts_from_lambda(lambda_base_url, sec_uid, cursor, limit, api_key) -> dict:
         lambda_api_handler = LambdaApiRequestHandler(base_url=lambda_base_url)
 
         user_posts_api_request_data = UserPostsAPISpecs()
-        user_posts_api_request_data.set_body(sec_uid=sec_uid, cursor=cursor)
+        user_posts_api_request_data.set_body(sec_uid=sec_uid, cursor=cursor, limit=limit)
         user_posts_api_request_data.set_headers(api_key)
 
         response, success, schema_errors = lambda_api_handler.call_api(

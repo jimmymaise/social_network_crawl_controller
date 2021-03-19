@@ -37,7 +37,8 @@ class BaseSystemConfig:
     LAMBDA_X_API_KEY = os.getenv('LAMBDA_X_API_KEY', 'Rcp9a7US932wBZtp5Dd7P8rN5rY02UQF3qIw8iBO')
 
     SLACK_NOTIFICATION_URL = os.getenv('SLACK_NOTIFICATION_URL',
-                                       'https://hooks.slack.com/services/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')
+                                       'https://hooks.slack.com/services/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'
+                                       )
     SERVICE_SLEEP_INTERVAL = os.getenv('PROCESS_SLEEP_INTERVAL', 5)
     S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', 'hiip-asia-media')
     S3_IMAGE_PATH = os.getenv('S3_IMAGE_PATH', f'images/{SOCIAL_NETWORK.lower()}')

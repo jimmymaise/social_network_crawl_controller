@@ -13,9 +13,10 @@ class UserPostsAPISpecs(BaseAPISpecs):
                          request_schema=UserDetailAPIRequestSchema,
                          response_schema=UserDetailAPIResponseSchema)
 
-    def set_body(self, sec_uid: str, cursor: int):
+    def set_body(self, sec_uid: str, cursor: int, limit: int = 10):
         self.body = {
-            'sec_uid': sec_uid
+            'sec_uid': sec_uid,
+            'limit': limit
         }
 
         if cursor is not None:

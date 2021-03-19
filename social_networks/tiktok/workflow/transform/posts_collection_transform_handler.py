@@ -53,7 +53,8 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
 
         yield self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_USER,
-            updated_object_list=[self._build_user_interaction_updated_object(loaded_item=loaded_item, statistics=statistics, latest_posts=latest_posts)])
+            updated_object_list=[self._build_user_interaction_updated_object(
+                loaded_item=loaded_item, statistics=statistics, latest_posts=latest_posts)])
 
         yield self._make_transformed_item(
             collection_name=Constant.COLLECTION_NAME_KOL,
@@ -83,8 +84,7 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
     @staticmethod
     def _parse_item_to_statistics(post, statistics, latest_posts):
         # Build latest posts: Get 30 latest ids
-        if len(latest_posts) < 30:
-            latest_posts.append(post['_id'])
+        latest_posts.append(post['_id'])
 
         # Build statistics
         statistics['num_post'] += 1
@@ -99,7 +99,8 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
 
     def _parse_item_media_to_stored_object_lists(self, item):
         if item.get('post', {}).get('display_url'):
-            return self._build_media_updated_object(item_having_media=item['post'], mapping={'display_url': 'link'}, media_type='display_url')
+            return self._build_media_updated_object(item_having_media=item['post'], mapping={'display_url': 'link'},
+                                                    media_type='display_url')
 
     def _build_post_updated_object(self, collected_item):
         posts_stored_object_builder = StoredObjectBuilder()

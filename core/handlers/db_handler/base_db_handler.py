@@ -167,11 +167,6 @@ class BaseDBHandler(object):
             result = None
         return result
 
-    def aggregate(self,
-                  requests):
-        result = self.collection.aggregate(requests)
-        return result
-
     def get_many_pairs_by_id(self,
                              _ids,
                              filter_=None,

@@ -10,6 +10,7 @@ from botocore.exceptions import ClientError
 
 from core.handlers.file_handler.file_handler import FileHandler
 from core.logger.logger_handler import Logger
+from core.utils.constant import Constant
 
 
 class S3Handler:
@@ -128,7 +129,11 @@ class S3Handler:
     def copy_file_from_external_url_to_s3(self, external_url, s3_folder_path, bucket, is_overwrite_if_exist=False):
         url_parse_obj = urlparse(external_url)
         file_name = os.path.basename(url_parse_obj.path)
+        _, file_extension = os.path.splitext(url_parse_obj.path)
         s3_full_path = f'{s3_folder_path}/{file_name}'
+
+        if not file_extension:
+            file_name += Constant.EXTENSION_DEFAULT
 
         if not is_overwrite_if_exist and self.is_s3_path_exists_in_bucket(s3_path=s3_full_path,
                                                                           bucket_name=bucket):
