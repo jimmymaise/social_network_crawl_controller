@@ -59,28 +59,17 @@ class PostListCollectionService(CollectionService):
                                                     service_name=self.service_name,
                                                     country=None)
         collect_handler = APICollectHandler(crawl_account_handler=crawl_account_handler)
-        has_next_page = True
-        next_cursor = None
-        count = 0
 
-        while has_next_page is True:
-            self.logger.info(f'Next cursor {next_cursor}')
-            response_body = collect_handler.get_user_posts_from_lambda(
-                lambda_base_url=self.system_config.LAMBDA_BASE_URL,
-                api_key=self.system_config.LAMBDA_X_API_KEY,
-                sec_uid=loaded_item['sec_uid'],
-                cursor=next_cursor,
-                limit=Constant.POST_DEFAULT_PAGING_NUM_ITEM
-            )
+        response_body = collect_handler.get_user_posts_from_lambda(
+            lambda_base_url=self.system_config.LAMBDA_BASE_URL,
+            api_key=self.system_config.LAMBDA_X_API_KEY,
+            sec_uid=loaded_item['sec_uid'],
+            cursor=None,
+            limit=Constant.POST_DEFAULT_PAGING_NUM_ITEM
+        )
 
-            has_next_page = response_body['paging']['has_next_page']
-            next_cursor = response_body['paging']['next_cursor']
-            for item in response_body['data']:
-                yield item
-                count += 1
-                if count >= Constant.POST_MAX_LIST:
-                    has_next_page = False
-                    break
+        for item in response_body['data']:
+            yield item
 
     def _transform_data(self, loaded_items, collected_data):
         posts_collection_transform = PostsCollectionTransformHandler(service_name=self.service_name)
