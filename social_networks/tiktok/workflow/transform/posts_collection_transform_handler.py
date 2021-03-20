@@ -108,7 +108,8 @@ class PostsCollectionTransformHandler(BaseItemTransformHandler):
 
         post_stored_object = posts_stored_object_builder.build(collected_post=collected_item['post'])
         post_stored_object['updated_at'] = datetime.now().timestamp()
-        post_stored_object['display_url'] = self._get_image_id_from_social_url(url=collected_item['post']['display_url'])
+        post_stored_object['display_url'] = self._get_image_id_from_social_url(
+            url=collected_item['post']['display_url'])
         post_stored_object = self._make_updated_object(
             filter_={'_id': post_stored_object['_id']},
             stored_object=post_stored_object,
