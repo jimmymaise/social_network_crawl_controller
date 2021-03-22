@@ -15,7 +15,7 @@ from social_networks.tiktok.workflow.transform.posts_collection_transform_handle
 
 class PostListCollectionService(CollectionService):
     def __init__(self, service_config, on_demand_handler=None):
-        super().__init__(service_config, Constant.COLLECTION_NAME_POST,
+        super().__init__(service_config, Constant.COLLECTION_NAME_KOL,
                          service_name=Constant.SERVICE_NAME_POSTS_COLLECTION, on_demand_handler=on_demand_handler)
         self.receive_message_schema = PostListMessageSchema
         self.loaded_item_message_mapping = {
