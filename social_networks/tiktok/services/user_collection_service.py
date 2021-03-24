@@ -20,7 +20,7 @@ class UserCollectionService(CollectionService):
             'user_id': 'social_id',
             'app_id': 'social_app_id',
             'username': 'social_user_name',
-            '_id': 'hiip_user_id'
+            '_id': 'ObjectId()'
         }
         self.sync_data_handler = SyncDataHandler(self.db_connection)
 
