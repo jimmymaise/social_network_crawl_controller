@@ -88,6 +88,7 @@ class PostObjectSchema(Schema):
     content = fields.Str(required=True)
     taken_at_timestamp = fields.Int(required=True)
     user_id = fields.Str(required=True)
+    username = fields.Str(required=True)
     num_like = fields.Int(required=True)
     num_share = fields.Int(required=True)
     num_comment = fields.Int(required=True)
