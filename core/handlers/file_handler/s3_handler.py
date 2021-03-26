@@ -74,7 +74,8 @@ class S3Handler:
         s3_full_path = str(pathlib.Path(s3_full_path))
         if not extra_args.get('ContentType') and mimetypes.guess_type(filename):
             guessed_mime_type = mimetypes.guess_type(filename)[0]
-            extra_args['ContentType'] = guessed_mime_type
+            if guessed_mime_type:
+                extra_args['ContentType'] = guessed_mime_type
 
         self.s3_client.upload_file(filename, bucket, s3_full_path, Callback=callback,
                                    ExtraArgs=extra_args)
