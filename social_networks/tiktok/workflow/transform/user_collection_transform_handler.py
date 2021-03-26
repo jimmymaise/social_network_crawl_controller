@@ -63,6 +63,7 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
             kol_stored_object.update(loaded_item)
 
         kol_stored_object[f'{Constant.SERVICE_NAME_POSTS_COLLECTION}_status.status'] = 'new'
+        kol_stored_object['user_id'] = collected_data.get('user', {}).get('_id')
         kol_updated_object = self._make_updated_object(
             filter_={'username': kol_stored_object['username']},
             stored_object=kol_stored_object,
@@ -76,6 +77,6 @@ class UserCollectionTransformHandler(BaseItemTransformHandler):
         if collected_data.get('user', {}).get('avatar'):
             media_updated_objects.append(
                 self._build_media_updated_object(item_having_media=collected_data['user'],
-                                                 mapping={'avatar': 'link'}, media_type='avatar'))
+                                                 mapping={'avatar': 'link'}, media_type=Constant.MEDIA_TYPE_AVATAR))
 
         return media_updated_objects

@@ -16,7 +16,7 @@ from core.utils.constant import Constant
 
 class CollectionService(ABC):
     def __init__(self, service_config: dict, loaded_collection_name: str, service_name: str,
-                 on_demand_handler: OnDemandHandler = None):
+                 error_key='_id', on_demand_handler: OnDemandHandler = None):
         self.service_name = service_name
         self.on_demand_handler = on_demand_handler
         self.system_config = SystemConfig.get_system_config()
@@ -28,6 +28,7 @@ class CollectionService(ABC):
         self.loaded_collection_name = loaded_collection_name
         self.is_on_demand = bool(on_demand_handler)
         self.sqs_handler = SQSHandler()
+        self.error_key = error_key
 
     def _update_failed_status(self, load_id, exception):
         error_code = getattr(exception, Constant.COLLECTION_SERVICE_ERROR_NAME, Constant.DEFAULT_UNKNOWN_ERROR_CODE)
@@ -37,7 +38,7 @@ class CollectionService(ABC):
             {'collection_name': self.loaded_collection_name,
              'items': [
                  {
-                     'filter': {'_id': load_id},
+                     'filter': {self.error_key: load_id},
                      'update': {
                          f'{self.service_name}_status': {'status': error_code,
                                                          'exception_detail': str(exception),
