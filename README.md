@@ -35,9 +35,11 @@ The `social_network_crawl_controller` is an open-source repository designed for 
 
 Clone the repository and install the required packages:
 
-```git clone https://github.com/your/repository.git
+```
+git clone https://github.com/your/repository.git
 cd repository
-pip install -r requirements.txt```
+pip install -r requirements.txt
+```
 
 ## Configuration
 
@@ -73,9 +75,9 @@ If no documents in your report table meet the filter conditions, zero items may 
 For development purposes, set up a local Docker database. To run MongoDB for Facebook or Instagram:
 
 1. Export the config:
-   ```source localvar.sh```
+   `source localvar.sh`
 2. Run the main script:
-   ```python main.py```
+   `python main.py`
 
 ## Contributing
 
@@ -84,9 +86,5 @@ Please read the CONTRIBUTING.md for guidelines on how to contribute to the proje
 ## License
 
 This project is licensed under the MIT License. See the LICENSE.md file for details.
-
-## Contact
-
-For questions or concerns, please open an issue or contact the maintainers directly.
 
 ---
